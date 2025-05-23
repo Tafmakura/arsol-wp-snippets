@@ -37,7 +37,7 @@ if ($file_exists) {
     <p class="arsol-css-error">
         <span class="dashicons dashicons-warning" style="color: #d63638; vertical-align: middle;"></span>
         <span style="color: #d63638;">
-            <?php echo esc_html(sprintf(__('CSS file "%s" could not be found.', 'arsol-css-addons'), $css_data['name'])); ?>
+            <?php echo esc_html(sprintf(__('CSS file for "%s" could not be found.', 'arsol-css-addons'), $css_data['name'])); ?>
         </span>
     </p>
     <?php

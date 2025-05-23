@@ -72,23 +72,58 @@ class Admin_Settings {
             array($this, 'sanitize_settings')
         );
         
-        // Add settings section
+        // Add Admin CSS Section
         add_settings_section(
-            'arsol_css_addons_general',
-            __('General Settings', 'arsol-css-addons'),
+            'arsol_css_addons_admin',
+            __('Admin CSS', 'arsol-css-addons'),
             function() {
-                echo '<p>' . esc_html__('Configure the CSS Addons settings below.', 'arsol-css-addons') . '</p>';
+                echo '<p>' . esc_html__('Enable CSS enhancements for the WordPress admin area.', 'arsol-css-addons') . '</p>';
             },
             $this->css_addons_slug
         );
         
-        // Add enable CSS Addons field
+        // Add admin CSS options
         add_settings_field(
-            'enable_css_addons',
-            __('Enable CSS Addons', 'arsol-css-addons'),
-            array($this, 'render_enable_field'),
+            'enable_admin_css',
+            __('Enable Admin CSS', 'arsol-css-addons'),
+            array($this, 'render_enable_admin_field'),
             $this->css_addons_slug,
-            'arsol_css_addons_general'
+            'arsol_css_addons_admin'
+        );
+        
+        add_settings_field(
+            'admin_css_options',
+            __('Select Admin CSS Files', 'arsol-css-addons'),
+            array($this, 'render_admin_css_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_admin'
+        );
+        
+        // Add Frontend CSS Section
+        add_settings_section(
+            'arsol_css_addons_frontend',
+            __('Frontend CSS', 'arsol-css-addons'),
+            function() {
+                echo '<p>' . esc_html__('Enable CSS enhancements for your website frontend.', 'arsol-css-addons') . '</p>';
+            },
+            $this->css_addons_slug
+        );
+        
+        // Add frontend CSS options
+        add_settings_field(
+            'enable_frontend_css',
+            __('Enable Frontend CSS', 'arsol-css-addons'),
+            array($this, 'render_enable_frontend_field'),
+            $this->css_addons_slug,
+            'arsol_css_addons_frontend'
+        );
+        
+        add_settings_field(
+            'frontend_css_options',
+            __('Select Frontend CSS Files', 'arsol-css-addons'),
+            array($this, 'render_frontend_css_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_frontend'
         );
         
         // Add custom CSS field
@@ -97,7 +132,7 @@ class Admin_Settings {
             __('Custom CSS', 'arsol-css-addons'),
             array($this, 'render_css_field'),
             $this->css_addons_slug,
-            'arsol_css_addons_general'
+            'arsol_css_addons_frontend'
         );
     }
     
@@ -111,6 +146,86 @@ class Admin_Settings {
         <input type="checkbox" name="arsol_css_addons_options[enable_css_addons]" value="1" <?php checked(1, $enabled); ?>/>
         <span class="description"><?php esc_html_e('Enable CSS Addons functionality', 'arsol-css-addons'); ?></span>
         <?php
+    }
+    
+    /**
+     * Render enable admin CSS field
+     */
+    public function render_enable_admin_field() {
+        $options = get_option('arsol_css_addons_options', array());
+        $enabled = isset($options['enable_admin_css']) ? $options['enable_admin_css'] : 1;
+        ?>
+        <input type="checkbox" name="arsol_css_addons_options[enable_admin_css]" value="1" <?php checked(1, $enabled); ?>/>
+        <span class="description"><?php esc_html_e('Enable CSS enhancements for the admin area', 'arsol-css-addons'); ?></span>
+        <?php
+    }
+    
+    /**
+     * Render admin CSS options checkboxes
+     */
+    public function render_admin_css_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $admin_css_options = isset($options['admin_css_options']) ? $options['admin_css_options'] : array();
+        
+        // Define available admin CSS files
+        $available_admin_css = array(
+            'admin-menu' => __('Enhanced Admin Menu', 'arsol-css-addons'),
+            'admin-buttons' => __('Enhanced Admin Buttons', 'arsol-css-addons'),
+            'admin-forms' => __('Enhanced Admin Forms', 'arsol-css-addons'),
+            'admin-tables' => __('Enhanced Admin Tables', 'arsol-css-addons'),
+        );
+        
+        foreach ($available_admin_css as $css_id => $css_name) {
+            $checked = isset($admin_css_options[$css_id]) ? $admin_css_options[$css_id] : 0;
+            ?>
+            <p>
+                <input type="checkbox" id="arsol-admin-css-<?php echo esc_attr($css_id); ?>" 
+                       name="arsol_css_addons_options[admin_css_options][<?php echo esc_attr($css_id); ?>]" 
+                       value="1" <?php checked(1, $checked); ?>/>
+                <label for="arsol-admin-css-<?php echo esc_attr($css_id); ?>"><?php echo esc_html($css_name); ?></label>
+            </p>
+            <?php
+        }
+    }
+    
+    /**
+     * Render enable frontend CSS field
+     */
+    public function render_enable_frontend_field() {
+        $options = get_option('arsol_css_addons_options', array());
+        $enabled = isset($options['enable_frontend_css']) ? $options['enable_frontend_css'] : 1;
+        ?>
+        <input type="checkbox" name="arsol_css_addons_options[enable_frontend_css]" value="1" <?php checked(1, $enabled); ?>/>
+        <span class="description"><?php esc_html_e('Enable CSS enhancements for the frontend', 'arsol-css-addons'); ?></span>
+        <?php
+    }
+    
+    /**
+     * Render frontend CSS options checkboxes
+     */
+    public function render_frontend_css_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $frontend_css_options = isset($options['frontend_css_options']) ? $options['frontend_css_options'] : array();
+        
+        // Define available frontend CSS files
+        $available_frontend_css = array(
+            'buttons' => __('Enhanced Buttons', 'arsol-css-addons'),
+            'forms' => __('Enhanced Forms', 'arsol-css-addons'),
+            'typography' => __('Enhanced Typography', 'arsol-css-addons'),
+            'layouts' => __('Enhanced Layouts', 'arsol-css-addons'),
+        );
+        
+        foreach ($available_frontend_css as $css_id => $css_name) {
+            $checked = isset($frontend_css_options[$css_id]) ? $frontend_css_options[$css_id] : 0;
+            ?>
+            <p>
+                <input type="checkbox" id="arsol-frontend-css-<?php echo esc_attr($css_id); ?>" 
+                       name="arsol_css_addons_options[frontend_css_options][<?php echo esc_attr($css_id); ?>]" 
+                       value="1" <?php checked(1, $checked); ?>/>
+                <label for="arsol-frontend-css-<?php echo esc_attr($css_id); ?>"><?php echo esc_html($css_name); ?></label>
+            </p>
+            <?php
+        }
     }
     
     /**
@@ -134,8 +249,27 @@ class Admin_Settings {
     public function sanitize_settings($input) {
         $sanitized_input = array();
         
-        // Sanitize enable option
-        $sanitized_input['enable_css_addons'] = isset($input['enable_css_addons']) ? 1 : 0;
+        // Sanitize admin CSS options
+        $sanitized_input['enable_admin_css'] = isset($input['enable_admin_css']) ? 1 : 0;
+        
+        // Sanitize admin CSS file options
+        $sanitized_input['admin_css_options'] = array();
+        if (isset($input['admin_css_options']) && is_array($input['admin_css_options'])) {
+            foreach ($input['admin_css_options'] as $css_id => $value) {
+                $sanitized_input['admin_css_options'][$css_id] = 1;
+            }
+        }
+        
+        // Sanitize frontend CSS options
+        $sanitized_input['enable_frontend_css'] = isset($input['enable_frontend_css']) ? 1 : 0;
+        
+        // Sanitize frontend CSS file options
+        $sanitized_input['frontend_css_options'] = array();
+        if (isset($input['frontend_css_options']) && is_array($input['frontend_css_options'])) {
+            foreach ($input['frontend_css_options'] as $css_id => $value) {
+                $sanitized_input['frontend_css_options'][$css_id] = 1;
+            }
+        }
         
         // Sanitize custom CSS - allow CSS but strip dangerous tags
         $sanitized_input['custom_css'] = isset($input['custom_css']) ? sanitize_textarea_field($input['custom_css']) : '';

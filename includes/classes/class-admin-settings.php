@@ -212,6 +212,22 @@ class Admin_Settings {
     public function sanitize_settings($input) {
         $sanitized_input = array();
         
+        // Sanitize admin CSS file options
+        $sanitized_input['admin_css_options'] = array();
+        if (isset($input['admin_css_options']) && is_array($input['admin_css_options'])) {
+            foreach ($input['admin_css_options'] as $css_id => $value) {
+                $sanitized_input['admin_css_options'][$css_id] = 1;
+            }
+        }
+        
+        // Sanitize frontend CSS file options
+        $sanitized_input['frontend_css_options'] = array();
+        if (isset($input['frontend_css_options']) && is_array($input['frontend_css_options'])) {
+            foreach ($input['frontend_css_options'] as $css_id => $value) {
+                $sanitized_input['frontend_css_options'][$css_id] = 1;
+            }
+        }
+        
         return $sanitized_input;
     }
 }

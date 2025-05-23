@@ -35,16 +35,22 @@ class Admin_Settings {
      * Add admin menu
      */
     public function add_admin_menu() {
-        // Add a single Arsol CSS Addons menu
+        // Add a single Arsol CSS Addons menu with no submenu
         add_menu_page(
             __('Arsol CSS Addons', 'arsol-css-addons'), // Page title
-            __('Arsol CSS', 'arsol-css-addons'),        // Menu title (shortened)
+            __('CSS Addons', 'arsol-css-addons'),      // Menu title (shorter for clarity)
             'manage_options',
             $this->css_addons_slug,
             array($this, 'display_css_addons_page'),
             'dashicons-admin-customizer',
             30
         );
+        
+        // Remove the automatically added submenu item
+        global $submenu;
+        if (isset($submenu[$this->css_addons_slug])) {
+            unset($submenu[$this->css_addons_slug]);
+        }
     }
     
     /**

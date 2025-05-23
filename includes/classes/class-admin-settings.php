@@ -76,17 +76,17 @@ class Admin_Settings {
             array($this, 'sanitize_settings')
         );
         
-        // Add Admin CSS Section
+        // ADMIN SECTION
         add_settings_section(
             'arsol_css_addons_admin',
             __('Admin', 'arsol-css-addons'),
             function() {
-                echo '<p>' . esc_html__('Select CSS enhancements for the WordPress admin area.', 'arsol-css-addons') . '</p>';
+                echo '<p>' . esc_html__('Extend the WordPress admin area with additional files.', 'arsol-css-addons') . '</p>';
             },
             $this->css_addons_slug
         );
         
-        // Add admin CSS options
+        // Admin CSS
         add_settings_field(
             'admin_css_options',
             __('Admin addon CSS files', 'arsol-css-addons'),
@@ -95,17 +95,35 @@ class Admin_Settings {
             'arsol_css_addons_admin'
         );
         
-        // Add Frontend CSS Section
+        // Admin JavaScript
+        add_settings_field(
+            'admin_js_options',
+            __('Admin addon JS files', 'arsol-css-addons'),
+            array($this, 'render_admin_js_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_admin'
+        );
+        
+        // Admin PHP
+        add_settings_field(
+            'admin_php_options',
+            __('Admin addon PHP files', 'arsol-css-addons'),
+            array($this, 'render_admin_php_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_admin'
+        );
+        
+        // FRONTEND SECTION
         add_settings_section(
             'arsol_css_addons_frontend',
             __('Frontend', 'arsol-css-addons'),
             function() {
-                echo '<p>' . esc_html__('Select CSS enhancements for your website frontend.', 'arsol-css-addons') . '</p>';
+                echo '<p>' . esc_html__('Extend your website frontend with additional files.', 'arsol-css-addons') . '</p>';
             },
             $this->css_addons_slug
         );
         
-        // Add frontend CSS options
+        // Frontend CSS
         add_settings_field(
             'frontend_css_options',
             __('Frontend addon CSS files', 'arsol-css-addons'),
@@ -114,21 +132,57 @@ class Admin_Settings {
             'arsol_css_addons_frontend'
         );
         
-        // Add Global CSS Section - MOVED TO BOTTOM
+        // Frontend JavaScript
+        add_settings_field(
+            'frontend_js_options',
+            __('Frontend addon JS files', 'arsol-css-addons'),
+            array($this, 'render_frontend_js_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_frontend'
+        );
+        
+        // Frontend PHP
+        add_settings_field(
+            'frontend_php_options',
+            __('Frontend addon PHP files', 'arsol-css-addons'),
+            array($this, 'render_frontend_php_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_frontend'
+        );
+        
+        // GLOBAL SECTION
         add_settings_section(
             'arsol_css_addons_global',
             __('Global', 'arsol-css-addons'),
             function() {
-                echo '<p>' . esc_html__('Select CSS enhancements that apply globally.', 'arsol-css-addons') . '</p>';
+                echo '<p>' . esc_html__('Files that apply both to admin and frontend.', 'arsol-css-addons') . '</p>';
             },
             $this->css_addons_slug
         );
         
-        // Add global CSS options
+        // Global CSS
         add_settings_field(
             'global_css_options',
             __('Global addon CSS files', 'arsol-css-addons'),
             array($this, 'render_global_css_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_global'
+        );
+        
+        // Global JavaScript
+        add_settings_field(
+            'global_js_options',
+            __('Global addon JS files', 'arsol-css-addons'),
+            array($this, 'render_global_js_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_global'
+        );
+        
+        // Global PHP
+        add_settings_field(
+            'global_php_options',
+            __('Global addon PHP files', 'arsol-css-addons'),
+            array($this, 'render_global_php_options'),
             $this->css_addons_slug,
             'arsol_css_addons_global'
         );
@@ -219,6 +273,118 @@ class Admin_Settings {
     }
     
     /**
+     * Get available admin JS options
+     *
+     * @return array Array of admin JS options
+     */
+    public function get_admin_js_options() {
+        // Default empty array
+        $admin_js_options = array();
+        
+        /**
+         * Filter the admin JS options
+         * 
+         * @param array $admin_js_options Array of admin JS options with file paths
+         */
+        $filtered_options = apply_filters('arsol_css_addons_admin_js_options', $admin_js_options);
+        
+        // Validate that all files are JS files
+        foreach ($filtered_options as $js_id => $js_data) {
+            // Check if file path exists and ends with .js
+            if (!isset($js_data['file']) || substr($js_data['file'], -3) !== '.js') {
+                // Remove invalid entries
+                unset($filtered_options[$js_id]);
+            }
+        }
+        
+        return $filtered_options;
+    }
+    
+    /**
+     * Get available admin PHP options
+     *
+     * @return array Array of admin PHP options
+     */
+    public function get_admin_php_options() {
+        // Default empty array
+        $admin_php_options = array();
+        
+        /**
+         * Filter the admin PHP options
+         * 
+         * @param array $admin_php_options Array of admin PHP options with file paths
+         */
+        $filtered_options = apply_filters('arsol_css_addons_admin_php_options', $admin_php_options);
+        
+        // Validate that all files are PHP files
+        foreach ($filtered_options as $php_id => $php_data) {
+            // Check if file path exists and ends with .php
+            if (!isset($php_data['file']) || substr($php_data['file'], -4) !== '.php') {
+                // Remove invalid entries
+                unset($filtered_options[$php_id]);
+            }
+        }
+        
+        return $filtered_options;
+    }
+    
+    /**
+     * Get available frontend JS options
+     *
+     * @return array Array of frontend JS options
+     */
+    public function get_frontend_js_options() {
+        // Default empty array
+        $frontend_js_options = array();
+        
+        /**
+         * Filter the frontend JS options
+         * 
+         * @param array $frontend_js_options Array of frontend JS options with file paths
+         */
+        $filtered_options = apply_filters('arsol_css_addons_frontend_js_options', $frontend_js_options);
+        
+        // Validate that all files are JS files
+        foreach ($filtered_options as $js_id => $js_data) {
+            // Check if file path exists and ends with .js
+            if (!isset($js_data['file']) || substr($js_data['file'], -3) !== '.js') {
+                // Remove invalid entries
+                unset($filtered_options[$js_id]);
+            }
+        }
+        
+        return $filtered_options;
+    }
+    
+    /**
+     * Get available frontend PHP options
+     *
+     * @return array Array of frontend PHP options
+     */
+    public function get_frontend_php_options() {
+        // Default empty array
+        $frontend_php_options = array();
+        
+        /**
+         * Filter the frontend PHP options
+         * 
+         * @param array $frontend_php_options Array of frontend PHP options with file paths
+         */
+        $filtered_options = apply_filters('arsol_css_addons_frontend_php_options', $frontend_php_options);
+        
+        // Validate that all files are PHP files
+        foreach ($filtered_options as $php_id => $php_data) {
+            // Check if file path exists and ends with .php
+            if (!isset($php_data['file']) || substr($php_data['file'], -4) !== '.php') {
+                // Remove invalid entries
+                unset($filtered_options[$php_id]);
+            }
+        }
+        
+        return $filtered_options;
+    }
+    
+    /**
      * Render global CSS options checkboxes
      */
     public function render_global_css_options() {
@@ -269,6 +435,60 @@ class Admin_Settings {
     }
     
     /**
+     * Render admin JS options checkboxes
+     */
+    public function render_admin_js_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $admin_js_options = isset($options['admin_js_options']) ? $options['admin_js_options'] : array();
+        
+        // Get JS options from the filter
+        $available_admin_js = $this->get_admin_js_options();
+        
+        if (empty($available_admin_js)) {
+            echo '<p>' . esc_html__('No admin JavaScript files available.', 'arsol-css-addons') . '</p>';
+            return;
+        }
+        
+        foreach ($available_admin_js as $js_id => $js_data) {
+            // Set variables that will be available to the template
+            $enabled_options = $admin_js_options;
+            $option_type = 'admin_js';
+            $css_id = $js_id; // Keeping variable name for compatibility with template
+            $css_data = $js_data; // Keeping variable name for compatibility with template
+            
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+        }
+    }
+    
+    /**
+     * Render admin PHP options checkboxes
+     */
+    public function render_admin_php_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $admin_php_options = isset($options['admin_php_options']) ? $options['admin_php_options'] : array();
+        
+        // Get PHP options from the filter
+        $available_admin_php = $this->get_admin_php_options();
+        
+        if (empty($available_admin_php)) {
+            echo '<p>' . esc_html__('No admin PHP files available.', 'arsol-css-addons') . '</p>';
+            return;
+        }
+        
+        foreach ($available_admin_php as $php_id => $php_data) {
+            // Set variables that will be available to the template
+            $enabled_options = $admin_php_options;
+            $option_type = 'admin_php';
+            $css_id = $php_id; // Keeping variable name for compatibility with template
+            $css_data = $php_data; // Keeping variable name for compatibility with template
+            
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+        }
+    }
+    
+    /**
      * Render frontend CSS options checkboxes
      */
     public function render_frontend_css_options() {
@@ -294,6 +514,60 @@ class Admin_Settings {
     }
     
     /**
+     * Render frontend JS options checkboxes
+     */
+    public function render_frontend_js_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $frontend_js_options = isset($options['frontend_js_options']) ? $options['frontend_js_options'] : array();
+        
+        // Get JS options from the filter
+        $available_frontend_js = $this->get_frontend_js_options();
+        
+        if (empty($available_frontend_js)) {
+            echo '<p>' . esc_html__('No frontend JavaScript files available.', 'arsol_css_addons') . '</p>';
+            return;
+        }
+        
+        foreach ($available_frontend_js as $js_id => $js_data) {
+            // Set variables that will be available to the template
+            $enabled_options = $frontend_js_options;
+            $option_type = 'frontend_js';
+            $css_id = $js_id; // Keeping variable name for compatibility with template
+            $css_data = $js_data; // Keeping variable name for compatibility with template
+            
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+        }
+    }
+    
+    /**
+     * Render frontend PHP options checkboxes
+     */
+    public function render_frontend_php_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $frontend_php_options = isset($options['frontend_php_options']) ? $options['frontend_php_options'] : array();
+        
+        // Get PHP options from the filter
+        $available_frontend_php = $this->get_frontend_php_options();
+        
+        if (empty($available_frontend_php)) {
+            echo '<p>' . esc_html__('No frontend PHP files available.', 'arsol-css-addons') . '</p>';
+            return;
+        }
+        
+        foreach ($available_frontend_php as $php_id => $php_data) {
+            // Set variables that will be available to the template
+            $enabled_options = $frontend_php_options;
+            $option_type = 'frontend_php';
+            $css_id = $php_id; // Keeping variable name for compatibility with template
+            $css_data = $php_data; // Keeping variable name for compatibility with template
+            
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+        }
+    }
+    
+    /**
      * Sanitize settings
      *
      * @param array $input The input array.
@@ -302,7 +576,7 @@ class Admin_Settings {
     public function sanitize_settings($input) {
         $sanitized_input = array();
         
-        // Sanitize global CSS file options
+        // Sanitize global CSS options
         $sanitized_input['global_css_options'] = array();
         if (isset($input['global_css_options']) && is_array($input['global_css_options'])) {
             foreach ($input['global_css_options'] as $css_id => $value) {
@@ -310,7 +584,23 @@ class Admin_Settings {
             }
         }
         
-        // Sanitize admin CSS file options
+        // Sanitize global JS options
+        $sanitized_input['global_js_options'] = array();
+        if (isset($input['global_js_options']) && is_array($input['global_js_options'])) {
+            foreach ($input['global_js_options'] as $js_id => $value) {
+                $sanitized_input['global_js_options'][$js_id] = 1;
+            }
+        }
+        
+        // Sanitize global PHP options
+        $sanitized_input['global_php_options'] = array();
+        if (isset($input['global_php_options']) && is_array($input['global_php_options'])) {
+            foreach ($input['global_php_options'] as $php_id => $value) {
+                $sanitized_input['global_php_options'][$php_id] = 1;
+            }
+        }
+        
+        // Sanitize admin CSS options
         $sanitized_input['admin_css_options'] = array();
         if (isset($input['admin_css_options']) && is_array($input['admin_css_options'])) {
             foreach ($input['admin_css_options'] as $css_id => $value) {
@@ -318,7 +608,23 @@ class Admin_Settings {
             }
         }
         
-        // Sanitize frontend CSS file options
+        // Sanitize admin JS options
+        $sanitized_input['admin_js_options'] = array();
+        if (isset($input['admin_js_options']) && is_array($input['admin_js_options'])) {
+            foreach ($input['admin_js_options'] as $js_id => $value) {
+                $sanitized_input['admin_js_options'][$js_id] = 1;
+            }
+        }
+        
+        // Sanitize admin PHP options
+        $sanitized_input['admin_php_options'] = array();
+        if (isset($input['admin_php_options']) && is_array($input['admin_php_options'])) {
+            foreach ($input['admin_php_options'] as $php_id => $value) {
+                $sanitized_input['admin_php_options'][$php_id] = 1;
+            }
+        }
+        
+        // Sanitize frontend CSS options
         $sanitized_input['frontend_css_options'] = array();
         if (isset($input['frontend_css_options']) && is_array($input['frontend_css_options'])) {
             foreach ($input['frontend_css_options'] as $css_id => $value) {
@@ -326,11 +632,27 @@ class Admin_Settings {
             }
         }
         
+        // Sanitize frontend JS options
+        $sanitized_input['frontend_js_options'] = array();
+        if (isset($input['frontend_js_options']) && is_array($input['frontend_js_options'])) {
+            foreach ($input['frontend_js_options'] as $js_id => $value) {
+                $sanitized_input['frontend_js_options'][$js_id] = 1;
+            }
+        }
+        
+        // Sanitize frontend PHP options
+        $sanitized_input['frontend_php_options'] = array();
+        if (isset($input['frontend_php_options']) && is_array($input['frontend_php_options'])) {
+            foreach ($input['frontend_php_options'] as $php_id => $value) {
+                $sanitized_input['frontend_php_options'][$php_id] = 1;
+            }
+        }
+        
         return $sanitized_input;
     }
     
     /**
-     * Load admin CSS files based on settings
+     * Load admin files based on settings
      */
     public function load_admin_css_files() {
         // Only run in admin
@@ -360,34 +682,113 @@ class Admin_Settings {
             }
         }
         
-        // If no admin CSS options are set, return
-        if (!isset($options['admin_css_options']) || empty($options['admin_css_options'])) {
-            return;
+        // Load global JS files
+        if (isset($options['global_js_options']) && !empty($options['global_js_options'])) {
+            $global_js_options = $this->get_global_js_options();
+            $enabled_global_options = $options['global_js_options'];
+            
+            // Loop through enabled global files and enqueue them
+            foreach ($enabled_global_options as $js_id => $enabled) {
+                if ($enabled && isset($global_js_options[$js_id])) {
+                    wp_enqueue_script(
+                        'arsol-js-addon-global-' . $js_id,
+                        $global_js_options[$js_id]['file'],
+                        array('jquery'),
+                        ARSOL_CSS_ADDONS_VERSION,
+                        true
+                    );
+                    
+                    do_action('arsol_css_addons_loaded_global_js', $js_id, $global_js_options[$js_id]['file']);
+                }
+            }
         }
         
-        // Get admin CSS definitions
-        $admin_css_options = $this->get_admin_css_options();
+        // Load global PHP files
+        if (isset($options['global_php_options']) && !empty($options['global_php_options'])) {
+            $global_php_options = $this->get_global_php_options();
+            $enabled_global_options = $options['global_php_options'];
+            
+            // Loop through enabled global files and include them
+            foreach ($enabled_global_options as $php_id => $enabled) {
+                if ($enabled && isset($global_php_options[$php_id])) {
+                    // Convert URL to file path for PHP files
+                    $file_url = $global_php_options[$php_id]['file'];
+                    $file_path = str_replace(ARSOL_CSS_ADDONS_PLUGIN_URL, ARSOL_CSS_ADDONS_PLUGIN_DIR, $file_url);
+                    
+                    if (file_exists($file_path)) {
+                        include_once $file_path;
+                    }
+                    
+                    do_action('arsol_css_addons_loaded_global_php', $php_id, $file_path);
+                }
+            }
+        }
         
-        // Get enabled admin CSS files
-        $enabled_options = $options['admin_css_options'];
+        // Load admin CSS files
+        if (isset($options['admin_css_options']) && !empty($options['admin_css_options'])) {
+            $admin_css_options = $this->get_admin_css_options();
+            $enabled_options = $options['admin_css_options'];
+            
+            // Loop through enabled files and enqueue them
+            foreach ($enabled_options as $css_id => $enabled) {
+                if ($enabled && isset($admin_css_options[$css_id])) {
+                    wp_enqueue_style(
+                        'arsol-css-addon-' . $css_id,
+                        $admin_css_options[$css_id]['file'],
+                        array(),
+                        ARSOL_CSS_ADDONS_VERSION
+                    );
+                    
+                    do_action('arsol_css_addons_loaded_admin_css', $css_id, $admin_css_options[$css_id]['file']);
+                }
+            }
+        }
         
-        // Loop through enabled files and enqueue them
-        foreach ($enabled_options as $css_id => $enabled) {
-            if ($enabled && isset($admin_css_options[$css_id])) {
-                wp_enqueue_style(
-                    'arsol-css-addon-' . $css_id,
-                    $admin_css_options[$css_id]['file'],
-                    array(),
-                    ARSOL_CSS_ADDONS_VERSION
-                );
-                
-                do_action('arsol_css_addons_loaded_admin_css', $css_id, $admin_css_options[$css_id]['file']);
+        // Load admin JS files
+        if (isset($options['admin_js_options']) && !empty($options['admin_js_options'])) {
+            $admin_js_options = $this->get_admin_js_options();
+            $enabled_options = $options['admin_js_options'];
+            
+            // Loop through enabled files and enqueue them
+            foreach ($enabled_options as $js_id => $enabled) {
+                if ($enabled && isset($admin_js_options[$js_id])) {
+                    wp_enqueue_script(
+                        'arsol-js-addon-' . $js_id,
+                        $admin_js_options[$js_id]['file'],
+                        array('jquery'),
+                        ARSOL_CSS_ADDONS_VERSION,
+                        true
+                    );
+                    
+                    do_action('arsol_css_addons_loaded_admin_js', $js_id, $admin_js_options[$js_id]['file']);
+                }
+            }
+        }
+        
+        // Load admin PHP files
+        if (isset($options['admin_php_options']) && !empty($options['admin_php_options'])) {
+            $admin_php_options = $this->get_admin_php_options();
+            $enabled_options = $options['admin_php_options'];
+            
+            // Loop through enabled files and include them
+            foreach ($enabled_options as $php_id => $enabled) {
+                if ($enabled && isset($admin_php_options[$php_id])) {
+                    // Convert URL to file path for PHP files
+                    $file_url = $admin_php_options[$php_id]['file'];
+                    $file_path = str_replace(ARSOL_CSS_ADDONS_PLUGIN_URL, ARSOL_CSS_ADDONS_PLUGIN_DIR, $file_url);
+                    
+                    if (file_exists($file_path)) {
+                        include_once $file_path;
+                    }
+                    
+                    do_action('arsol_css_addons_loaded_admin_php', $php_id, $file_path);
+                }
             }
         }
     }
     
     /**
-     * Load frontend CSS files based on settings
+     * Load frontend files based on settings
      */
     public function load_frontend_css_files() {
         // Don't run in admin
@@ -417,28 +818,107 @@ class Admin_Settings {
             }
         }
         
-        // If no frontend CSS options are set, return
-        if (!isset($options['frontend_css_options']) || empty($options['frontend_css_options'])) {
-            return;
+        // Load global JS files
+        if (isset($options['global_js_options']) && !empty($options['global_js_options'])) {
+            $global_js_options = $this->get_global_js_options();
+            $enabled_global_options = $options['global_js_options'];
+            
+            // Loop through enabled global files and enqueue them
+            foreach ($enabled_global_options as $js_id => $enabled) {
+                if ($enabled && isset($global_js_options[$js_id])) {
+                    wp_enqueue_script(
+                        'arsol-js-addon-global-' . $js_id,
+                        $global_js_options[$js_id]['file'],
+                        array('jquery'),
+                        ARSOL_CSS_ADDONS_VERSION,
+                        true
+                    );
+                    
+                    do_action('arsol_css_addons_loaded_global_js', $js_id, $global_js_options[$js_id]['file']);
+                }
+            }
         }
         
-        // Get frontend CSS definitions
-        $frontend_css_options = $this->get_frontend_css_options();
+        // Load global PHP files
+        if (isset($options['global_php_options']) && !empty($options['global_php_options'])) {
+            $global_php_options = $this->get_global_php_options();
+            $enabled_global_options = $options['global_php_options'];
+            
+            // Loop through enabled global files and include them
+            foreach ($enabled_global_options as $php_id => $enabled) {
+                if ($enabled && isset($global_php_options[$php_id])) {
+                    // Convert URL to file path for PHP files
+                    $file_url = $global_php_options[$php_id]['file'];
+                    $file_path = str_replace(ARSOL_CSS_ADDONS_PLUGIN_URL, ARSOL_CSS_ADDONS_PLUGIN_DIR, $file_url);
+                    
+                    if (file_exists($file_path)) {
+                        include_once $file_path;
+                    }
+                    
+                    do_action('arsol_css_addons_loaded_global_php', $php_id, $file_path);
+                }
+            }
+        }
         
-        // Get enabled frontend CSS files
-        $enabled_options = $options['frontend_css_options'];
+        // Load frontend CSS files
+        if (isset($options['frontend_css_options']) && !empty($options['frontend_css_options'])) {
+            $frontend_css_options = $this->get_frontend_css_options();
+            $enabled_options = $options['frontend_css_options'];
+            
+            // Loop through enabled files and enqueue them
+            foreach ($enabled_options as $css_id => $enabled) {
+                if ($enabled && isset($frontend_css_options[$css_id])) {
+                    wp_enqueue_style(
+                        'arsol-css-addon-' . $css_id,
+                        $frontend_css_options[$css_id]['file'],
+                        array(),
+                        ARSOL_CSS_ADDONS_VERSION
+                    );
+                    
+                    do_action('arsol_css_addons_loaded_frontend_css', $css_id, $frontend_css_options[$css_id]['file']);
+                }
+            }
+        }
         
-        // Loop through enabled files and enqueue them
-        foreach ($enabled_options as $css_id => $enabled) {
-            if ($enabled && isset($frontend_css_options[$css_id])) {
-                wp_enqueue_style(
-                    'arsol-css-addon-' . $css_id,
-                    $frontend_css_options[$css_id]['file'],
-                    array(),
-                    ARSOL_CSS_ADDONS_VERSION
-                );
-                
-                do_action('arsol_css_addons_loaded_frontend_css', $css_id, $frontend_css_options[$css_id]['file']);
+        // Load frontend JS files
+        if (isset($options['frontend_js_options']) && !empty($options['frontend_js_options'])) {
+            $frontend_js_options = $this->get_frontend_js_options();
+            $enabled_options = $options['frontend_js_options'];
+            
+            // Loop through enabled files and enqueue them
+            foreach ($enabled_options as $js_id => $enabled) {
+                if ($enabled && isset($frontend_js_options[$js_id])) {
+                    wp_enqueue_script(
+                        'arsol-js-addon-' . $js_id,
+                        $frontend_js_options[$js_id]['file'],
+                        array('jquery'),
+                        ARSOL_CSS_ADDONS_VERSION,
+                        true
+                    );
+                    
+                    do_action('arsol_css_addons_loaded_frontend_js', $js_id, $frontend_js_options[$js_id]['file']);
+                }
+            }
+        }
+        
+        // Load frontend PHP files
+        if (isset($options['frontend_php_options']) && !empty($options['frontend_php_options'])) {
+            $frontend_php_options = $this->get_frontend_php_options();
+            $enabled_options = $options['frontend_php_options'];
+            
+            // Loop through enabled files and include them
+            foreach ($enabled_options as $php_id => $enabled) {
+                if ($enabled && isset($frontend_php_options[$php_id])) {
+                    // Convert URL to file path for PHP files
+                    $file_url = $frontend_php_options[$php_id]['file'];
+                    $file_path = str_replace(ARSOL_CSS_ADDONS_PLUGIN_URL, ARSOL_CSS_ADDONS_PLUGIN_DIR, $file_url);
+                    
+                    if (file_exists($file_path)) {
+                        include_once $file_path;
+                    }
+                    
+                    do_action('arsol_css_addons_loaded_frontend_php', $php_id, $file_path);
+                }
             }
         }
     }

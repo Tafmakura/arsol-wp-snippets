@@ -410,6 +410,60 @@ class Admin_Settings {
     }
     
     /**
+     * Render global JS options checkboxes
+     */
+    public function render_global_js_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $global_js_options = isset($options['global_js_options']) ? $options['global_js_options'] : array();
+        
+        // Get JS options from the filter
+        $available_global_js = $this->get_global_js_options();
+        
+        if (empty($available_global_js)) {
+            echo '<p>' . esc_html__('No global JavaScript files available.', 'arsol-css-addons') . '</p>';
+            return;
+        }
+        
+        foreach ($available_global_js as $js_id => $js_data) {
+            // Set variables that will be available to the template
+            $enabled_options = $global_js_options;
+            $option_type = 'global_js';
+            $css_id = $js_id; // Keeping variable name for compatibility with template
+            $css_data = $js_data; // Keeping variable name for compatibility with template
+            
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+        }
+    }
+    
+    /**
+     * Render global PHP options checkboxes
+     */
+    public function render_global_php_options() {
+        $options = get_option('arsol_css_addons_options', array());
+        $global_php_options = isset($options['global_php_options']) ? $options['global_php_options'] : array();
+        
+        // Get PHP options from the filter
+        $available_global_php = $this->get_global_php_options();
+        
+        if (empty($available_global_php)) {
+            echo '<p>' . esc_html__('No global PHP files available.', 'arsol-css-addons') . '</p>';
+            return;
+        }
+        
+        foreach ($available_global_php as $php_id => $php_data) {
+            // Set variables that will be available to the template
+            $enabled_options = $global_php_options;
+            $option_type = 'global_php';
+            $css_id = $php_id; // Keeping variable name for compatibility with template
+            $css_data = $php_data; // Keeping variable name for compatibility with template
+            
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+        }
+    }
+    
+    /**
      * Render admin CSS options checkboxes
      */
     public function render_admin_css_options() {

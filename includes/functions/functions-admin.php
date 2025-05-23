@@ -216,15 +216,10 @@ function arsol_add_global_php_files($options) {
 }
 add_filter('arsol_css_addons_global_php_options', 'arsol_add_global_php_files');
 
-
-
-
-
-
-// Register test files
+// Fix the test filters to use 'name' instead of 'label'
 add_filter('arsol_css_addons_global_css_options', function($options) {
     $options['test-global-css'] = array(
-        'label' => 'Test Global CSS',
+        'name' => 'Test Global CSS',  // Changed from 'label' to 'name'
         'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/test.css',
         'description' => 'Test CSS file'
     );
@@ -233,7 +228,7 @@ add_filter('arsol_css_addons_global_css_options', function($options) {
 
 add_filter('arsol_css_addons_global_php_options', function($options) {
     $options['test-global-php'] = array(
-        'label' => 'Test Global PHP',
+        'name' => 'Test Global PHP',  // Changed from 'label' to 'name'
         'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/php/addon-php/global-helpers.php',
         'description' => 'Test PHP file'
     );

@@ -173,4 +173,26 @@ function arsol_add_frontend_tables_css($options) {
 }
 add_filter('arsol_css_addons_frontend_css_options', 'arsol_add_frontend_tables_css');
 
+/**
+ * Add global CSS files
+ * 
+ * @param array $options Existing global CSS options
+ * @return array Modified options array
+ */
+function arsol_add_global_css_files($options) {
+    // Add global CSS files
+    $options['normalize'] = array(
+        'name' => __('Normalize CSS', 'arsol-css-addons'),
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/global-normalize.css'
+    );
+    
+    $options['responsive'] = array(
+        'name' => __('Responsive Utilities', 'arsol-css-addons'),
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/global-responsive.css'
+    );
+    
+    return $options;
+}
+add_filter('arsol_css_addons_global_css_options', 'arsol_add_global_css_files');
+
 // Continue with similar individual functions for typography, layouts, tables, etc.

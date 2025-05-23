@@ -109,15 +109,6 @@ class Admin_Settings {
             $this->css_addons_slug,
             'arsol_css_addons_frontend'
         );
-        
-        // Add custom CSS field
-        add_settings_field(
-            'custom_css',
-            __('Custom CSS', 'arsol-css-addons'),
-            array($this, 'render_css_field'),
-            $this->css_addons_slug,
-            'arsol_css_addons_frontend'
-        );
     }
     
     /**
@@ -213,18 +204,6 @@ class Admin_Settings {
     }
     
     /**
-     * Render custom CSS field
-     */
-    public function render_css_field() {
-        $options = get_option('arsol_css_addons_options', array());
-        $custom_css = isset($options['custom_css']) ? $options['custom_css'] : '';
-        ?>
-        <textarea name="arsol_css_addons_options[custom_css]" rows="10" class="large-text code"><?php echo esc_textarea($custom_css); ?></textarea>
-        <p class="description"><?php esc_html_e('Add custom CSS rules to be applied to your site.', 'arsol-css-addons'); ?></p>
-        <?php
-    }
-    
-    /**
      * Sanitize settings
      *
      * @param array $input The input array.
@@ -232,31 +211,6 @@ class Admin_Settings {
      */
     public function sanitize_settings($input) {
         $sanitized_input = array();
-        
-        // Sanitize admin CSS options
-        $sanitized_input['enable_admin_css'] = isset($input['enable_admin_css']) ? 1 : 0;
-        
-        // Sanitize admin CSS file options
-        $sanitized_input['admin_css_options'] = array();
-        if (isset($input['admin_css_options']) && is_array($input['admin_css_options'])) {
-            foreach ($input['admin_css_options'] as $css_id => $value) {
-                $sanitized_input['admin_css_options'][$css_id] = 1;
-            }
-        }
-        
-        // Sanitize frontend CSS options
-        $sanitized_input['enable_frontend_css'] = isset($input['enable_frontend_css']) ? 1 : 0;
-        
-        // Sanitize frontend CSS file options
-        $sanitized_input['frontend_css_options'] = array();
-        if (isset($input['frontend_css_options']) && is_array($input['frontend_css_options'])) {
-            foreach ($input['frontend_css_options'] as $css_id => $value) {
-                $sanitized_input['frontend_css_options'][$css_id] = 1;
-            }
-        }
-        
-        // Sanitize custom CSS - allow CSS but strip dangerous tags
-        $sanitized_input['custom_css'] = isset($input['custom_css']) ? sanitize_textarea_field($input['custom_css']) : '';
         
         return $sanitized_input;
     }

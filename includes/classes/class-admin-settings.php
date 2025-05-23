@@ -79,7 +79,7 @@ class Admin_Settings {
         // Add Admin CSS Section
         add_settings_section(
             'arsol_css_addons_admin',
-            __('Admin CSS', 'arsol-css-addons'),
+            __('Admin', 'arsol-css-addons'),
             function() {
                 echo '<p>' . esc_html__('Select CSS enhancements for the WordPress admin area.', 'arsol-css-addons') . '</p>';
             },
@@ -89,7 +89,7 @@ class Admin_Settings {
         // Add admin CSS options
         add_settings_field(
             'admin_css_options',
-            __('Admin CSS Files', 'arsol-css-addons'),
+            __('Admin addon CSS files', 'arsol-css-addons'),
             array($this, 'render_admin_css_options'),
             $this->css_addons_slug,
             'arsol_css_addons_admin'
@@ -98,7 +98,7 @@ class Admin_Settings {
         // Add Frontend CSS Section
         add_settings_section(
             'arsol_css_addons_frontend',
-            __('Frontend CSS', 'arsol-css-addons'),
+            __('Frontend', 'arsol-css-addons'),
             function() {
                 echo '<p>' . esc_html__('Select CSS enhancements for your website frontend.', 'arsol-css-addons') . '</p>';
             },
@@ -108,7 +108,7 @@ class Admin_Settings {
         // Add frontend CSS options
         add_settings_field(
             'frontend_css_options',
-            __('Frontend CSS Files', 'arsol-css-addons'),
+            __('Frontend addon CSS files', 'arsol-css-addons'),
             array($this, 'render_frontend_css_options'),
             $this->css_addons_slug,
             'arsol_css_addons_frontend'

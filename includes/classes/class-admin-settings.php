@@ -150,5 +150,3 @@ class Admin_Settings {
     }
 }
 
-// Initialize the admin settings
-new Admin_Settings();

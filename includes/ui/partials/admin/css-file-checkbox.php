@@ -32,12 +32,12 @@ if ($file_exists) {
     </p>
     <?php
 } else {
-    // File doesn't exist - show error message
+    // File doesn't exist - show error message with file path
     ?>
     <p class="arsol-css-error">
         <span class="dashicons dashicons-warning" style="color: #d63638; vertical-align: middle;"></span>
         <span style="color: #d63638;">
-            <?php echo esc_html(sprintf(__('CSS file for "%s" could not be found.', 'arsol-css-addons'), $css_data['name'])); ?>
+            <?php echo esc_html(sprintf(__('CSS file for "%s" could not be found at: %s', 'arsol-css-addons'), $css_data['name'], $file_path)); ?>
         </span>
     </p>
     <?php

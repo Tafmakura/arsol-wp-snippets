@@ -71,141 +71,114 @@ class Admin_Settings {
      */
     public function register_settings() {
         register_setting(
-            'arsol_css_addons_options',  // Change this to match your template
+            'arsol-css-addons',
             'arsol_css_addons_options',
             array($this, 'sanitize_settings')
         );
 
-        // Also update all your add_settings_section calls
+        // GLOBAL SECTION
         add_settings_section(
-            'arsol_css_addons_global_section',
+            'arsol-css-addons-global',
             __('Global Options', 'arsol-css-addons'),
-            null,
-            'arsol_css_addons_options'  // Change this too
+            function() {
+                echo '<p>' . esc_html__('Files that apply both to admin and frontend.', 'arsol-css-addons') . '</p>';
+            },
+            'arsol-css-addons'
         );
 
+        // ADMIN SECTION
         add_settings_section(
-            'arsol_css_addons_admin_section',
+            'arsol-css-addons-admin',
             __('Admin Options', 'arsol-css-addons'),
-            null,
-            'arsol_css_addons_options'  // Change this too
+            function() {
+                echo '<p>' . esc_html__('Extend your website admin area with additional files.', 'arsol-css-addons') . '</p>';
+            },
+            'arsol-css-addons'
         );
 
+        // FRONTEND SECTION
         add_settings_section(
-            'arsol_css_addons_frontend_section',
+            'arsol-css-addons-frontend',
             __('Frontend Options', 'arsol-css-addons'),
-            null,
-            'arsol_css_addons_options'  // Change this too
+            function() {
+                echo '<p>' . esc_html__('Extend your website frontend with additional files.', 'arsol-css-addons') . '</p>';
+            },
+            'arsol-css-addons'
         );
 
-        // Update all your add_settings_field calls too
+        // GLOBAL SECTION FIELDS
         add_settings_field(
             'global_css_options',
             __('Global CSS Files', 'arsol-css-addons'),
             array($this, 'render_global_css_options'),
-            'arsol_css_addons_options',  // Change this
-            'arsol_css_addons_global_section'
+            'arsol-css-addons',
+            'arsol-css-addons-global'
         );
         
-        // Admin CSS
-        add_settings_field(
-            'admin_css_options',
-            __('Admin addon CSS files', 'arsol-css-addons'),
-            array($this, 'render_admin_css_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_admin'
-        );
-        
-        // Admin JavaScript
-        add_settings_field(
-            'admin_js_options',
-            __('Admin addon JS files', 'arsol-css-addons'),
-            array($this, 'render_admin_js_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_admin'
-        );
-        
-        // Admin PHP
-        add_settings_field(
-            'admin_php_options',
-            __('Admin addon PHP files', 'arsol-css-addons'),
-            array($this, 'render_admin_php_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_admin'
-        );
-        
-        // FRONTEND SECTION
-        add_settings_section(
-            'arsol_css_addons_frontend',
-            __('Frontend', 'arsol-css-addons'),
-            function() {
-                echo '<p>' . esc_html__('Extend your website frontend with additional files.', 'arsol-css-addons') . '</p>';
-            },
-            $this->css_addons_slug
-        );
-        
-        // Frontend CSS
-        add_settings_field(
-            'frontend_css_options',
-            __('Frontend addon CSS files', 'arsol-css-addons'),
-            array($this, 'render_frontend_css_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_frontend'
-        );
-        
-        // Frontend JavaScript
-        add_settings_field(
-            'frontend_js_options',
-            __('Frontend addon JS files', 'arsol-css-addons'),
-            array($this, 'render_frontend_js_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_frontend'
-        );
-        
-        // Frontend PHP
-        add_settings_field(
-            'frontend_php_options',
-            __('Frontend addon PHP files', 'arsol-css-addons'),
-            array($this, 'render_frontend_php_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_frontend'
-        );
-        
-        // GLOBAL SECTION
-        add_settings_section(
-            'arsol_css_addons_global',
-            __('Global', 'arsol-css-addons'),
-            function() {
-                echo '<p>' . esc_html__('Files that apply both to admin and frontend.', 'arsol-css-addons') . '</p>';
-            },
-            $this->css_addons_slug
-        );
-        
-        // Global CSS
-        add_settings_field(
-            'global_css_options',
-            __('Global addon CSS files', 'arsol-css-addons'),
-            array($this, 'render_global_css_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_global'
-        );
-        
-        // Global JavaScript
         add_settings_field(
             'global_js_options',
-            __('Global addon JS files', 'arsol-css-addons'),
+            __('Global JS Files', 'arsol-css-addons'),
             array($this, 'render_global_js_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_global'
+            'arsol-css-addons',
+            'arsol-css-addons-global'
         );
         
-        // Global PHP
         add_settings_field(
             'global_php_options',
-            __('Global addon PHP files', 'arsol-css-addons'),
+            __('Global PHP Files', 'arsol-css-addons'),
             array($this, 'render_global_php_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_global'
+            'arsol-css-addons',
+            'arsol-css-addons-global'
+        );
+        
+        // ADMIN SECTION FIELDS
+        add_settings_field(
+            'admin_css_options',
+            __('Admin CSS Files', 'arsol-css-addons'),
+            array($this, 'render_admin_css_options'),
+            'arsol-css-addons',
+            'arsol-css-addons-admin'
+        );
+        
+        add_settings_field(
+            'admin_js_options',
+            __('Admin JS Files', 'arsol-css-addons'),
+            array($this, 'render_admin_js_options'),
+            'arsol-css-addons',
+            'arsol-css-addons-admin'
+        );
+        
+        add_settings_field(
+            'admin_php_options',
+            __('Admin PHP Files', 'arsol-css-addons'),
+            array($this, 'render_admin_php_options'),
+            'arsol-css-addons',
+            'arsol-css-addons-admin'
+        );
+        
+        // FRONTEND SECTION FIELDS
+        add_settings_field(
+            'frontend_css_options',
+            __('Frontend CSS Files', 'arsol-css-addons'),
+            array($this, 'render_frontend_css_options'),
+            'arsol-css-addons',
+            'arsol-css-addons-frontend'
+        );
+        
+        add_settings_field(
+            'frontend_js_options',
+            __('Frontend JS Files', 'arsol-css-addons'),
+            array($this, 'render_frontend_js_options'),
+            'arsol-css-addons',
+            'arsol-css-addons-frontend'
+        );
+        
+        add_settings_field(
+            'frontend_php_options',
+            __('Frontend PHP Files', 'arsol-css-addons'),
+            array($this, 'render_frontend_php_options'),
+            'arsol-css-addons',
+            'arsol-css-addons-frontend'
         );
     }
     

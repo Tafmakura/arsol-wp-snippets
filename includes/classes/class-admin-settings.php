@@ -411,6 +411,34 @@ class Admin_Settings {
         
         return $filtered_options;
     }
+
+     /**
+     * Get available global PHP options
+     *
+     * @return array Array of global PHP options
+     */
+    public function get_global_php_options() {
+        // Default empty array
+        $global_php_options = array();
+        
+        /**
+         * Filter the global PHP options
+         * 
+         * @param array $global_php_options Array of global PHP options with file paths
+         */
+        $filtered_options = apply_filters('arsol_css_addons_global_php_options', $global_php_options);
+        
+        // Validate that all files are PHP files
+        foreach ($filtered_options as $php_id => $php_data) {
+            // Check if file path exists and ends with .php
+            if (!isset($php_data['file']) || substr($php_data['file'], -4) !== '.php') {
+                // Remove invalid entries
+                unset($filtered_options[$php_id]);
+            }
+        }
+        
+        return $filtered_options;
+    }
     
     /**
      * Render global CSS options checkboxes

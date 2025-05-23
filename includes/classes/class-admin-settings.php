@@ -148,7 +148,18 @@ class Admin_Settings {
          * 
          * @param array $global_css_options Array of global CSS options with file paths
          */
-        return apply_filters('arsol_css_addons_global_css_options', $global_css_options);
+        $filtered_options = apply_filters('arsol_css_addons_global_css_options', $global_css_options);
+        
+        // Validate that all files are CSS files
+        foreach ($filtered_options as $css_id => $css_data) {
+            // Check if file path exists and ends with .css
+            if (!isset($css_data['file']) || substr($css_data['file'], -4) !== '.css') {
+                // Remove invalid entries
+                unset($filtered_options[$css_id]);
+            }
+        }
+        
+        return $filtered_options;
     }
     
     /**
@@ -165,7 +176,18 @@ class Admin_Settings {
          * 
          * @param array $admin_css_options Array of admin CSS options with file paths
          */
-        return apply_filters('arsol_css_addons_admin_css_options', $admin_css_options);
+        $filtered_options = apply_filters('arsol_css_addons_admin_css_options', $admin_css_options);
+        
+        // Validate that all files are CSS files
+        foreach ($filtered_options as $css_id => $css_data) {
+            // Check if file path exists and ends with .css
+            if (!isset($css_data['file']) || substr($css_data['file'], -4) !== '.css') {
+                // Remove invalid entries
+                unset($filtered_options[$css_id]);
+            }
+        }
+        
+        return $filtered_options;
     }
     
     /**
@@ -182,7 +204,18 @@ class Admin_Settings {
          * 
          * @param array $frontend_css_options Array of frontend CSS options with file paths
          */
-        return apply_filters('arsol_css_addons_frontend_css_options', $frontend_css_options);
+        $filtered_options = apply_filters('arsol_css_addons_frontend_css_options', $frontend_css_options);
+        
+        // Validate that all files are CSS files
+        foreach ($filtered_options as $css_id => $css_data) {
+            // Check if file path exists and ends with .css
+            if (!isset($css_data['file']) || substr($css_data['file'], -4) !== '.css') {
+                // Remove invalid entries
+                unset($filtered_options[$css_id]);
+            }
+        }
+        
+        return $filtered_options;
     }
     
     /**

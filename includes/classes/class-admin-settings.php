@@ -37,8 +37,8 @@ class Admin_Settings {
     public function add_admin_menu() {
         // Add a single Arsol CSS Addons menu
         add_menu_page(
-            __('Arsol CSS Addons', 'arsol-css-addons'),
-            __('Arsol CSS Addons', 'arsol-css-addons'),
+            __('Arsol CSS Addons', 'arsol-css-addons'), // Page title
+            __('Arsol CSS', 'arsol-css-addons'),        // Menu title (shortened)
             'manage_options',
             $this->css_addons_slug,
             array($this, 'display_css_addons_page'),

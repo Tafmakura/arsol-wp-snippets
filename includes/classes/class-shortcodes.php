@@ -12,5 +12,5 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class Admin_Settings {
+class Shortcodes {
 }

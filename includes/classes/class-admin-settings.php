@@ -2,7 +2,7 @@
 namespace Arsol_CSS_Addons;
 
 /**
- * Admin Settings Class
+ * Admin Settings Controller Class
  *
  * @package Arsol_CSS_Addons
  */
@@ -13,185 +13,167 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin_Settings {
-
     /**
-     * Settings page slug
+     * CSS Addons page slug
      *
      * @var string
      */
-    private $page_slug = 'arsol-css-addons';
+    private $css_addons_slug = 'arsol-css-addons';
 
     /**
-     * Plugin base path
+     * Main page slug
      *
      * @var string
      */
-    private $base_path;
+    private $main_slug = 'arsol';
 
     /**
      * Constructor
      */
     public function __construct() {
-        add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
-        add_action( 'admin_init', array( $this, 'register_settings' ) );
+        // Add admin menus
+        add_action('admin_menu', array($this, 'add_admin_menus'));
         
-        // Set base path to plugin directory
-        $this->base_path = plugin_dir_path( dirname( dirname( __FILE__ ) ) );
+        // Register settings
+        add_action('admin_init', array($this, 'register_settings'));
     }
 
     /**
-     * Add admin menu
+     * Add admin menus
      */
-    public function add_admin_menu() {
-        // Add main Arsol menu if it doesn't exist
-        if ( ! menu_page_url( 'arsol', false ) ) {
-            add_menu_page(
-                __( 'Arsol', 'arsol-css-addons' ),
-                __( 'Arsol', 'arsol-css-addons' ),
-                'manage_options',
-                'arsol',
-                array( $this, 'display_settings_page' ),
-                'dashicons-admin-customizer',
-                30
-            );
-        }
-
+    public function add_admin_menus() {
+        // Add main Arsol menu with Hello World content
+        add_menu_page(
+            __('Arsol', 'arsol-css-addons'),
+            __('Arsol', 'arsol-css-addons'),
+            'manage_options',
+            $this->main_slug,
+            array($this, 'display_main_page'),
+            'dashicons-admin-customizer',
+            30
+        );
+        
         // Add CSS Addons submenu
         add_submenu_page(
-            'arsol',
-            __( 'CSS Addons', 'arsol-css-addons' ),
-            __( 'CSS Addons', 'arsol-css-addons' ),
+            $this->main_slug,
+            __('CSS Addons', 'arsol-css-addons'),
+            __('CSS Addons', 'arsol-css-addons'),
             'manage_options',
-            $this->page_slug,
-            array( $this, 'display_settings_page' )
+            $this->css_addons_slug,
+            array($this, 'display_css_addons_page')
         );
     }
-
+    
     /**
-     * Register settings
+     * Display main Hello World page
+     */
+    public function display_main_page() {
+        $args = array(
+            'page_title' => get_admin_page_title(),
+            'page_type' => 'main'
+        );
+        
+        $this->load_template('settings-page', $args);
+    }
+    
+    /**
+     * Display CSS Addons settings page
+     */
+    public function display_css_addons_page() {
+        $options = get_option('arsol_css_addons_options', array());
+        
+        $args = array(
+            'page_title' => get_admin_page_title(),
+            'page_type' => 'css-addons',
+            'page_slug' => $this->css_addons_slug,
+            'options' => $options
+        );
+        
+        $this->load_template('settings-page', $args);
+    }
+    
+    /**
+     * Load a template file
+     *
+     * @param string $template Template name
+     * @param array $args Arguments to pass to the template
+     */
+    private function load_template($template, $args = array()) {
+        $template_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'ui/templates/admin/' . $template . '.php';
+        
+        if (file_exists($template_path)) {
+            extract($args);
+            include $template_path;
+        }
+    }
+    
+    /**
+     * Register plugin settings
      */
     public function register_settings() {
         register_setting(
             'arsol_css_addons_settings',
             'arsol_css_addons_options',
-            array( $this, 'sanitize_settings' )
+            array($this, 'sanitize_settings')
         );
-
-        // General settings section
+        
+        // Add settings section
         add_settings_section(
             'arsol_css_addons_general',
-            __( 'General Settings', 'arsol-css-addons' ),
-            array( $this, 'render_general_section' ),
-            $this->page_slug
+            __('General Settings', 'arsol-css-addons'),
+            function() {
+                echo '<p>' . esc_html__('Configure the CSS Addons settings below.', 'arsol-css-addons') . '</p>';
+            },
+            $this->css_addons_slug
         );
-
-        // Enable CSS Addons field
+        
+        // Add enable CSS Addons field
         add_settings_field(
             'enable_css_addons',
-            __( 'Enable CSS Addons', 'arsol-css-addons' ),
-            array( $this, 'render_enable_field' ),
-            $this->page_slug,
+            __('Enable CSS Addons', 'arsol-css-addons'),
+            function() {
+                $options = get_option('arsol_css_addons_options', array());
+                $enabled = isset($options['enable_css_addons']) ? $options['enable_css_addons'] : 1;
+                echo '<input type="checkbox" name="arsol_css_addons_options[enable_css_addons]" value="1" ' . checked(1, $enabled, false) . '/>';
+                echo '<span class="description">' . esc_html__('Enable CSS Addons functionality', 'arsol-css-addons') . '</span>';
+            },
+            $this->css_addons_slug,
             'arsol_css_addons_general'
         );
-
-        // Custom CSS field
+        
+        // Add custom CSS field
         add_settings_field(
             'custom_css',
-            __( 'Custom CSS', 'arsol-css-addons' ),
-            array( $this, 'render_custom_css_field' ),
-            $this->page_slug,
+            __('Custom CSS', 'arsol-css-addons'),
+            function() {
+                $options = get_option('arsol_css_addons_options', array());
+                $custom_css = isset($options['custom_css']) ? $options['custom_css'] : '';
+                echo '<textarea name="arsol_css_addons_options[custom_css]" rows="10" class="large-text code">' . esc_textarea($custom_css) . '</textarea>';
+                echo '<p class="description">' . esc_html__('Add custom CSS rules to be applied to your site.', 'arsol-css-addons') . '</p>';
+            },
+            $this->css_addons_slug,
             'arsol_css_addons_general'
         );
     }
-
-    /**
-     * Load a template file
-     *
-     * @param string $template_name Template name without extension.
-     * @param string $type Either 'template' for full templates or 'partial' for partial templates.
-     * @param array  $args Arguments to pass to the template.
-     */
-    private function load_template( $template_name, $type = 'template', $args = array() ) {
-        $dir = ($type === 'template') ? 'ui/templates/admin' : 'ui/partials/admin';
-        $template_path = $this->base_path . $dir . '/' . $template_name . '.php';
-        
-        if ( file_exists( $template_path ) ) {
-            extract( $args );
-            include $template_path;
-        } else {
-            // Fallback message for development
-            echo '<!-- Template not found: ' . esc_html( $template_path ) . ' -->';
-        }
-    }
-
-    /**
-     * Display settings page
-     */
-    public function display_settings_page() {
-        $args = array(
-            'page_title' => get_admin_page_title(),
-            'page_slug' => $this->page_slug,
-        );
-        
-        $this->load_template( 'settings-page', 'template', $args );
-    }
-
-    /**
-     * Render general section
-     */
-    public function render_general_section() {
-        $args = array();
-        $this->load_template( 'general-settings', 'partial', $args );
-    }
-
-    /**
-     * Render enable field
-     */
-    public function render_enable_field() {
-        $options = get_option( 'arsol_css_addons_options', array() );
-        $enabled = isset( $options['enable_css_addons'] ) ? $options['enable_css_addons'] : 1;
-        
-        $args = array(
-            'field_type' => 'enable',
-            'enabled' => $enabled,
-        );
-        
-        $this->load_template( 'general-settings', 'partial', $args );
-    }
-
-    /**
-     * Render custom CSS field
-     */
-    public function render_custom_css_field() {
-        $options = get_option( 'arsol_css_addons_options', array() );
-        $custom_css = isset( $options['custom_css'] ) ? $options['custom_css'] : '';
-        
-        $args = array(
-            'field_type' => 'custom_css',
-            'custom_css' => $custom_css,
-        );
-        
-        $this->load_template( 'general-settings', 'partial', $args );
-    }
-
+    
     /**
      * Sanitize settings
      *
      * @param array $input The input array.
      * @return array
      */
-    public function sanitize_settings( $input ) {
+    public function sanitize_settings($input) {
         $sanitized_input = array();
-
+        
         // Sanitize enable option
-        $sanitized_input['enable_css_addons'] = isset( $input['enable_css_addons'] ) ? 1 : 0;
-
+        $sanitized_input['enable_css_addons'] = isset($input['enable_css_addons']) ? 1 : 0;
+        
         // Sanitize custom CSS
-        $sanitized_input['custom_css'] = isset( $input['custom_css'] ) ? wp_strip_all_tags( $input['custom_css'] ) : '';
-
+        $sanitized_input['custom_css'] = isset($input['custom_css']) ? wp_strip_all_tags($input['custom_css']) : '';
+        
         return $sanitized_input;
     }
 }
 
 // Initialize the admin settings
-new \Arsol_CSS_Addons\Admin_Settings();
+new Admin_Settings();

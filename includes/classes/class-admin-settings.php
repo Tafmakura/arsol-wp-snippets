@@ -1,4 +1,6 @@
 <?php
+namespace Arsol_CSS_Addons;
+
 /**
  * Admin Settings Class
  *
@@ -10,10 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-/**
- * Admin Settings Class
- */
-class Arsol_CSS_Addons_Admin_Settings {
+class Admin_Settings {
 
     /**
      * Settings page slug
@@ -195,4 +194,4 @@ class Arsol_CSS_Addons_Admin_Settings {
 }
 
 // Initialize the admin settings
-new Arsol_CSS_Addons_Admin_Settings();
+new \Arsol_CSS_Addons\Admin_Settings();

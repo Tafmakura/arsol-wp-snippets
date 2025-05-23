@@ -77,23 +77,15 @@ class Admin_Settings {
             'arsol_css_addons_admin',
             __('Admin CSS', 'arsol-css-addons'),
             function() {
-                echo '<p>' . esc_html__('Enable CSS enhancements for the WordPress admin area.', 'arsol-css-addons') . '</p>';
+                echo '<p>' . esc_html__('Select CSS enhancements for the WordPress admin area.', 'arsol-css-addons') . '</p>';
             },
             $this->css_addons_slug
         );
         
-        // Add admin CSS options
-        add_settings_field(
-            'enable_admin_css',
-            __('Enable Admin CSS', 'arsol-css-addons'),
-            array($this, 'render_enable_admin_field'),
-            $this->css_addons_slug,
-            'arsol_css_addons_admin'
-        );
-        
+        // Add admin CSS options (removed the enable toggle)
         add_settings_field(
             'admin_css_options',
-            __('Select Admin CSS Files', 'arsol-css-addons'),
+            __('Admin CSS Files', 'arsol-css-addons'),
             array($this, 'render_admin_css_options'),
             $this->css_addons_slug,
             'arsol_css_addons_admin'
@@ -104,23 +96,15 @@ class Admin_Settings {
             'arsol_css_addons_frontend',
             __('Frontend CSS', 'arsol-css-addons'),
             function() {
-                echo '<p>' . esc_html__('Enable CSS enhancements for your website frontend.', 'arsol-css-addons') . '</p>';
+                echo '<p>' . esc_html__('Select CSS enhancements for your website frontend.', 'arsol-css-addons') . '</p>';
             },
             $this->css_addons_slug
         );
         
-        // Add frontend CSS options
-        add_settings_field(
-            'enable_frontend_css',
-            __('Enable Frontend CSS', 'arsol-css-addons'),
-            array($this, 'render_enable_frontend_field'),
-            $this->css_addons_slug,
-            'arsol_css_addons_frontend'
-        );
-        
+        // Add frontend CSS options (removed the enable toggle)
         add_settings_field(
             'frontend_css_options',
-            __('Select Frontend CSS Files', 'arsol-css-addons'),
+            __('Frontend CSS Files', 'arsol-css-addons'),
             array($this, 'render_frontend_css_options'),
             $this->css_addons_slug,
             'arsol_css_addons_frontend'

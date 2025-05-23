@@ -21,10 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function arsol_add_admin_css_options($options) {
     $admin_css_files = array(
-        'admin-menu' => array(
-            'name' => __('Enhanced Admin Menu', 'arsol-css-addons'),
-            'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/admin-menu.css'
-        ),
+      
         'admin-buttons' => array(
             'name' => __('Enhanced Admin Buttons', 'arsol-css-addons'),
             'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/admin-buttons.css'

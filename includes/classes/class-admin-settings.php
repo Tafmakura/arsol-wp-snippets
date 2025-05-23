@@ -165,33 +165,12 @@ class Admin_Settings {
         }
         
         foreach ($available_admin_css as $css_id => $css_data) {
-            // Check if file exists by converting URL to file path
-            $file_url = $css_data['file'];
-            $file_path = str_replace(ARSOL_CSS_ADDONS_PLUGIN_URL, ARSOL_CSS_ADDONS_PLUGIN_DIR, $file_url);
-            $file_exists = file_exists($file_path);
+            // Set variables that will be available to the template
+            $enabled_options = $admin_css_options;
+            $option_type = 'admin';
             
-            if ($file_exists) {
-                // File exists - show checkbox
-                $checked = isset($admin_css_options[$css_id]) ? $admin_css_options[$css_id] : 0;
-                ?>
-                <p>
-                    <input type="checkbox" id="arsol-admin-css-<?php echo esc_attr($css_id); ?>" 
-                           name="arsol_css_addons_options[admin_css_options][<?php echo esc_attr($css_id); ?>]" 
-                           value="1" <?php checked(1, $checked); ?>/>
-                    <label for="arsol-admin-css-<?php echo esc_attr($css_id); ?>"><?php echo esc_html($css_data['name']); ?></label>
-                </p>
-                <?php
-            } else {
-                // File doesn't exist - show error message
-                ?>
-                <p class="arsol-css-error">
-                    <span class="dashicons dashicons-warning" style="color: #d63638; vertical-align: middle;"></span>
-                    <span style="color: #d63638;">
-                        <?php echo esc_html(sprintf(__('CSS file "%s" could not be found.', 'arsol-css-addons'), $css_data['name'])); ?>
-                    </span>
-                </p>
-                <?php
-            }
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
         }
     }
     
@@ -211,33 +190,12 @@ class Admin_Settings {
         }
         
         foreach ($available_frontend_css as $css_id => $css_data) {
-            // Check if file exists by converting URL to file path
-            $file_url = $css_data['file'];
-            $file_path = str_replace(ARSOL_CSS_ADDONS_PLUGIN_URL, ARSOL_CSS_ADDONS_PLUGIN_DIR, $file_url);
-            $file_exists = file_exists($file_path);
+            // Set variables that will be available to the template
+            $enabled_options = $frontend_css_options;
+            $option_type = 'frontend';
             
-            if ($file_exists) {
-                // File exists - show checkbox
-                $checked = isset($frontend_css_options[$css_id]) ? $frontend_css_options[$css_id] : 0;
-                ?>
-                <p>
-                    <input type="checkbox" id="arsol-frontend-css-<?php echo esc_attr($css_id); ?>" 
-                           name="arsol_css_addons_options[frontend_css_options][<?php echo esc_attr($css_id); ?>]" 
-                           value="1" <?php checked(1, $checked); ?>/>
-                    <label for="arsol-frontend-css-<?php echo esc_attr($css_id); ?>"><?php echo esc_html($css_data['name']); ?></label>
-                </p>
-                <?php
-            } else {
-                // File doesn't exist - show error message
-                ?>
-                <p class="arsol-css-error">
-                    <span class="dashicons dashicons-warning" style="color: #d63638; vertical-align: middle;"></span>
-                    <span style="color: #d63638;">
-                        <?php echo esc_html(sprintf(__('CSS file "%s" could not be found.', 'arsol-css-addons'), $css_data['name'])); ?>
-                    </span>
-                </p>
-                <?php
-            }
+            // Include the template file with the correct path
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
         }
     }
     

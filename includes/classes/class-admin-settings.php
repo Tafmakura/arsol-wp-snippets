@@ -71,7 +71,7 @@ class Admin_Settings {
      */
     public function register_settings() {
         register_setting(
-            'arsol_css_addons_settings',
+            'arsol_css_addons_settings',  // This should match settings_fields() in your form
             'arsol_css_addons_options',
             array($this, 'sanitize_settings')
         );

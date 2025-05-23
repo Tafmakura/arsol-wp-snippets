@@ -76,25 +76,6 @@ class Admin_Settings {
             array($this, 'sanitize_settings')
         );
         
-        // Add Global CSS Section
-        add_settings_section(
-            'arsol_css_addons_global',
-            __('Global', 'arsol-css-addons'),
-            function() {
-                echo '<p>' . esc_html__('Select CSS enhancements that apply globally.', 'arsol-css-addons') . '</p>';
-            },
-            $this->css_addons_slug
-        );
-        
-        // Add global CSS options
-        add_settings_field(
-            'global_css_options',
-            __('Global addon CSS files', 'arsol-css-addons'),
-            array($this, 'render_global_css_options'),
-            $this->css_addons_slug,
-            'arsol_css_addons_global'
-        );
-        
         // Add Admin CSS Section
         add_settings_section(
             'arsol_css_addons_admin',
@@ -131,6 +112,25 @@ class Admin_Settings {
             array($this, 'render_frontend_css_options'),
             $this->css_addons_slug,
             'arsol_css_addons_frontend'
+        );
+        
+        // Add Global CSS Section - MOVED TO BOTTOM
+        add_settings_section(
+            'arsol_css_addons_global',
+            __('Global', 'arsol-css-addons'),
+            function() {
+                echo '<p>' . esc_html__('Select CSS enhancements that apply globally.', 'arsol-css-addons') . '</p>';
+            },
+            $this->css_addons_slug
+        );
+        
+        // Add global CSS options
+        add_settings_field(
+            'global_css_options',
+            __('Global addon CSS files', 'arsol-css-addons'),
+            array($this, 'render_global_css_options'),
+            $this->css_addons_slug,
+            'arsol_css_addons_global'
         );
     }
     

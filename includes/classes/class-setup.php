@@ -20,8 +20,8 @@ class Setup {
 
     /**
      * Include necessary files.
-     */
-    private function require_files() {
+     *//*
+    private function require_files() 
         // Core Classes
         require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-admin-settings.php';
@@ -30,14 +30,13 @@ class Setup {
 
     /**
      * Instantiate plugin classes.
-     */
+     *//*
     private function instantiate_classes() {
         new \Arsol_CSS_Addons\Assets();
         new \Arsol_CSS_Addons\Admin_Settings();
-        new \Arsol_CSS_Addons\Frontend();
-        new \Arsol_CSS_Addons\Customizer();
         new \Arsol_CSS_Addons\Shortcodes();
     }
+        */
 }
 
 // Initialize the setup class

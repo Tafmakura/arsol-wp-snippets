@@ -220,7 +220,7 @@ add_filter('arsol_css_addons_global_php_options', 'arsol_add_global_php_files');
 add_filter('arsol_css_addons_global_css_options', function($options) {
     $options['test-global-css'] = array(
         'name' => 'Test Global CSS',  // Changed from 'label' to 'name'
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/test.css',
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/test.css',
         'description' => 'Test CSS file'
     );
     return $options;

@@ -301,6 +301,34 @@ class Admin_Settings {
     }
     
     /**
+     * Get available global JS options
+     *
+     * @return array Array of global JS options
+     */
+    public function get_global_js_options() {
+        // Default empty array
+        $global_js_options = array();
+        
+        /**
+         * Filter the global JS options
+         * 
+         * @param array $global_js_options Array of global JS options with file paths
+         */
+        $filtered_options = apply_filters('arsol_css_addons_global_js_options', $global_js_options);
+        
+        // Validate that all files are JS files
+        foreach ($filtered_options as $js_id => $js_data) {
+            // Check if file path exists and ends with .js
+            if (!isset($js_data['file']) || substr($js_data['file'], -3) !== '.js') {
+                // Remove invalid entries
+                unset($filtered_options[$js_id]);
+            }
+        }
+        
+        return $filtered_options;
+    }
+    
+    /**
      * Get available admin PHP options
      *
      * @return array Array of admin PHP options

@@ -32,7 +32,7 @@ class Setup {
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
-     //   new \Arsol_CSS_Addons\Assets();
+      new \Arsol_CSS_Addons\Assets();
      //   new \Arsol_CSS_Addons\Admin_Settings();
      //   new \Arsol_CSS_Addons\Shortcodes();
     }

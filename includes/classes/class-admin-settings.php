@@ -21,59 +21,30 @@ class Admin_Settings {
     private $css_addons_slug = 'arsol-css-addons';
 
     /**
-     * Main page slug
-     *
-     * @var string
-     */
-    private $main_slug = 'arsol';
-
-    /**
      * Constructor
      */
     public function __construct() {
-        // Add admin menus
-        add_action('admin_menu', array($this, 'add_admin_menus'));
+        // Add admin menu
+        add_action('admin_menu', array($this, 'add_admin_menu'));
         
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
     }
 
     /**
-     * Add admin menus
+     * Add admin menu
      */
-    public function add_admin_menus() {
-        // Add main Arsol menu with Hello World content
+    public function add_admin_menu() {
+        // Add a single Arsol CSS Addons menu
         add_menu_page(
-            __('Arsol', 'arsol-css-addons'),
-            __('Arsol', 'arsol-css-addons'),
+            __('Arsol CSS Addons', 'arsol-css-addons'),
+            __('Arsol CSS Addons', 'arsol-css-addons'),
             'manage_options',
-            $this->main_slug,
-            array($this, 'display_main_page'),
+            $this->css_addons_slug,
+            array($this, 'display_css_addons_page'),
             'dashicons-admin-customizer',
             30
         );
-        
-        // Add CSS Addons submenu
-        add_submenu_page(
-            $this->main_slug,
-            __('CSS Addons', 'arsol-css-addons'),
-            __('CSS Addons', 'arsol-css-addons'),
-            'manage_options',
-            $this->css_addons_slug,
-            array($this, 'display_css_addons_page')
-        );
-    }
-    
-    /**
-     * Display main Hello World page
-     */
-    public function display_main_page() {
-        $args = array(
-            'page_title' => get_admin_page_title(),
-            'page_type' => 'main'
-        );
-        
-        $this->load_template('settings-page', $args);
     }
     
     /**

@@ -71,19 +71,40 @@ class Admin_Settings {
      */
     public function register_settings() {
         register_setting(
-            'arsol_css_addons_settings',  // This should match settings_fields() in your form
+            'arsol_css_addons_options',  // Change this to match your template
             'arsol_css_addons_options',
             array($this, 'sanitize_settings')
         );
-        
-        // ADMIN SECTION
+
+        // Also update all your add_settings_section calls
         add_settings_section(
-            'arsol_css_addons_admin',
-            __('Admin', 'arsol-css-addons'),
-            function() {
-                echo '<p>' . esc_html__('Extend the WordPress admin area with additional files.', 'arsol-css-addons') . '</p>';
-            },
-            $this->css_addons_slug
+            'arsol_css_addons_global_section',
+            __('Global Options', 'arsol-css-addons'),
+            null,
+            'arsol_css_addons_options'  // Change this too
+        );
+
+        add_settings_section(
+            'arsol_css_addons_admin_section',
+            __('Admin Options', 'arsol-css-addons'),
+            null,
+            'arsol_css_addons_options'  // Change this too
+        );
+
+        add_settings_section(
+            'arsol_css_addons_frontend_section',
+            __('Frontend Options', 'arsol-css-addons'),
+            null,
+            'arsol_css_addons_options'  // Change this too
+        );
+
+        // Update all your add_settings_field calls too
+        add_settings_field(
+            'global_css_options',
+            __('Global CSS Files', 'arsol-css-addons'),
+            array($this, 'render_global_css_options'),
+            'arsol_css_addons_options',  // Change this
+            'arsol_css_addons_global_section'
         );
         
         // Admin CSS

@@ -215,3 +215,27 @@ function arsol_add_global_php_files($options) {
     return $options;
 }
 add_filter('arsol_css_addons_global_php_options', 'arsol_add_global_php_files');
+
+
+
+
+
+
+// Register test files
+add_filter('arsol_css_addons_global_css_options', function($options) {
+    $options['test-global-css'] = array(
+        'label' => 'Test Global CSS',
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/test.css',
+        'description' => 'Test CSS file'
+    );
+    return $options;
+});
+
+add_filter('arsol_css_addons_global_php_options', function($options) {
+    $options['test-global-php'] = array(
+        'label' => 'Test Global PHP',
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/php/addon-php/global-helpers.php',
+        'description' => 'Test PHP file'
+    );
+    return $options;
+});

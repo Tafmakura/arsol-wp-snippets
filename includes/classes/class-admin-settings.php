@@ -54,18 +54,12 @@ class Admin_Settings {
      * Display CSS Addons settings page
      */
     public function display_css_addons_page() {
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('arsol_css_addons_settings');
-                do_settings_sections($this->css_addons_slug);
-                submit_button();
-                ?>
-            </form>
-        </div>
-        <?php
+        // Set variables that will be available to the template
+        $page_title = get_admin_page_title();
+        $settings_slug = $this->css_addons_slug;
+        
+        // Include the template file
+        include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/templates/admin/settings-page.php';
     }
     
     /**

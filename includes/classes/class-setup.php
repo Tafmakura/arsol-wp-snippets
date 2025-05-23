@@ -28,7 +28,7 @@ class Setup {
         require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
 
         // Core Functions 
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions.php';
+        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions-admin.php';
     }
 
     /**

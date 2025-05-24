@@ -113,9 +113,13 @@ class Theme_Support {
                 $filename = basename($file_path, '.' . $type);
                 $file_key = $theme_type . '-theme-' . sanitize_key($filename);
                 
+                // Convert filename to sentence case (first letter capitalized, rest lowercase)
+                $display_name = str_replace(array('-', '_'), ' ', $filename);
+                $display_name = ucfirst(strtolower($display_name)); // Sentence case
+                
                 // Build addon data
                 $addon_data = array(
-                    'name' => ucwords(str_replace(array('-', '_'), ' ', $filename)) . " ({$theme_label})",
+                    'name' => $display_name . " ({$theme_label})",
                 );
                 
                 if ($type === 'php') {
@@ -123,8 +127,8 @@ class Theme_Support {
                     $addon_data['context'] = 'global';
                 } else {
                     $addon_data['file'] = $config['uri'] . basename($file_path);
-                    $addon_data['context'] = 'frontend'; // Explicitly set to frontend only
-                    $addon_data['position'] = $config['position']; // header for CSS, footer for JS
+                    $addon_data['context'] = 'frontend';
+                    $addon_data['position'] = $config['position'];
                 }
                 
                 $options[$file_key] = $addon_data;

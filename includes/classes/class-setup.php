@@ -43,6 +43,3 @@ class Setup {
         new \Arsol_WP_Snippets\Shortcodes();
     }
 }
-
-// Initialize the setup class
-new Setup();

@@ -216,6 +216,12 @@ function arsol_add_global_php_files($options) {
 }
 add_filter('arsol_css_addons_global_php_options', 'arsol_add_global_php_files');
 
+
+
+
+
+
+
 // Fix the test filters to use 'name' instead of 'label'
 add_filter('arsol_css_addons_global_css_options', function($options) {
     $options['test-global-css'] = array(

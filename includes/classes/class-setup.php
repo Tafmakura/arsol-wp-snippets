@@ -26,6 +26,7 @@ class Setup {
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-admin-settings.php';
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-theme-support.php';
 
         // Core Functions 
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-admin.php';
@@ -41,5 +42,6 @@ class Setup {
         new \Arsol_WP_Snippets\Assets();
         new \Arsol_WP_Snippets\Admin_Settings();
         new \Arsol_WP_Snippets\Shortcodes();
+        new \Arsol_WP_Snippets\Theme_Support();
     }
 }

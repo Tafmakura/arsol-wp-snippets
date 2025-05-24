@@ -83,17 +83,10 @@ class Admin_Settings {
             __('PHP Addons', 'arsol-wp-snippets'),
             function() {
                 echo '<p>' . esc_html__('Select PHP snippets to include.', 'arsol-wp-snippets') . '</p>';
+                // Render PHP addons directly here instead of using add_settings_field
+                $this->render_php_addon_options();
             },
             $this->css_addons_slug
-        );
-        
-        // Add PHP addon options
-        add_settings_field(
-            'php_addon_options',
-            __('PHP snippets', 'arsol-wp-snippets'),
-            array($this, 'render_php_addon_options'),
-            $this->css_addons_slug,
-            'arsol_wp_snippets_php'
         );
         
         // Add CSS Addon Section
@@ -102,17 +95,10 @@ class Admin_Settings {
             __('CSS Addons', 'arsol-wp-snippets'),
             function() {
                 echo '<p>' . esc_html__('Select CSS snippets to include.', 'arsol-wp-snippets') . '</p>';
+                // Render CSS addons directly here instead of using add_settings_field
+                $this->render_css_addon_options();
             },
             $this->css_addons_slug
-        );
-        
-        // Add CSS addon options
-        add_settings_field(
-            'css_addon_options',
-            __('CSS snippets', 'arsol-wp-snippets'),
-            array($this, 'render_css_addon_options'),
-            $this->css_addons_slug,
-            'arsol_wp_snippets_css'
         );
         
         // Add JS Addon Section
@@ -121,18 +107,13 @@ class Admin_Settings {
             __('JS Addons', 'arsol-wp-snippets'),
             function() {
                 echo '<p>' . esc_html__('Select JavaScript snippets to include.', 'arsol-wp-snippets') . '</p>';
+                // Render JS addons directly here instead of using add_settings_field
+                $this->render_js_addon_options();
             },
             $this->css_addons_slug
         );
         
-        // Add JS addon options
-        add_settings_field(
-            'js_addon_options',
-            __('JS snippets', 'arsol-wp-snippets'),
-            array($this, 'render_js_addon_options'),
-            $this->css_addons_slug,
-            'arsol_wp_snippets_js'
-        );
+        // Don't add any add_settings_field() calls - that's what creates the table structure
     }
     
     /**

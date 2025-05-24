@@ -62,7 +62,6 @@ class Admin_Settings {
         // Set variables that will be available to the template
         $page_title = get_admin_page_title();
         $settings_slug = $this->css_addons_slug;
-        $admin_settings = $this; // Pass the whole object to access methods
         
         // Include the template file
         include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/templates/admin/settings-page.php';
@@ -76,6 +75,63 @@ class Admin_Settings {
             'arsol_wp_snippets_settings',
             'arsol_wp_snippets_options',
             array($this, 'sanitize_settings')
+        );
+        
+        // Add PHP Addon Section
+        add_settings_section(
+            'arsol_wp_snippets_php',
+            __('PHP Addons', 'arsol-wp-snippets'),
+            function() {
+                echo '<p>' . esc_html__('Select PHP addon files to include.', 'arsol-wp-snippets') . '</p>';
+            },
+            $this->css_addons_slug
+        );
+        
+        // Add PHP addon options
+        add_settings_field(
+            'php_addon_options',
+            __('PHP addon files', 'arsol-wp-snippets'),
+            array($this, 'render_php_addon_options'),
+            $this->css_addons_slug,
+            'arsol_wp_snippets_php'
+        );
+        
+        // Add CSS Addon Section
+        add_settings_section(
+            'arsol_wp_snippets_css',
+            __('CSS Addons', 'arsol-wp-snippets'),
+            function() {
+                echo '<p>' . esc_html__('Select CSS addon files to include.', 'arsol-wp-snippets') . '</p>';
+            },
+            $this->css_addons_slug
+        );
+        
+        // Add CSS addon options
+        add_settings_field(
+            'css_addon_options',
+            __('CSS addon files', 'arsol-wp-snippets'),
+            array($this, 'render_css_addon_options'),
+            $this->css_addons_slug,
+            'arsol_wp_snippets_css'
+        );
+        
+        // Add JS Addon Section
+        add_settings_section(
+            'arsol_wp_snippets_js',
+            __('JS Addons', 'arsol-wp-snippets'),
+            function() {
+                echo '<p>' . esc_html__('Select JavaScript addon files to include.', 'arsol-wp-snippets') . '</p>';
+            },
+            $this->css_addons_slug
+        );
+        
+        // Add JS addon options
+        add_settings_field(
+            'js_addon_options',
+            __('JS addon files', 'arsol-wp-snippets'),
+            array($this, 'render_js_addon_options'),
+            $this->css_addons_slug,
+            'arsol_wp_snippets_js'
         );
     }
     

@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP addon functions for Arsol CSS Addons
+ * PHP addon functions for Arsol WP Snippets
  * 
  * Hooks into filters to add PHP addon files to the plugin.
  * Each addon is registered independently.

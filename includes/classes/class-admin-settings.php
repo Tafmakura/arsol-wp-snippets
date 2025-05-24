@@ -42,8 +42,8 @@ class Admin_Settings {
     public function add_admin_menu() {
         // Add main menu page
         add_menu_page(
-            __('Arsol CSS Addons', 'arsol-wp-snippets'), // Page title
-            __('Arsol CSS Addons', 'arsol-wp-snippets'), // Menu title
+            __('Arsol WP Snippets', 'arsol-wp-snippets'), // Page title
+            __('Arsol WP Snippets', 'arsol-wp-snippets'), // Menu title
             'manage_options',
             $this->css_addons_slug,
             array($this, 'display_css_addons_page'),

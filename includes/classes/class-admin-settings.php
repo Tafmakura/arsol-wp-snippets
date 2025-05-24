@@ -238,11 +238,11 @@ class Admin_Settings {
             // Set variables that will be available to the template
             $enabled_options = $php_addon_options;
             $option_type = 'php';
-            $css_id = $addon_id;
-            $css_data = $addon_data;
+            $addon_id = $addon_id;
+            $addon_data = $addon_data;
             
             // Include the template file with the correct path
-            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
     }
     
@@ -265,11 +265,11 @@ class Admin_Settings {
             // Set variables that will be available to the template
             $enabled_options = $css_addon_options;
             $option_type = 'css';
-            $css_id = $addon_id;
-            $css_data = $addon_data;
+            $addon_id = $addon_id;
+            $addon_data = $addon_data;
             
             // Include the template file with the correct path
-            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
     }
     
@@ -292,11 +292,11 @@ class Admin_Settings {
             // Set variables that will be available to the template
             $enabled_options = $js_addon_options;
             $option_type = 'js';
-            $css_id = $addon_id;
-            $css_data = $addon_data;
+            $addon_id = $addon_id;
+            $addon_data = $addon_data;
             
             // Include the template file with the correct path
-            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/css-file-checkbox.php';
+            include ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
     }
     

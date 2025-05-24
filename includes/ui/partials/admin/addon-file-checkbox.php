@@ -2,7 +2,7 @@
 /**
  * Template for rendering addon file option
  *
- * @package Arsol_CSS_Addons
+ * @package Arsol_WP_Snippets
  * 
  * @var string $addon_id       The addon file ID
  * @var array  $addon_data     The addon file data
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 
 // Check if file exists by converting URL to file path
 $file_url = $addon_data['file'];
-$file_path = str_replace(ARSOL_CSS_ADDONS_PLUGIN_URL, ARSOL_CSS_ADDONS_PLUGIN_DIR, $file_url);
+$file_path = str_replace(ARSOL_WP_SNIPPETS_PLUGIN_URL, ARSOL_WP_SNIPPETS_PLUGIN_DIR, $file_url);
 $file_exists = file_exists($file_path);
 
 if ($file_exists) {
@@ -26,7 +26,7 @@ if ($file_exists) {
     ?>
     <p>
         <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
-               name="arsol_css_addons_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
+               name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
                value="1" <?php checked(1, $checked); ?>/>
         <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
     </p>
@@ -37,7 +37,7 @@ if ($file_exists) {
     <p class="arsol-addon-error">
         <span class="dashicons dashicons-warning" style="color: #d63638; vertical-align: middle;"></span>
         <span style="color: #d63638;">
-            <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-css-addons'), $addon_data['name'], $file_path)); ?>
+            <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], $file_path)); ?>
         </span>
     </p>
     <?php

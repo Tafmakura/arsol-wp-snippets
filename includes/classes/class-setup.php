@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_CSS_Addons;
+namespace Arsol_WP_Snippets;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -15,7 +15,7 @@ class Setup {
 
     public function init() {
         // Load plugin text domain
-        // load_plugin_textdomain('arsol-css-addons', false, dirname(ARSOL_CSS_ADDONS_PLUGIN_BASENAME) . '/languages');
+        // load_plugin_textdomain('arsol-wp-snippets', false, dirname(ARSOL_WP_SNIPPETS_PLUGIN_BASENAME) . '/languages');
     }
 
     /**
@@ -23,24 +23,24 @@ class Setup {
      */
     private function require_files() {
         // Core Classes
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-assets.php';
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-admin-settings.php';
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-assets.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-admin-settings.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
 
         // Core Functions 
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-admin.php';
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-css.php';
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-js.php';
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-php.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-admin.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-css.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-js.php';
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-php.php';
     }
 
     /**
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
-        new \Arsol_CSS_Addons\Assets();
-        new \Arsol_CSS_Addons\Admin_Settings();
-        new \Arsol_CSS_Addons\Shortcodes();
+        new \Arsol_WP_Snippets\Assets();
+        new \Arsol_WP_Snippets\Admin_Settings();
+        new \Arsol_WP_Snippets\Shortcodes();
     }
 }
 

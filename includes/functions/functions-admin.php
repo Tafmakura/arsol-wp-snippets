@@ -4,7 +4,7 @@
  * 
  * Includes all addon function files.
  *
- * @package Arsol_CSS_Addons
+ * @package Arsol_WP_Snippets
  */
 
 // Exit if accessed directly
@@ -13,10 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Include PHP addon functions
-// ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-php.php';
+// ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-php.php';
 
 // Include CSS addon functions
-//require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-css.php';
+//require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-css.php';
 
 // Include JS addon functions
-//require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-js.php';
+//require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-js.php';

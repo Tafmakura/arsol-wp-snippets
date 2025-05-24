@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Snippet Loader class to handle loading and executing snippets
+ * Snippet Loader class to handle loading and executing snippets yay
  */
 class Snippet_Loader {
     

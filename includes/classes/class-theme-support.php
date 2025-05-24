@@ -72,17 +72,20 @@ class Theme_Support {
             'css' => array(
                 'dir' => $snippets_dir . 'css/',
                 'uri' => $theme_uri . '/arsol-wp-snippets/css/',
-                'context' => 'frontend'
+                'context' => 'frontend',
+                'position' => 'header'
             ),
             'js' => array(
                 'dir' => $snippets_dir . 'js/',
                 'uri' => $theme_uri . '/arsol-wp-snippets/js/',
-                'context' => 'frontend'
+                'context' => 'frontend',
+                'position' => 'footer'
             ),
             'php' => array(
                 'dir' => $snippets_dir . 'php/',
                 'uri' => null, // PHP files don't need URIs
-                'context' => null
+                'context' => 'global',
+                'position' => null
             )
         );
         
@@ -117,10 +120,11 @@ class Theme_Support {
                 
                 if ($type === 'php') {
                     $addon_data['file'] = $file_path;
+                    $addon_data['context'] = 'global';
                 } else {
                     $addon_data['file'] = $config['uri'] . basename($file_path);
-                    $addon_data['context'] = $config['context'];
-                    $addon_data['position'] = ($type === 'js') ? 'footer' : 'header';
+                    $addon_data['context'] = 'frontend'; // Explicitly set to frontend only
+                    $addon_data['position'] = $config['position']; // header for CSS, footer for JS
                 }
                 
                 $options[$file_key] = $addon_data;

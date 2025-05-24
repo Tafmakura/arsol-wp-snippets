@@ -30,7 +30,7 @@ class Admin_Settings {
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
         
-        // Enqueue addon files based on settings
+        // Enqueue snippets based on settings
         add_action('admin_enqueue_scripts', array($this, 'load_admin_addon_files'));
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_addon_files'));
         add_action('init', array($this, 'load_php_addon_files'));
@@ -82,7 +82,7 @@ class Admin_Settings {
             'arsol_wp_snippets_php',
             __('PHP Addons', 'arsol-wp-snippets'),
             function() {
-                echo '<p>' . esc_html__('Select PHP addon files to include.', 'arsol-wp-snippets') . '</p>';
+                echo '<p>' . esc_html__('Select PHP snippets to include.', 'arsol-wp-snippets') . '</p>';
             },
             $this->css_addons_slug
         );
@@ -90,7 +90,7 @@ class Admin_Settings {
         // Add PHP addon options
         add_settings_field(
             'php_addon_options',
-            __('PHP addon files', 'arsol-wp-snippets'),
+            __('PHP snippets', 'arsol-wp-snippets'),
             array($this, 'render_php_addon_options'),
             $this->css_addons_slug,
             'arsol_wp_snippets_php'
@@ -101,7 +101,7 @@ class Admin_Settings {
             'arsol_wp_snippets_css',
             __('CSS Addons', 'arsol-wp-snippets'),
             function() {
-                echo '<p>' . esc_html__('Select CSS addon files to include.', 'arsol-wp-snippets') . '</p>';
+                echo '<p>' . esc_html__('Select CSS snippets to include.', 'arsol-wp-snippets') . '</p>';
             },
             $this->css_addons_slug
         );
@@ -109,7 +109,7 @@ class Admin_Settings {
         // Add CSS addon options
         add_settings_field(
             'css_addon_options',
-            __('CSS addon files', 'arsol-wp-snippets'),
+            __('CSS snippets', 'arsol-wp-snippets'),
             array($this, 'render_css_addon_options'),
             $this->css_addons_slug,
             'arsol_wp_snippets_css'
@@ -120,7 +120,7 @@ class Admin_Settings {
             'arsol_wp_snippets_js',
             __('JS Addons', 'arsol-wp-snippets'),
             function() {
-                echo '<p>' . esc_html__('Select JavaScript addon files to include.', 'arsol-wp-snippets') . '</p>';
+                echo '<p>' . esc_html__('Select JavaScript snippets to include.', 'arsol-wp-snippets') . '</p>';
             },
             $this->css_addons_slug
         );
@@ -128,7 +128,7 @@ class Admin_Settings {
         // Add JS addon options
         add_settings_field(
             'js_addon_options',
-            __('JS addon files', 'arsol-wp-snippets'),
+            __('JS snippets', 'arsol-wp-snippets'),
             array($this, 'render_js_addon_options'),
             $this->css_addons_slug,
             'arsol_wp_snippets_js'
@@ -224,7 +224,7 @@ class Admin_Settings {
         $available_php_addons = $this->get_php_addon_options();
         
         if (empty($available_php_addons)) {
-            echo '<p>' . esc_html__('No PHP addon files available.', 'arsol-wp-snippets') . '</p>';
+            echo '<p>' . esc_html__('No PHP snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
         
@@ -251,7 +251,7 @@ class Admin_Settings {
         $available_css_addons = $this->get_css_addon_options();
         
         if (empty($available_css_addons)) {
-            echo '<p>' . esc_html__('No CSS addon files available.', 'arsol-wp-snippets') . '</p>';
+            echo '<p>' . esc_html__('No CSS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
         
@@ -278,7 +278,7 @@ class Admin_Settings {
         $available_js_addons = $this->get_js_addon_options();
         
         if (empty($available_js_addons)) {
-            echo '<p>' . esc_html__('No JS addon files available.', 'arsol-wp-snippets') . '</p>';
+            echo '<p>' . esc_html__('No JS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
         
@@ -331,7 +331,7 @@ class Admin_Settings {
     }
     
     /**
-     * Load PHP addon files based on settings
+     * Load PHP snippets based on settings
      */
     public function load_php_addon_files() {
         $options = get_option('arsol_wp_snippets_options', array());
@@ -344,7 +344,7 @@ class Admin_Settings {
         // Get PHP addon definitions
         $php_addon_options = $this->get_php_addon_options();
         
-        // Get enabled PHP addon files
+        // Get enabled PHP snippets
         $enabled_options = $options['php_addon_options'];
         
         // Loop through enabled files and include them
@@ -360,7 +360,7 @@ class Admin_Settings {
     }
     
     /**
-     * Load admin addon files based on settings
+     * Load admin snippets based on settings
      */
     public function load_admin_addon_files() {
         // Only run in admin
@@ -370,7 +370,7 @@ class Admin_Settings {
         
         $options = get_option('arsol_wp_snippets_options', array());
         
-        // Load CSS addon files
+        // Load CSS snippets
         if (isset($options['css_addon_options']) && !empty($options['css_addon_options'])) {
             $css_addon_options = $this->get_css_addon_options();
             $enabled_css_options = $options['css_addon_options'];
@@ -397,7 +397,7 @@ class Admin_Settings {
             }
         }
         
-        // Load JS addon files
+        // Load JS snippets
         if (isset($options['js_addon_options']) && !empty($options['js_addon_options'])) {
             $js_addon_options = $this->get_js_addon_options();
             $enabled_js_options = $options['js_addon_options'];
@@ -430,7 +430,7 @@ class Admin_Settings {
     }
     
     /**
-     * Load frontend addon files based on settings
+     * Load frontend snippets based on settings
      */
     public function load_frontend_addon_files() {
         // Don't run in admin
@@ -440,7 +440,7 @@ class Admin_Settings {
         
         $options = get_option('arsol_wp_snippets_options', array());
         
-        // Load CSS addon files
+        // Load CSS snippets
         if (isset($options['css_addon_options']) && !empty($options['css_addon_options'])) {
             $css_addon_options = $this->get_css_addon_options();
             $enabled_css_options = $options['css_addon_options'];
@@ -467,7 +467,7 @@ class Admin_Settings {
             }
         }
         
-        // Load JS addon files
+        // Load JS snippets
         if (isset($options['js_addon_options']) && !empty($options['js_addon_options'])) {
             $js_addon_options = $this->get_js_addon_options();
             $enabled_js_options = $options['js_addon_options'];

@@ -24,15 +24,44 @@ class Theme_Support {
      * Automatically register theme addon files from arsol-wp-snippets directory
      */
     private function auto_register_theme_files() {
-        $theme_dir = get_template_directory();
-        $theme_uri = get_template_directory_uri();
+        // Check both child theme and parent theme directories
+        $theme_directories = array();
+        
+        // Child theme first (if exists)
+        if (is_child_theme()) {
+            $theme_directories['child'] = array(
+                'dir' => get_stylesheet_directory(),
+                'uri' => get_stylesheet_directory_uri(),
+                'label' => 'Child Theme'
+            );
+        }
+        
+        // Parent theme
+        $theme_directories['parent'] = array(
+            'dir' => get_template_directory(),
+            'uri' => get_template_directory_uri(),
+            'label' => 'Theme'
+        );
+        
+        foreach ($theme_directories as $theme_type => $theme_info) {
+            $this->scan_theme_directory($theme_info, $theme_type);
+        }
+    }
+
+    /**
+     * Scan a specific theme directory for addon files
+     */
+    private function scan_theme_directory($theme_info, $theme_type) {
+        $theme_dir = $theme_info['dir'];
+        $theme_uri = $theme_info['uri'];
+        $theme_label = $theme_info['label'];
         
         // Check for arsol-wp-snippets directory in theme
         $snippets_dir = $theme_dir . '/arsol-wp-snippets/';
         
         // Debug: Add error log to see if directory exists
-        error_log('Checking directory: ' . $snippets_dir);
-        error_log('Directory exists: ' . (is_dir($snippets_dir) ? 'YES' : 'NO'));
+        error_log("Checking {$theme_label} directory: " . $snippets_dir);
+        error_log("Directory exists: " . (is_dir($snippets_dir) ? 'YES' : 'NO'));
         
         if (!is_dir($snippets_dir)) {
             return;
@@ -59,7 +88,7 @@ class Theme_Support {
         
         foreach ($addon_paths as $type => $config) {
             if (is_dir($config['dir'])) {
-                $this->register_files_from_directory($type, $config);
+                $this->register_files_from_directory($type, $config, $theme_type, $theme_label);
             }
         }
     }
@@ -67,7 +96,7 @@ class Theme_Support {
     /**
      * Register files from a theme directory
      */
-    private function register_files_from_directory($type, $config) {
+    private function register_files_from_directory($type, $config, $theme_type, $theme_label) {
         $files = glob($config['dir'] . '*.' . $type);
         
         if (empty($files)) {
@@ -76,14 +105,14 @@ class Theme_Support {
         
         $filter_name = "arsol_wp_snippets_{$type}_addon_files";
         
-        add_filter($filter_name, function($options) use ($files, $config, $type) {
+        add_filter($filter_name, function($options) use ($files, $config, $type, $theme_type, $theme_label) {
             foreach ($files as $file_path) {
                 $filename = basename($file_path, '.' . $type);
-                $file_key = 'theme-' . sanitize_key($filename);
+                $file_key = $theme_type . '-theme-' . sanitize_key($filename);
                 
                 // Build addon data
                 $addon_data = array(
-                    'name' => ucwords(str_replace(array('-', '_'), ' ', $filename)) . ' (Theme)',
+                    'name' => ucwords(str_replace(array('-', '_'), ' ', $filename)) . " ({$theme_label})",
                 );
                 
                 if ($type === 'php') {

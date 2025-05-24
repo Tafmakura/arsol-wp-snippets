@@ -29,6 +29,9 @@ class Setup {
 
         // Core Functions 
         require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-admin.php';
+        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-css.php';
+        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-js.php';
+        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-addon-php.php';
     }
 
     /**

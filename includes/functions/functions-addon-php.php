@@ -23,7 +23,7 @@ function arsol_add_admin_enhancements_php_addon($options) {
     );
     return $options;
 }
-add_filter('arsol_css_addons_php_addon_options', 'arsol_add_admin_enhancements_php_addon');
+add_filter('arsol_css_addons_php_addon_files', 'arsol_add_admin_enhancements_php_addon');
 
 /**
  * Add Custom Post Types PHP addon
@@ -35,7 +35,7 @@ function arsol_add_custom_post_types_php_addon($options) {
     );
     return $options;
 }
-add_filter('arsol_css_addons_php_addon_options', 'arsol_add_custom_post_types_php_addon');
+add_filter('arsol_css_addons_php_addon_files', 'arsol_add_custom_post_types_php_addon');
 
 /**
  * Add Custom Fields PHP addon
@@ -47,21 +47,19 @@ function arsol_add_custom_fields_php_addon($options) {
     );
     return $options;
 }
-add_filter('arsol_css_addons_php_addon_options', 'arsol_add_custom_fields_php_addon');
+add_filter('arsol_css_addons_php_addon_files', 'arsol_add_custom_fields_php_addon');
 
 /**
  * Add Security Enhancements PHP addon
  */
 function arsol_add_security_enhancements_php_addon($options) {
-    if (current_user_can('manage_options')) {
-        $options['security-enhancements'] = array(
-            'name' => __('Security Enhancements', 'arsol-css-addons'),
-            'file' => ARSOL_CSS_ADDONS_PLUGIN_DIR . 'assets/php/addon-php/security-enhancements.php'
-        );
-    }
+    $options['security-enhancements'] = array(
+        'name' => __('Security Enhancements', 'arsol-css-addons'),
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_DIR . 'assets/php/addon-php/security-enhancements.php'
+    );
     return $options;
 }
-add_filter('arsol_css_addons_php_addon_options', 'arsol_add_security_enhancements_php_addon');
+add_filter('arsol_css_addons_php_addon_files', 'arsol_add_security_enhancements_php_addon');
 
 /**
  * Add SEO Enhancements PHP addon
@@ -73,7 +71,7 @@ function arsol_add_seo_enhancements_php_addon($options) {
     );
     return $options;
 }
-add_filter('arsol_css_addons_php_addon_options', 'arsol_add_seo_enhancements_php_addon');
+add_filter('arsol_css_addons_php_addon_files', 'arsol_add_seo_enhancements_php_addon');
 
 /**
  * Add Performance Optimizations PHP addon
@@ -85,7 +83,7 @@ function arsol_add_performance_optimizations_php_addon($options) {
     );
     return $options;
 }
-add_filter('arsol_css_addons_php_addon_options', 'arsol_add_performance_optimizations_php_addon');
+add_filter('arsol_css_addons_php_addon_files', 'arsol_add_performance_optimizations_php_addon');
 
 /**
  * Add Custom Shortcodes PHP addon
@@ -97,4 +95,4 @@ function arsol_add_custom_shortcodes_php_addon($options) {
     );
     return $options;
 }
-add_filter('arsol_css_addons_php_addon_options', 'arsol_add_custom_shortcodes_php_addon');
+add_filter('arsol_css_addons_php_addon_files', 'arsol_add_custom_shortcodes_php_addon');

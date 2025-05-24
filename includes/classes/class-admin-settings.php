@@ -137,8 +137,6 @@ class Admin_Settings {
     
     /**
      * Get available PHP addon options
-     *
-     * @return array Array of PHP addon options
      */
     public function get_php_addon_options() {
         // Default empty array
@@ -149,7 +147,7 @@ class Admin_Settings {
          * 
          * @param array $php_addon_options Array of PHP addon options with file paths
          */
-        $filtered_options = apply_filters('arsol_css_addons_php_addon_options', $php_addon_options);
+        $filtered_options = apply_filters('arsol_css_addons_php_addon_files', $php_addon_options);
         
         // Validate that all files are PHP files
         foreach ($filtered_options as $addon_id => $addon_data) {
@@ -165,8 +163,6 @@ class Admin_Settings {
     
     /**
      * Get available CSS addon options
-     *
-     * @return array Array of CSS addon options
      */
     public function get_css_addon_options() {
         // Default empty array
@@ -177,7 +173,7 @@ class Admin_Settings {
          * 
          * @param array $css_addon_options Array of CSS addon options with file paths
          */
-        $filtered_options = apply_filters('arsol_css_addons_css_addon_options', $css_addon_options);
+        $filtered_options = apply_filters('arsol_css_addons_css_addon_files', $css_addon_options);
         
         // Validate that all files are CSS files
         foreach ($filtered_options as $addon_id => $addon_data) {
@@ -193,8 +189,6 @@ class Admin_Settings {
     
     /**
      * Get available JS addon options
-     *
-     * @return array Array of JS addon options
      */
     public function get_js_addon_options() {
         // Default empty array
@@ -205,7 +199,7 @@ class Admin_Settings {
          * 
          * @param array $js_addon_options Array of JS addon options with file paths
          */
-        $filtered_options = apply_filters('arsol_css_addons_js_addon_options', $js_addon_options);
+        $filtered_options = apply_filters('arsol_css_addons_js_addon_files', $js_addon_options);
         
         // Validate that all files are JS files
         foreach ($filtered_options as $addon_id => $addon_data) {
@@ -384,14 +378,21 @@ class Admin_Settings {
             // Loop through enabled CSS files and enqueue them
             foreach ($enabled_css_options as $addon_id => $enabled) {
                 if ($enabled && isset($css_addon_options[$addon_id])) {
-                    wp_enqueue_style(
-                        'arsol-css-addon-' . $addon_id,
-                        $css_addon_options[$addon_id]['file'],
-                        array(),
-                        ARSOL_CSS_ADDONS_VERSION
-                    );
+                    $addon_data = $css_addon_options[$addon_id];
                     
-                    do_action('arsol_css_addons_loaded_css_addon', $addon_id, $css_addon_options[$addon_id]['file']);
+                    // Check context - load if global or admin
+                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                    if ($context === 'global' || $context === 'admin') {
+                        wp_enqueue_style(
+                            'arsol-css-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array(),
+                            ARSOL_CSS_ADDONS_VERSION
+                        );
+                        // Note: CSS position doesn't matter much - always loads in header
+                        
+                        do_action('arsol_css_addons_loaded_css_addon', $addon_id, $addon_data['file']);
+                    }
                 }
             }
         }
@@ -404,15 +405,25 @@ class Admin_Settings {
             // Loop through enabled JS files and enqueue them
             foreach ($enabled_js_options as $addon_id => $enabled) {
                 if ($enabled && isset($js_addon_options[$addon_id])) {
-                    wp_enqueue_script(
-                        'arsol-js-addon-' . $addon_id,
-                        $js_addon_options[$addon_id]['file'],
-                        array('jquery'),
-                        ARSOL_CSS_ADDONS_VERSION,
-                        true
-                    );
+                    $addon_data = $js_addon_options[$addon_id];
                     
-                    do_action('arsol_css_addons_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
+                    // Check context - load if global or admin
+                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                    if ($context === 'global' || $context === 'admin') {
+                        // Get position - DEFAULT TO FOOTER for JS
+                        $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
+                        $in_footer = ($position === 'footer');
+                        
+                        wp_enqueue_script(
+                            'arsol-js-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array('jquery'),
+                            ARSOL_CSS_ADDONS_VERSION,
+                            $in_footer  // true for footer (default), false for header
+                        );
+                        
+                        do_action('arsol_css_addons_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
+                    }
                 }
             }
         }
@@ -437,14 +448,21 @@ class Admin_Settings {
             // Loop through enabled CSS files and enqueue them
             foreach ($enabled_css_options as $addon_id => $enabled) {
                 if ($enabled && isset($css_addon_options[$addon_id])) {
-                    wp_enqueue_style(
-                        'arsol-css-addon-' . $addon_id,
-                        $css_addon_options[$addon_id]['file'],
-                        array(),
-                        ARSOL_CSS_ADDONS_VERSION
-                    );
+                    $addon_data = $css_addon_options[$addon_id];
                     
-                    do_action('arsol_css_addons_loaded_css_addon', $addon_id, $css_addon_options[$addon_id]['file']);
+                    // Check context - load if global or frontend
+                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                    if ($context === 'global' || $context === 'frontend') {
+                        wp_enqueue_style(
+                            'arsol-css-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array(),
+                            ARSOL_CSS_ADDONS_VERSION
+                        );
+                        // Note: CSS always loads in header regardless of position setting
+                        
+                        do_action('arsol_css_addons_loaded_css_addon', $addon_id, $css_addon_options[$addon_id]['file']);
+                    }
                 }
             }
         }
@@ -457,15 +475,25 @@ class Admin_Settings {
             // Loop through enabled JS files and enqueue them
             foreach ($enabled_js_options as $addon_id => $enabled) {
                 if ($enabled && isset($js_addon_options[$addon_id])) {
-                    wp_enqueue_script(
-                        'arsol-js-addon-' . $addon_id,
-                        $js_addon_options[$addon_id]['file'],
-                        array('jquery'),
-                        ARSOL_CSS_ADDONS_VERSION,
-                        true
-                    );
+                    $addon_data = $js_addon_options[$addon_id];
                     
-                    do_action('arsol_css_addons_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
+                    // Check context - load if global or frontend
+                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                    if ($context === 'global' || $context === 'frontend') {
+                        // Get position - DEFAULT TO FOOTER for JS
+                        $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
+                        $in_footer = ($position === 'footer');
+                        
+                        wp_enqueue_script(
+                            'arsol-js-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array('jquery'),
+                            ARSOL_CSS_ADDONS_VERSION,
+                            $in_footer  // true for footer (default), false for header
+                        );
+                        
+                        do_action('arsol_css_addons_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
+                    }
                 }
             }
         }

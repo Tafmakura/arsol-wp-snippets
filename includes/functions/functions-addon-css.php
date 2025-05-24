@@ -17,29 +17,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Add Admin Menu CSS addon
  */
 function arsol_add_admin_menu_css_addon($options) {
-    if (is_admin() && !wp_doing_ajax()) {
-        $options['admin-menu'] = array(
-            'name' => __('Admin Menu Styling', 'arsol-css-addons'),
-            'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/admin-menu.css'
-        );
-    }
+    $options['admin-menu'] = array(
+        'name' => __('Admin Menu Styling', 'arsol-css-addons'),
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/admin-menu.css',
+        'context' => 'admin',
+        'position' => 'header'
+    );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_admin_menu_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_admin_menu_css_addon');
 
 /**
  * Add Admin Buttons CSS addon
  */
 function arsol_add_admin_buttons_css_addon($options) {
-    if (current_user_can('manage_options')) {
-        $options['admin-buttons'] = array(
-            'name' => __('Admin Button Styling', 'arsol-css-addons'),
-            'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/admin-buttons.css'
-        );
-    }
+    $options['admin-buttons'] = array(
+        'name' => __('Admin Button Styling', 'arsol-css-addons'),
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/admin-buttons.css',
+        'context' => 'admin',
+        'position' => 'header'
+    );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_admin_buttons_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_admin_buttons_css_addon');
 
 /**
  * Add Frontend Buttons CSS addon
@@ -47,11 +47,13 @@ add_filter('arsol_css_addons_css_addon_options', 'arsol_add_admin_buttons_css_ad
 function arsol_add_frontend_buttons_css_addon($options) {
     $options['frontend-buttons'] = array(
         'name' => __('Frontend Button Styling', 'arsol-css-addons'),
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/frontend-buttons.css'
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/frontend-buttons.css',
+        'context' => 'frontend',
+        'position' => 'header'
     );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_frontend_buttons_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_frontend_buttons_css_addon');
 
 /**
  * Add Frontend Forms CSS addon
@@ -59,11 +61,13 @@ add_filter('arsol_css_addons_css_addon_options', 'arsol_add_frontend_buttons_css
 function arsol_add_frontend_forms_css_addon($options) {
     $options['frontend-forms'] = array(
         'name' => __('Frontend Form Styling', 'arsol-css-addons'),
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/frontend-forms.css'
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/frontend-forms.css',
+        'context' => 'frontend',
+        'position' => 'header'
     );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_frontend_forms_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_frontend_forms_css_addon');
 
 /**
  * Add Typography CSS addon
@@ -71,11 +75,13 @@ add_filter('arsol_css_addons_css_addon_options', 'arsol_add_frontend_forms_css_a
 function arsol_add_typography_css_addon($options) {
     $options['typography'] = array(
         'name' => __('Typography Styling', 'arsol-css-addons'),
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/typography.css'
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/typography.css',
+        'context' => 'global',
+        'position' => 'header'
     );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_typography_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_typography_css_addon');
 
 /**
  * Add Layouts CSS addon
@@ -83,11 +89,13 @@ add_filter('arsol_css_addons_css_addon_options', 'arsol_add_typography_css_addon
 function arsol_add_layouts_css_addon($options) {
     $options['layouts'] = array(
         'name' => __('Layout Styling', 'arsol-css-addons'),
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/layouts.css'
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/layouts.css',
+        'context' => 'frontend',
+        'position' => 'header'
     );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_layouts_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_layouts_css_addon');
 
 /**
  * Add Tables CSS addon
@@ -95,11 +103,13 @@ add_filter('arsol_css_addons_css_addon_options', 'arsol_add_layouts_css_addon');
 function arsol_add_tables_css_addon($options) {
     $options['tables'] = array(
         'name' => __('Table Styling', 'arsol-css-addons'),
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/tables.css'
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/tables.css',
+        'context' => 'global',
+        'position' => 'header'
     );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_tables_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_tables_css_addon');
 
 /**
  * Add Normalize CSS addon
@@ -107,11 +117,13 @@ add_filter('arsol_css_addons_css_addon_options', 'arsol_add_tables_css_addon');
 function arsol_add_normalize_css_addon($options) {
     $options['normalize'] = array(
         'name' => __('Normalize CSS', 'arsol-css-addons'),
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/normalize.css'
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/normalize.css',
+        'context' => 'global',
+        'position' => 'header'
     );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_normalize_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_normalize_css_addon');
 
 /**
  * Add Responsive CSS addon
@@ -119,8 +131,10 @@ add_filter('arsol_css_addons_css_addon_options', 'arsol_add_normalize_css_addon'
 function arsol_add_responsive_css_addon($options) {
     $options['responsive'] = array(
         'name' => __('Responsive Utilities', 'arsol-css-addons'),
-        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/responsive.css'
+        'file' => ARSOL_CSS_ADDONS_PLUGIN_URL . 'assets/css/addon-css/responsive.css',
+        'context' => 'global',
+        'position' => 'header'
     );
     return $options;
 }
-add_filter('arsol_css_addons_css_addon_options', 'arsol_add_responsive_css_addon');
+add_filter('arsol_css_addons_css_addon_files', 'arsol_add_responsive_css_addon');

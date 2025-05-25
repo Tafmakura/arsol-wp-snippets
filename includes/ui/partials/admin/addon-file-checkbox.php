@@ -102,7 +102,13 @@ if ($file_exists) {
                     <h4 class="arsol-addon-title">
                         <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
                     </h4>
-                    <small class="arsol-addon-source"><?php echo esc_html($source_name . $file_reference); ?></small>
+                    <small class="arsol-addon-source"><?php 
+                        $display_path = $file_reference;
+                        if (strpos($display_path, 'wp-content/plugins/') !== false) {
+                            $display_path = str_replace('/functions/snippets/', '/snippets/', $display_path);
+                        }
+                        echo esc_html($source_name . $display_path); 
+                    ?></small>
                 </div>
             </div>
         </p>

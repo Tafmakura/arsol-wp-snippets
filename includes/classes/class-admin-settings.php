@@ -86,41 +86,6 @@ class Admin_Settings {
             <p>
                 To disable Safe Mode, you'll need to set <code>ARSOL_WP_SNIPPETS_SAFE_MODE</code> to <code>false</code> in your wp-config.php file.
             </p>
-            <p>
-                <strong>Currently selected files that are not loading:</strong>
-            </p>
-            <ul style="list-style-type: disc; margin-left: 2em;">
-                <?php
-                $options = get_option('arsol_wp_snippets_options', array());
-                
-                // PHP files
-                if (!empty($options['php_addon_options'])) {
-                    echo '<li><strong>PHP Files:</strong><ul>';
-                    foreach ($options['php_addon_options'] as $file) {
-                        echo '<li>' . esc_html($file) . '</li>';
-                    }
-                    echo '</ul></li>';
-                }
-                
-                // CSS files
-                if (!empty($options['css_addon_options'])) {
-                    echo '<li><strong>CSS Files:</strong><ul>';
-                    foreach ($options['css_addon_options'] as $file) {
-                        echo '<li>' . esc_html($file) . '</li>';
-                    }
-                    echo '</ul></li>';
-                }
-                
-                // JS files
-                if (!empty($options['js_addon_options'])) {
-                    echo '<li><strong>JS Files:</strong><ul>';
-                    foreach ($options['js_addon_options'] as $file) {
-                        echo '<li>' . esc_html($file) . '</li>';
-                    }
-                    echo '</ul></li>';
-                }
-                ?>
-            </ul>
         </div>
         <?php
     }

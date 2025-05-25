@@ -19,38 +19,6 @@ if (!defined('ABSPATH')) {
 $file_exists = true;
 $file_reference = $addon_data['file'];
 
-// Function to get theme/plugin name from file path
-function get_source_name($file_path) {
-    // Check if it's a theme file
-    $theme_child_dir = get_stylesheet_directory();
-    $theme_parent_dir = get_template_directory();
-    
-    if (strpos($file_path, $theme_child_dir) === 0) {
-        return wp_get_theme()->get('Name') . ' (Child Theme)';
-    } elseif (strpos($file_path, $theme_parent_dir) === 0) {
-        // Parent theme file
-        return wp_get_theme()->get('Name') . ' (Parent Theme)';
-    }
-    
-    // Check if it's a plugin file
-    $plugins_dir = WP_PLUGIN_DIR;
-    if (strpos($file_path, $plugins_dir) === 0) {
-        // Get the plugin directory name
-        $plugin_dir = dirname($file_path);
-        if ($plugin_dir !== $plugins_dir) {
-            // Get plugin data
-            $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';
-            if (file_exists($plugin_file)) {
-                $plugin_data = get_plugin_data($plugin_file);
-                return $plugin_data['Name'] ?? basename($plugin_dir);
-            }
-            return basename($plugin_dir);
-        }
-    }
-    
-    return 'WordPress';
-}
-
 // Determine how to check file existence based on file type
 if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
     // It's a URL - convert to file path for theme files
@@ -71,14 +39,12 @@ if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
     }
 } else {
     // It's a file path - check directly
-    $file_path = $file_reference;
     $file_exists = file_exists($file_reference);
 }
 
 if ($file_exists) {
     // File exists - show checkbox
     $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
-    $source_name = isset($file_path) ? get_source_name($file_path) : 'WordPress';
     ?>
     <div class="arsol-addon-container">
         <p>
@@ -92,7 +58,7 @@ if ($file_exists) {
                     <h4 class="arsol-addon-title">
                         <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
                     </h4>
-                    <div class="arsol-addon-source"><?php echo esc_html($source_name); ?></div>
+                    <div class="arsol-addon-source"><?php echo esc_html($addon_data['source'] ?? 'WordPress Theme'); ?></div>
                 </div>
             </div>
         </p>

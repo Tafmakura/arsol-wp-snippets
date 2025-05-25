@@ -30,9 +30,9 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
     $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
     $plugin_dir = dirname($plugin_path);
     
-    // Go up one level if we're in a css/js directory
+    // Go up two levels if we're in a css/js directory inside snippets
     if (in_array(basename($plugin_dir), array('css', 'js'))) {
-        $plugin_dir = dirname($plugin_dir);
+        $plugin_dir = dirname(dirname($plugin_dir));
     }
     
     $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';

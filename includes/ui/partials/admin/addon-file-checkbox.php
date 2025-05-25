@@ -21,6 +21,8 @@ $file_reference = $addon_data['file'];
 // Remove 'functions/' from plugin paths regardless of format
 if (strpos($file_reference, 'wp-content/plugins/') !== false || strpos($file_reference, WP_PLUGIN_DIR) !== false) {
     $file_reference = preg_replace('#/functions/snippets/#', '/snippets/', $file_reference);
+    $file_reference = preg_replace('#/functions/\.\./snippets/#', '/snippets/', $file_reference);
+    $file_reference = str_replace('/functions/', '/', $file_reference);
 }
 
 // Additional path cleanup
@@ -104,7 +106,9 @@ if ($file_exists) {
                 <small class="arsol-addon-source"><?php 
                     $display_path = $file_reference;
                     if (strpos($display_path, 'wp-content/plugins/') !== false) {
-                        $display_path = str_replace('/functions/snippets/', '/snippets/', $display_path);
+                        $display_path = preg_replace('#/functions/snippets/#', '/snippets/', $display_path);
+                        $display_path = preg_replace('#/functions/\.\./snippets/#', '/snippets/', $display_path);
+                        $display_path = str_replace('/functions/', '/', $display_path);
                     }
                     echo esc_html($source_name . $display_path); 
                 ?></small>

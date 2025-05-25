@@ -93,9 +93,7 @@ if ($file_exists) {
             <div class="arsol-label-container">
                 <div class="arsol-addon-info">
                     <h4 class="arsol-addon-title">
-                        <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>">
-                            <?php echo esc_html(str_replace(' (Child Theme)', '', $addon_data['name'])); ?>
-                        </label>
+                        <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
                     </h4>
                     <small class="arsol-addon-source"><?php echo esc_html($source_name . $file_reference); ?></small>
                 </div>

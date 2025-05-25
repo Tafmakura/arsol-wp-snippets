@@ -19,6 +19,16 @@ if (!defined('ABSPATH')) {
 $file_exists = true;
 $file_reference = $addon_data['file'];
 
+// Get simple source name
+$source_name = '';
+if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
+    $source_name = wp_get_theme()->get('Name') . ' → ';
+} elseif (strpos($file_reference, get_template_directory_uri()) === 0) {
+    $source_name = wp_get_theme()->get('Name') . ' → ';
+} elseif (strpos($file_reference, plugins_url()) === 0) {
+    $source_name = 'Plugin → ';
+}
+
 // Determine how to check file existence based on file type
 if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
     // It's a URL - convert to file path for theme files
@@ -58,7 +68,7 @@ if ($file_exists) {
                     <h4 class="arsol-addon-title">
                         <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
                     </h4>
-                    <small class="arsol-addon-source"><?php echo esc_html($file_reference); ?></small>
+                    <small class="arsol-addon-source"><?php echo esc_html($source_name . $file_reference); ?></small>
                 </div>
             </div>
         </p>

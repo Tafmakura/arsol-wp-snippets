@@ -55,8 +55,8 @@ class Setup {
             return;
         }
         
-        // Prepare the constant definition
-        $constant_definition = "\n// Arsol WP Snippets Safe Mode\nif (!defined('ARSOL_WP_SNIPPETS_SAFE_MODE')) {\n    define('ARSOL_WP_SNIPPETS_SAFE_MODE', false);\n}\n";
+        // Prepare the constant definition with a single space after it
+        $constant_definition = "\n// Arsol WP Snippets Safe Mode\nif (!defined('ARSOL_WP_SNIPPETS_SAFE_MODE')) {\n    define('ARSOL_WP_SNIPPETS_SAFE_MODE', false);\n}\n\n";
         
         // Try to find the WordPress setup comment first
         $insert_position = strpos($config_content, "/** Sets up WordPress vars and included files. */");

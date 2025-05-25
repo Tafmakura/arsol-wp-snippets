@@ -31,11 +31,21 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
     $plugin_dir = dirname($plugin_path);
     $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';
     
+    // Debug output
+    error_log('Plugin URL: ' . $file_reference);
+    error_log('Plugin Path: ' . $plugin_path);
+    error_log('Plugin Dir: ' . $plugin_dir);
+    error_log('Plugin File: ' . $plugin_file);
+    error_log('File exists: ' . (file_exists($plugin_file) ? 'yes' : 'no'));
+    
     if (file_exists($plugin_file)) {
         $plugin_data = get_plugin_data($plugin_file);
+        error_log('Plugin Data: ' . print_r($plugin_data, true));
         $source_name = $plugin_data['Name'] . ' → ';
     } else {
-        $source_name = 'Plugin → ';
+        // Try to get plugin name from directory
+        $plugin_name = basename($plugin_dir);
+        $source_name = ucwords(str_replace('-', ' ', $plugin_name)) . ' → ';
     }
 }
 

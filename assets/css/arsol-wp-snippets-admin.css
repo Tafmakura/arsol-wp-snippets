@@ -84,8 +84,9 @@
     color: #d63638;
 }
 
-.arsol-addon-error .dashicons {
-    color: #d63638;
+.arsol-addon-error .dashicons,
+.arsol-addon-error .dashicons-warning {
+    color: #d63638 !important;
     vertical-align: middle;
 }
 

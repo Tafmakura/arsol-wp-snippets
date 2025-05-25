@@ -18,9 +18,19 @@ class Snippet_Loader {
     }
 
     /**
+     * Check if safe mode is enabled
+     */
+    private function is_safe_mode() {
+        return defined('ARSOL_WP_SNIPPETS_SAFE_MODE') && ARSOL_WP_SNIPPETS_SAFE_MODE;
+    }
+
+    /**
      * Load CSS and JS snippets for frontend
      */
     public function load_frontend_snippets() {
+        if ($this->is_safe_mode()) {
+            return;
+        }
         $this->load_css_snippets('frontend');
         $this->load_js_snippets('frontend');
     }
@@ -29,6 +39,9 @@ class Snippet_Loader {
      * Load CSS and JS snippets for admin
      */
     public function load_admin_snippets() {
+        if ($this->is_safe_mode()) {
+            return;
+        }
         $this->load_css_snippets('admin');
         $this->load_js_snippets('admin');
     }
@@ -42,7 +55,9 @@ class Snippet_Loader {
         
         if (!empty($enabled_php_files)) {
             foreach ($enabled_php_files as $file_key) {
-                $this->include_php_snippet($file_key);
+                if (!$this->is_safe_mode()) {
+                    $this->include_php_snippet($file_key);
+                }
             }
         }
     }

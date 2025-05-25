@@ -63,8 +63,66 @@ class Admin_Settings {
         $page_title = get_admin_page_title();
         $settings_slug = $this->css_addons_slug;
         
+        // Display safe mode notice if enabled
+        if (defined('ARSOL_WP_SNIPPETS_SAFE_MODE') && ARSOL_WP_SNIPPETS_SAFE_MODE) {
+            $this->display_safe_mode_notice();
+        }
+        
         // Include the template file
         include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/templates/admin/settings-page.php';
+    }
+    
+    /**
+     * Display safe mode notice
+     */
+    private function display_safe_mode_notice() {
+        ?>
+        <div class="notice notice-warning">
+            <h3 style="margin: 0.5em 0;">⚠️ Safe Mode Active</h3>
+            <p>
+                <strong>Safe Mode is currently enabled.</strong> This means that while you can still manage which files are selected, 
+                none of the selected files will be loaded. This is useful when troubleshooting fatal errors.
+            </p>
+            <p>
+                To disable Safe Mode, you'll need to set <code>ARSOL_WP_SNIPPETS_SAFE_MODE</code> to <code>false</code> in your wp-config.php file.
+            </p>
+            <p>
+                <strong>Currently selected files that are not loading:</strong>
+            </p>
+            <ul style="list-style-type: disc; margin-left: 2em;">
+                <?php
+                $options = get_option('arsol_wp_snippets_options', array());
+                
+                // PHP files
+                if (!empty($options['php_addon_options'])) {
+                    echo '<li><strong>PHP Files:</strong><ul>';
+                    foreach ($options['php_addon_options'] as $file) {
+                        echo '<li>' . esc_html($file) . '</li>';
+                    }
+                    echo '</ul></li>';
+                }
+                
+                // CSS files
+                if (!empty($options['css_addon_options'])) {
+                    echo '<li><strong>CSS Files:</strong><ul>';
+                    foreach ($options['css_addon_options'] as $file) {
+                        echo '<li>' . esc_html($file) . '</li>';
+                    }
+                    echo '</ul></li>';
+                }
+                
+                // JS files
+                if (!empty($options['js_addon_options'])) {
+                    echo '<li><strong>JS Files:</strong><ul>';
+                    foreach ($options['js_addon_options'] as $file) {
+                        echo '<li>' . esc_html($file) . '</li>';
+                    }
+                    echo '</ul></li>';
+                }
+                ?>
+            </ul>
+        </div>
+        <?php
     }
     
     /**

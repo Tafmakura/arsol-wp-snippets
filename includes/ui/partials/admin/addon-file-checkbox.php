@@ -35,8 +35,9 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
     $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
     $plugin_dir = dirname($plugin_path);
     
-    // Go up one level for all file types if we're in a subdirectory
-    if (basename($plugin_dir) !== basename(WP_PLUGIN_DIR)) {
+    // Keep going up until we reach the plugin root directory
+    while (basename($plugin_dir) !== basename(WP_PLUGIN_DIR) && 
+           strpos($plugin_dir, WP_PLUGIN_DIR) === 0) {
         $plugin_dir = dirname($plugin_dir);
     }
     

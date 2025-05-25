@@ -58,7 +58,7 @@ if ($file_exists) {
                     <h4 class="arsol-addon-title">
                         <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
                     </h4>
-                    <div class="arsol-addon-source"><?php echo esc_html($addon_data['source'] ?? 'WordPress Theme'); ?></div>
+                    <small class="arsol-addon-source"><?php echo esc_html($file_reference); ?></small>
                 </div>
             </div>
         </p>

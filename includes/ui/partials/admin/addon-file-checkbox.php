@@ -95,9 +95,11 @@ if ($file_exists) {
     ?>
     <div class="arsol-addon-container <?php echo esc_attr($state_class); ?>">
         <div class="arsol-first-column">
-            <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
-                   name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
-                   value="1" <?php checked(1, $checked); ?>/>
+            <span class="arsol-wp-snippets-checkbox" >
+                <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
+                       name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
+                       value="1" <?php checked(1, $checked); ?>/>
+            </span>
         </div>
         <div class="arsol-label-container">
             <div class="arsol-addon-info">
@@ -147,7 +149,7 @@ if ($file_exists) {
                 <?php echo esc_html($addon_data['name']); ?>
             </h4>
             <p class="arsol-addon-error">
-                <?php echo esc_html(sprintf(__('Could not be found at: %s', 'arsol-wp-snippets'), isset($file_path) ? $file_path : $file_reference)); ?>
+                <small><?php echo esc_html(sprintf(__('Could not be found at: %s', 'arsol-wp-snippets'), isset($file_path) ? $file_path : $file_reference)); ?></small>
             </p>
         </div>
     </div>

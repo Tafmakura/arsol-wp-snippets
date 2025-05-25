@@ -48,10 +48,14 @@ if ($file_exists) {
     ?>
     <div class="arsol-addon-container">
         <p>
-            <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
-                   name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
-                   value="1" <?php checked(1, $checked); ?>/>
-            <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+            <div class="arsol-checkbox-container">
+                <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
+                       name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
+                       value="1" <?php checked(1, $checked); ?>/>
+            </div>
+            <div class="arsol-label-container">
+                <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+            </div>
         </p>
     </div>
     <?php

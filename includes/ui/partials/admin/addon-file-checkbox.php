@@ -91,8 +91,9 @@ if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
 if ($file_exists) {
     // File exists - show checkbox
     $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
+    $state_class = $checked ? 'enabled' : 'disabled';
     ?>
-    <div class="arsol-addon-container">
+    <div class="arsol-addon-container <?php echo esc_attr($state_class); ?>">
         <div class="arsol-first-column">
             <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
                    name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 

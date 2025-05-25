@@ -6,6 +6,7 @@
 /* Addon file container styles */
 .arsol-addon-container {
     border: 1px solid #ddd;
+    border-left: 4px solid #ddd;
     padding: 15px;
     margin: 10px 0;
     border-radius: 4px;
@@ -51,9 +52,20 @@
     line-height: 1.4;
 }
 
-/* Error message styles */
+/* Enabled file state */
+.arsol-addon-container.enabled {
+    border-left-color: #46b450;
+}
+
+/* Disabled file state */
+.arsol-addon-container.disabled {
+    border-left-color: #ffb900;
+}
+
+/* Error state */
 .arsol-addon-container.error {
     border: 1px solid #d63638;
+    border-left: 4px solid #d63638;
     background-color: #fef7f7;
 }
 

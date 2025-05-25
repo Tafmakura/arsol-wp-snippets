@@ -19,8 +19,10 @@ if (!defined('ABSPATH')) {
 $file_exists = true;
 $file_reference = $addon_data['file'];
 
-// Clean up the file path
-$file_reference = str_replace('/../', '/', $file_reference);
+// Clean up the file path only for CSS and JS files
+if ($option_type !== 'php') {
+    $file_reference = str_replace('/../', '/', $file_reference);
+}
 
 // Get simple source name
 $source_name = '';

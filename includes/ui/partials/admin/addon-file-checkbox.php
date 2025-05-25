@@ -17,9 +17,13 @@ if (!defined('ABSPATH')) {
 
 // Clean up the file path
 $file_reference = $addon_data['file'];
-if (strpos($file_reference, 'wp-content/plugins/') !== false) {
-    $file_reference = str_replace('/functions/', '/', $file_reference);
+
+// Remove 'functions/' from plugin paths regardless of format
+if (strpos($file_reference, 'wp-content/plugins/') !== false || strpos($file_reference, WP_PLUGIN_DIR) !== false) {
+    $file_reference = preg_replace('#/functions/snippets/#', '/snippets/', $file_reference);
 }
+
+// Additional path cleanup
 if ($option_type !== 'php') {
     $file_reference = str_replace('/../', '/', $file_reference);
 }

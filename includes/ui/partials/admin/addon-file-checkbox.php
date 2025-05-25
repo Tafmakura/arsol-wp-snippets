@@ -15,18 +15,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Check if file exists
-$file_exists = true;
+// Clean up the file path
 $file_reference = $addon_data['file'];
-
-// Clean up the file path only for CSS and JS files
+if (strpos($file_reference, 'wp-content/plugins/') !== false) {
+    $file_reference = str_replace('/functions/', '/', $file_reference);
+}
 if ($option_type !== 'php') {
     $file_reference = str_replace('/../', '/', $file_reference);
-    // Remove 'functions/' from plugin paths
-    if (strpos($file_reference, 'wp-content/plugins/') !== false) {
-        $file_reference = str_replace('/functions/', '/', $file_reference);
-    }
 }
+
+// Check if file exists
+$file_exists = true;
 
 // Get simple source name
 $source_name = '';

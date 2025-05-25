@@ -30,13 +30,17 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
     $source_name = wp_get_theme()->get('Name') . ' → ';
 } elseif (strpos($file_reference, get_template_directory_uri()) === 0) {
     $source_name = wp_get_theme()->get('Name') . ' → ';
-} elseif (strpos($file_reference, plugins_url()) === 0) {
+} elseif (strpos($file_reference, plugins_url()) === 0 || strpos($file_reference, WP_PLUGIN_DIR) === 0) {
     // Get plugin name from the file path
     $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
     $plugin_dir = dirname($plugin_path);
     
-    // Go up two levels if we're in a css/js directory inside snippets
-    if (in_array(basename($plugin_dir), array('css', 'js'))) {
+    // For PHP files, go up one level if we're in a subdirectory
+    if ($option_type === 'php' && basename($plugin_dir) !== basename(WP_PLUGIN_DIR)) {
+        $plugin_dir = dirname($plugin_dir);
+    }
+    // For CSS/JS files, go up two levels if we're in a css/js directory inside snippets
+    elseif (in_array(basename($plugin_dir), array('css', 'js'))) {
         $plugin_dir = dirname(dirname($plugin_dir));
     }
     

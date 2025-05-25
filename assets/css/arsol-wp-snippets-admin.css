@@ -3,13 +3,6 @@
     margin-left: 20px;
 }
 
-/* Checkbox styling with lines */
-.arsol-addon-list input[type="checkbox"] {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    padding: 5px 0;
-    margin: 5px 0;
-}
 
 /* Addon file container styles */
 .arsol-addon-container {

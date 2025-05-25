@@ -3,7 +3,6 @@
     margin-left: 0px;
 }
 
-
 /* Addon file container styles */
 .arsol-addon-container {
     border: 1px solid #ddd;
@@ -11,17 +10,11 @@
     margin: 10px 0;
     border-radius: 4px;
     background-color: #f9f9f9;
-}
-
-.arsol-addon-container p {
-    margin: 0;
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
 }
 
-.arsol-checkbox-container {
+.arsol-first-column {
     display: flex;
     align-items: flex-start;
     flex-shrink: 0;
@@ -58,16 +51,16 @@
 }
 
 /* Error message styles */
-.arsol-addon-error-container {
+.arsol-addon-container.error {
     border: 1px solid #d63638;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 4px;
     background-color: #fef7f7;
 }
 
 .arsol-addon-error {
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .arsol-addon-error .dashicons {

@@ -91,35 +91,35 @@ if ($file_exists) {
     $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
     ?>
     <div class="arsol-addon-container">
-        <p>
-            <div class="arsol-checkbox-container">
-                <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
-                       name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
-                       value="1" <?php checked(1, $checked); ?>/>
+        <div class="arsol-first-column">
+            <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
+                   name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
+                   value="1" <?php checked(1, $checked); ?>/>
+        </div>
+        <div class="arsol-label-container">
+            <div class="arsol-addon-info">
+                <h4 class="arsol-addon-title">
+                    <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+                </h4>
+                <small class="arsol-addon-source"><?php 
+                    $display_path = $file_reference;
+                    if (strpos($display_path, 'wp-content/plugins/') !== false) {
+                        $display_path = str_replace('/functions/snippets/', '/snippets/', $display_path);
+                    }
+                    echo esc_html($source_name . $display_path); 
+                ?></small>
             </div>
-            <div class="arsol-label-container">
-                <div class="arsol-addon-info">
-                    <h4 class="arsol-addon-title">
-                        <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
-                    </h4>
-                    <small class="arsol-addon-source"><?php 
-                        $display_path = $file_reference;
-                        if (strpos($display_path, 'wp-content/plugins/') !== false) {
-                            $display_path = str_replace('/functions/snippets/', '/snippets/', $display_path);
-                        }
-                        echo esc_html($source_name . $display_path); 
-                    ?></small>
-                </div>
-            </div>
-        </p>
+        </div>
     </div>
     <?php
 } else {
     // File doesn't exist - show error message
     ?>
-    <div class="arsol-addon-error-container">
+    <div class="arsol-addon-container error">
         <p class="arsol-addon-error">
-            <span class="dashicons dashicons-warning"></span>
+            <div class="arsol-first-column">
+                <span class="dashicons dashicons-warning"></span>
+            </div>
             <span>
                 <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], isset($file_path) ? $file_path : $file_reference)); ?>
             </span>

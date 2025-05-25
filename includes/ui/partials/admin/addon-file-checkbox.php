@@ -142,9 +142,14 @@ if ($file_exists) {
         <div class="arsol-first-column">
             <span class="dashicons dashicons-warning"></span>
         </div>
-        <span>
-            <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], isset($file_path) ? $file_path : $file_reference)); ?>
-        </span>
+        <div class="arsol-label-container">
+            <h4 class="arsol-addon-title">
+                <?php echo esc_html($addon_data['name']); ?>
+            </h4>
+            <p class="arsol-addon-error">
+                <?php echo esc_html(sprintf(__('Could not be found at: %s', 'arsol-wp-snippets'), isset($file_path) ? $file_path : $file_reference)); ?>
+            </p>
+        </div>
     </div>
     <?php
 }

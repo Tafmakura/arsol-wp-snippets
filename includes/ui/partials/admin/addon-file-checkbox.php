@@ -111,19 +111,19 @@ if ($file_exists) {
                         $display_path = preg_replace('#/functions/\.\./snippets/#', '/snippets/', $display_path);
                         $display_path = str_replace('/functions/', '/', $display_path);
                     }
-                    echo esc_html($source_name . $display_path); 
+                    echo '<strong>' . esc_html($source_name) . '</strong>' . esc_html($display_path); 
                 ?></small>
             </div>
             <div class="arsol-addon-footer">
                 <?php
                 // Display context for all file types
                 $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
-                echo '<span class="arsol-addon-meta"><strong>Context:</strong> ' . esc_html($context) . '</span>';
+                echo '<span class="arsol-addon-meta"><strong>Context:</strong> ' . esc_html(ucfirst($context)) . '</span>';
                 
                 // Display position only for JS and CSS files
                 if ($option_type === 'js' || $option_type === 'css') {
                     $position = isset($addon_data['position']) ? $addon_data['position'] : ($option_type === 'css' ? 'header' : 'footer');
-                    echo '<span class="arsol-addon-meta"><strong>Position:</strong> ' . esc_html($position) . '</span>';
+                    echo '<span class="arsol-addon-meta"><strong>Position:</strong> ' . esc_html(ucfirst($position)) . '</span>';
                 }
                 
                 // Display dependencies if available

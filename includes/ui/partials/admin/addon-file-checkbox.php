@@ -54,7 +54,9 @@ if ($file_exists) {
                        value="1" <?php checked(1, $checked); ?>/>
             </div>
             <div class="arsol-label-container">
-                <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+                <h4 class="arsol-addon-title">
+                    <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+                </h4>
             </div>
         </p>
     </div>

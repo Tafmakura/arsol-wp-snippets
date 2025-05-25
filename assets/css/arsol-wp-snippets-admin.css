@@ -33,6 +33,17 @@
     align-items: center;
 }
 
+.arsol-addon-title {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.arsol-addon-title label {
+    cursor: pointer;
+}
+
 /* Error message styles */
 .arsol-addon-error-container {
     border: 1px solid #d63638;

@@ -114,6 +114,24 @@ if ($file_exists) {
                     echo esc_html($source_name . $display_path); 
                 ?></small>
             </div>
+            <div class="arsol-addon-footer">
+                <?php
+                // Display context if available
+                if (isset($addon_data['context'])) {
+                    echo '<span class="arsol-addon-meta"><strong>Context:</strong> ' . esc_html($addon_data['context']) . '</span>';
+                }
+                
+                // Display position for JS files
+                if ($option_type === 'js' && isset($addon_data['position'])) {
+                    echo '<span class="arsol-addon-meta"><strong>Position:</strong> ' . esc_html($addon_data['position']) . '</span>';
+                }
+                
+                // Display dependencies if available
+                if (isset($addon_data['dependencies']) && !empty($addon_data['dependencies'])) {
+                    echo '<span class="arsol-addon-meta"><strong>Dependencies:</strong> ' . esc_html(implode(', ', $addon_data['dependencies'])) . '</span>';
+                }
+                ?>
+            </div>
         </div>
     </div>
     <?php

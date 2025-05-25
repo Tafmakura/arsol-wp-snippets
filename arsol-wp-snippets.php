@@ -41,7 +41,7 @@ define('ARSOL_WP_SNIPPETS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ARSOL_WP_SNIPPETS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_WP_SNIPPETS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('ARSOL_WP_SNIPPETS_VERSION', '1.0.9');
-define('ARSOL_WP_SNIPPETS_ASSETS_VERSION', '3.0.7');
+define('ARSOL_WP_SNIPPETS_ASSETS_VERSION', '4.0.7');
 
 // Use correct namespace
 use Arsol_WP_Snippets\Setup;

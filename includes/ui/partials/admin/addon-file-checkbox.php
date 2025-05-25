@@ -35,15 +35,18 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
     $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
     $plugin_dir = dirname($plugin_path);
     
-    // Keep going up until we reach the plugin root directory
-    while (basename($plugin_dir) !== basename(WP_PLUGIN_DIR) && 
-           strpos($plugin_dir, WP_PLUGIN_DIR) === 0) {
-        $plugin_dir = dirname($plugin_dir);
+    // Keep going up until we find the plugin's main PHP file
+    $found_plugin = false;
+    while (!$found_plugin && strpos($plugin_dir, WP_PLUGIN_DIR) === 0) {
+        $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';
+        if (file_exists($plugin_file)) {
+            $found_plugin = true;
+        } else {
+            $plugin_dir = dirname($plugin_dir);
+        }
     }
     
-    $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';
-    
-    if (file_exists($plugin_file)) {
+    if ($found_plugin) {
         $plugin_data = get_plugin_data($plugin_file);
         $source_name = $plugin_data['Name'] . ' → ';
     } else {

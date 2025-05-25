@@ -27,9 +27,11 @@ if ($option_type !== 'php') {
 // Get simple source name
 $source_name = '';
 if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
-    $source_name = wp_get_theme()->get('Name') . ' → ';
+    $theme = wp_get_theme();
+    $source_name = $theme->get('Name') . ' → ';
 } elseif (strpos($file_reference, get_template_directory_uri()) === 0) {
-    $source_name = wp_get_theme()->get('Name') . ' → ';
+    $theme = wp_get_theme();
+    $source_name = $theme->get('Name') . ' → ';
 } elseif (strpos($file_reference, plugins_url()) === 0 || strpos($file_reference, WP_PLUGIN_DIR) === 0) {
     // Get plugin name from the file path
     $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);

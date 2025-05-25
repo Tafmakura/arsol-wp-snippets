@@ -138,15 +138,13 @@ if ($file_exists) {
 } else {
     // File doesn't exist - show error message
     ?>
-    <div class="arsol-addon-container error">
-        <p class="arsol-addon-error">
-            <div class="arsol-first-column">
-                <span class="dashicons dashicons-warning"></span>
-            </div>
-            <span>
-                <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], isset($file_path) ? $file_path : $file_reference)); ?>
-            </span>
-        </p>
+    <div class="arsol-addon-container arsol-error">
+        <div class="arsol-first-column">
+            <span class="dashicons dashicons-warning"></span>
+        </div>
+        <span>
+            <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], isset($file_path) ? $file_path : $file_reference)); ?>
+        </span>
     </div>
     <?php
 }

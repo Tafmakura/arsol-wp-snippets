@@ -19,6 +19,9 @@ if (!defined('ABSPATH')) {
 $file_exists = true;
 $file_reference = $addon_data['file'];
 
+// Clean up the file path
+$file_reference = str_replace('/../', '/', $file_reference);
+
 // Get simple source name
 $source_name = '';
 if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {

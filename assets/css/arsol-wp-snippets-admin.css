@@ -75,6 +75,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #d63638;
 }
 
 .arsol-addon-error .dashicons {
@@ -82,12 +83,16 @@
     vertical-align: middle;
 }
 
-.arsol-wp-snippets-checkbox {
-    padding-top: 3px;
-}
-
 .arsol-addon-error span {
     color: #d63638;
+}
+
+.arsol-addon-error small {
+    color: #d63638;
+}
+
+.arsol-wp-snippets-checkbox {
+    padding-top: 3px;
 }
 
 .arsol-addon-footer {

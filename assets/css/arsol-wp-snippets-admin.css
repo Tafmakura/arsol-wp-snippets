@@ -67,7 +67,7 @@
 /* Error state */
 .arsol-addon-container.arsol-error {
     border: 1px solid #d63638;
-    border-left: 6px solid #d63638;
+    border-left: 4px solid #d63638;
     background-color: #fef7f7;
 }
 

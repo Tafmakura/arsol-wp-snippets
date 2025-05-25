@@ -10,3 +10,38 @@
     padding: 5px 0;
     margin: 5px 0;
 }
+
+/* Addon file container styles */
+.arsol-addon-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.arsol-addon-container p {
+    margin: 0;
+}
+
+/* Error message styles */
+.arsol-addon-error-container {
+    border: 1px solid #d63638;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    background-color: #fef7f7;
+}
+
+.arsol-addon-error {
+    margin: 0;
+}
+
+.arsol-addon-error .dashicons {
+    color: #d63638;
+    vertical-align: middle;
+}
+
+.arsol-addon-error span {
+    color: #d63638;
+}

@@ -46,22 +46,26 @@ if ($file_exists) {
     // File exists - show checkbox
     $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
     ?>
-    <p>
-        <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
-               name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
-               value="1" <?php checked(1, $checked); ?>/>
-        <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
-    </p>
+    <div class="arsol-addon-container">
+        <p>
+            <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
+                   name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
+                   value="1" <?php checked(1, $checked); ?>/>
+            <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+        </p>
+    </div>
     <?php
 } else {
     // File doesn't exist - show error message
     ?>
-    <p class="arsol-addon-error">
-        <span class="dashicons dashicons-warning" style="color: #d63638; vertical-align: middle;"></span>
-        <span style="color: #d63638;">
-            <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], isset($file_path) ? $file_path : $file_reference)); ?>
-        </span>
-    </p>
+    <div class="arsol-addon-error-container">
+        <p class="arsol-addon-error">
+            <span class="dashicons dashicons-warning"></span>
+            <span>
+                <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], isset($file_path) ? $file_path : $file_reference)); ?>
+            </span>
+        </p>
+    </div>
     <?php
 }
 ?>

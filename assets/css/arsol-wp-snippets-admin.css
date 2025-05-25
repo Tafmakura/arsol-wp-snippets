@@ -53,6 +53,12 @@
     line-height: 1.4;
 }
 
+/* Small text size consistency */
+.arsol-addon-container small {
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
 /* Enabled file state */
 .arsol-addon-container.enabled {
     border-left-color: #46b450;

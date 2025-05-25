@@ -16,6 +16,7 @@
 .arsol-addon-container p {
     margin: 0;
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
 }
@@ -23,10 +24,13 @@
 .arsol-checkbox-container {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .arsol-label-container {
     flex: 1;
+    display: flex;
+    align-items: center;
 }
 
 /* Error message styles */

@@ -59,10 +59,6 @@ class Theme_Support {
         // Check for arsol-wp-snippets directory in theme
         $snippets_dir = $theme_dir . '/arsol-wp-snippets/';
         
-        // Debug: Add error log to see if directory exists
-        error_log("Checking {$theme_label} directory: " . $snippets_dir);
-        error_log("Directory exists: " . (is_dir($snippets_dir) ? 'YES' : 'NO'));
-        
         if (!is_dir($snippets_dir)) {
             return;
         }

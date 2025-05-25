@@ -42,7 +42,7 @@ define('ARSOL_WP_SNIPPETS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_WP_SNIPPETS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('ARSOL_WP_SNIPPETS_VERSION', '9.0.9');
 define('ARSOL_WP_SNIPPETS_ASSETS_VERSION', '9.0.7');
-define('ARSOL_WP_SNIPPETS_SAFE_MODE', false); // Circuit breaker for safe mode
+
 
 // Use correct namespace
 use Arsol_WP_Snippets\Setup;

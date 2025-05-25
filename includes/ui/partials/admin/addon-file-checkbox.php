@@ -26,7 +26,17 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
 } elseif (strpos($file_reference, get_template_directory_uri()) === 0) {
     $source_name = wp_get_theme()->get('Name') . ' → ';
 } elseif (strpos($file_reference, plugins_url()) === 0) {
-    $source_name = 'Plugin → ';
+    // Get plugin name from the file path
+    $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
+    $plugin_dir = dirname($plugin_path);
+    $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';
+    
+    if (file_exists($plugin_file)) {
+        $plugin_data = get_plugin_data($plugin_file);
+        $source_name = $plugin_data['Name'] . ' → ';
+    } else {
+        $source_name = 'Plugin → ';
+    }
 }
 
 // Determine how to check file existence based on file type

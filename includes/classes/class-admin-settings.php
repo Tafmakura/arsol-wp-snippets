@@ -149,29 +149,28 @@ class Admin_Settings {
      * Get available PHP addon options
      */
     public function get_php_addon_options() {
-        // Default empty array
         $php_addon_options = array();
         
-        /**
-         * Filter the PHP addon options
-         * 
-         * @param array $php_addon_options Array of PHP addon options with file paths
-         */
-        $filtered_options = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
+        // Get PHP files from theme directory
+        $theme_dir = get_stylesheet_directory();
+        $theme_files = glob($theme_dir . '/includes/functions/*.php');
         
-        // Validate that all files are PHP files and add type
-        foreach ($filtered_options as $addon_id => $addon_data) {
-            // Check if file path exists and ends with .php
-            if (!isset($addon_data['file']) || substr($addon_data['file'], -4) !== '.php') {
-                // Remove invalid entries
-                unset($filtered_options[$addon_id]);
-            } else {
-                // Add type for PHP files
-                $filtered_options[$addon_id]['type'] = 'php';
+        if ($theme_files) {
+            foreach ($theme_files as $file) {
+                $file_name = basename($file);
+                $addon_id = 'theme-' . sanitize_title($file_name);
+                
+                $php_addon_options[$addon_id] = array(
+                    'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
+                    'file' => $file,
+                    'context' => 'global', // Default to global
+                    'priority' => 10 // Default priority
+                );
             }
         }
         
-        return $filtered_options;
+        // Allow filtering of PHP addon options
+        return apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
     }
     
     /**
@@ -384,10 +383,31 @@ class Admin_Settings {
         // Loop through enabled files and include them
         foreach ($enabled_options as $addon_id => $enabled) {
             if ($enabled && isset($php_addon_options[$addon_id])) {
-                $file_path = $php_addon_options[$addon_id]['file'];
-                if (file_exists($file_path)) {
-                    include_once $file_path;
-                    do_action('arsol_wp_snippets_loaded_php_addon', $addon_id, $file_path);
+                $addon_data = $php_addon_options[$addon_id];
+                $file_path = $addon_data['file'];
+                
+                // Check context - load if global or matches current context
+                $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                $should_load = false;
+                
+                if ($context === 'global') {
+                    $should_load = true;
+                } elseif ($context === 'admin' && is_admin()) {
+                    $should_load = true;
+                } elseif ($context === 'frontend' && !is_admin()) {
+                    $should_load = true;
+                }
+                
+                if ($should_load && file_exists($file_path)) {
+                    // Get priority - DEFAULT TO 10
+                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                    
+                    // Hook into appropriate action based on context
+                    $hook = is_admin() ? 'admin_init' : 'wp';
+                    add_action($hook, function() use ($file_path, $addon_id) {
+                        include_once $file_path;
+                        do_action('arsol_wp_snippets_loaded_php_addon', $addon_id, $file_path);
+                    }, $priority);
                 }
             }
         }

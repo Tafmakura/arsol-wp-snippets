@@ -191,8 +191,16 @@ if (!$file_exists) {
             </div>
             <div class="arsol-addon-footer">
                 <span class="arsol-addon-meta">
-                    <strong>Context:</strong> <?php echo ucfirst($addon_data['context'] ?? 'global'); ?>
+                    <strong>Context:</strong> <?php 
+                        $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                        echo ucfirst($context);
+                    ?>
                 </span>
+                <?php if (isset($addon_data['priority'])): ?>
+                <span class="arsol-addon-meta">
+                    <strong>Priority:</strong> <?php echo intval($addon_data['priority']); ?>
+                </span>
+                <?php endif; ?>
                 <?php 
                 // Define addon type for use in the template
                 $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
@@ -200,44 +208,6 @@ if (!$file_exists) {
                 ?>
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
-                </span>
-                <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> 
-                    <?php 
-                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                    $priority_group = '';
-                    if ($priority <= 5) {
-                        $priority_group = ' (Early)';
-                    } elseif ($priority <= 10) {
-                        $priority_group = ' (Default)';
-                    } elseif ($priority <= 20) {
-                        $priority_group = ' (Late)';
-                    } else {
-                        $priority_group = ' (Very Late)';
-                    }
-                    echo $priority . $priority_group;
-                    ?>
-                </span>
-                <?php elseif ($addon_type === 'css'): ?>
-                <span class="arsol-addon-meta">
-                    <strong>Position:</strong> Header
-                </span>
-                <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> 
-                    <?php 
-                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                    $priority_group = '';
-                    if ($priority <= 5) {
-                        $priority_group = ' (Early)';
-                    } elseif ($priority <= 10) {
-                        $priority_group = ' (Default)';
-                    } elseif ($priority <= 20) {
-                        $priority_group = ' (Late)';
-                    } else {
-                        $priority_group = ' (Very Late)';
-                    }
-                    echo $priority . $priority_group;
-                    ?>
                 </span>
                 <?php endif; ?>
                 <?php if (!empty($addon_data['dependencies'])): ?>

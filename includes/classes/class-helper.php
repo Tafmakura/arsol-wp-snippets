@@ -149,6 +149,12 @@ class Helper {
         // Combine all files
         $all_files = array_merge($php_files, $css_files, $js_files);
         
+        // Add the current file to the collection if it's not already there
+        $current_file_key = array_search($addon_data['file'], array_column($all_files, 'file'));
+        if ($current_file_key === false) {
+            $all_files[] = $addon_data;
+        }
+        
         // Find all files that use this path
         $files_with_same_path = array();
         foreach ($all_files as $file_data) {
@@ -168,6 +174,14 @@ class Helper {
         $first_file = $files_with_same_path[0];
         $first_path_info = self::normalize_path($first_file['file']);
         
+        // Get all duplicate names for display
+        $duplicate_names = array();
+        foreach ($files_with_same_path as $file) {
+            if ($file['name'] !== $first_file['name']) {
+                $duplicate_names[] = $file['name'];
+            }
+        }
+        
         return array(
             'file' => $addon_data['file'],
             'name' => $addon_data['name'],
@@ -175,7 +189,8 @@ class Helper {
             'first_source' => $first_path_info['source_name'],
             'first_name' => $first_file['name'],
             'first_loading_order' => self::get_loading_order($first_file),
-            'total_duplicates' => count($files_with_same_path)
+            'total_duplicates' => count($files_with_same_path),
+            'duplicate_names' => $duplicate_names
         );
     }
 } 

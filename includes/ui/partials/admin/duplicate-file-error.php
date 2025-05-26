@@ -39,6 +39,10 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_data['file']);
                     Loading Order: <?php echo esc_html($dup_data['loading_order']); ?> 
                     (First file: <?php echo esc_html($dup_data['first_loading_order']); ?>)
                     | Total Duplicates: <?php echo esc_html($dup_data['total_duplicates']); ?>
+                    <?php if (!empty($dup_data['duplicate_names'])): ?>
+                    <br>
+                    Other duplicates: <?php echo esc_html(implode(', ', $dup_data['duplicate_names'])); ?>
+                    <?php endif; ?>
                 </small>
             </small>
         </div>

@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @var string $dup_path The duplicate file path to display
+ * @var array $dup_data The duplicate file data containing file, name, and loading_order
  */
 
 // Normalize the path
-$path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_path);
+$path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_data['file']);
 ?>
 <div class="arsol-addon-container arsol-error">
     <div class="arsol-first-column">

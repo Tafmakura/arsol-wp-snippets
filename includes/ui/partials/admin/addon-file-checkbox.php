@@ -184,9 +184,9 @@ if (!$file_exists) {
                             echo ucfirst($context);
                         ?>
                 </span>
-                <?php if (isset($addon_data['priority'])): ?>
+                <?php if (isset($addon_data['loading_order'])): ?>
                 <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> <?php echo intval($addon_data['priority']); ?>
+                    <strong>Loading Order:</strong> <?php echo intval($addon_data['loading_order']); ?>
                 </span>
                 <?php endif; ?>
                 <?php 
@@ -199,7 +199,10 @@ if (!$file_exists) {
                 </span>
                 <?php endif; ?>
                 <div class="arsol-addon-meta">
-                    <strong><?php echo esc_html__('Timing:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($priority_category); ?>
+                    <strong><?php echo esc_html__('Source:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($source_name); ?>
+                </div>
+                <div class="arsol-addon-meta">
+                    <strong><?php echo esc_html__('Timing:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($loading_order_category); ?>
                 </div>
                 <?php if (!empty($addon_data['dependencies'])): ?>
                 <div class="arsol-addon-meta">

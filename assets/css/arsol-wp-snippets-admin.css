@@ -145,24 +145,24 @@
     font-weight: 600;
 }
 
-/* Priority group styles */
-.arsol-addon-meta strong:contains("Priority") + * {
+/* Loading Order group styles */
+.arsol-addon-meta strong:contains("Loading Order") + * {
     font-weight: 500;
 }
 
-.arsol-addon-meta strong:contains("Priority") + *:contains("(Early)") {
+.arsol-addon-meta strong:contains("Loading Order") + *:contains("(Early)") {
     color: #2271b1;
 }
 
-.arsol-addon-meta strong:contains("Priority") + *:contains("(Default)") {
+.arsol-addon-meta strong:contains("Loading Order") + *:contains("(Default)") {
     color: #50575e;
 }
 
-.arsol-addon-meta strong:contains("Priority") + *:contains("(Late)") {
+.arsol-addon-meta strong:contains("Loading Order") + *:contains("(Late)") {
     color: #996300;
 }
 
-.arsol-addon-meta strong:contains("Priority") + *:contains("(Very Late)") {
+.arsol-addon-meta strong:contains("Loading Order") + *:contains("(Very Late)") {
     color: #d63638;
 }
 

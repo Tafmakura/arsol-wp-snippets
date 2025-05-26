@@ -14,34 +14,33 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get priority and determine its category
-$priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-$priority_category = '';
-if ($priority <= 5) {
-    $priority_category = 'Early';
-} elseif ($priority <= 10) {
-    $priority_category = 'Default';
-} elseif ($priority <= 20) {
-    $priority_category = 'Late';
+// Get loading order and determine its category
+$loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
+$loading_order_category = '';
+if ($loading_order <= 5) {
+    $loading_order_category = 'Early';
+} elseif ($loading_order <= 10) {
+    $loading_order_category = 'Default';
+} elseif ($loading_order <= 20) {
+    $loading_order_category = 'Late';
 } else {
-    $priority_category = 'Very Late';
+    $loading_order_category = 'Very Late';
 }
 ?>
 <div class="arsol-addon-title-wrapper">
     <div class="arsol-addon-title">
         <h4 class="arsol-addon-title">
             <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
-            <?php echo wc_help_tip('Hello World'); ?>
         </h4>
     </div>
-    <div class="arsol-addon-priority">
+    <div class="arsol-addon-loading-order">
         <?php 
-        // Display priority number
+        // Display loading order number
         $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
         if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
         ?>
         <span class="arsol-loading-order">
-            <?php echo esc_html($priority); ?>
+            <?php echo esc_html($loading_order); ?>
         </span>
         <?php endif; ?>
     </div>

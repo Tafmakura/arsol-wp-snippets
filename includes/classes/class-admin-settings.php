@@ -177,7 +177,7 @@ class Admin_Settings {
         $final = array();
         $duplicates = array();
         
-        // Group files by path
+        // Group files by path using a hash map
         $path_groups = array();
         foreach ($files as $id => $data) {
             if (!isset($data['file'])) continue;
@@ -203,32 +203,40 @@ class Admin_Settings {
         // Process each path group
         foreach ($path_groups as $path => $group_files) {
             if (count($group_files) === 1) {
-                // Single file, add to final options
+                // Single file - add to final options
                 $file = $group_files[0];
-                $final[$file['id']] = array(
-                    'name' => $file['name'],
-                    'file' => $file['file'],
-                    'context' => $file['context'],
-                    'loading_order' => $file['loading_order']
-                );
+                $final[$file['id']] = $file;
             } else {
-                // Multiple files, sort by loading order
+                // Multiple files - sort by loading order
                 usort($group_files, function($a, $b) {
                     return $a['loading_order'] - $b['loading_order'];
                 });
                 
                 // First file goes to final options
                 $first_file = $group_files[0];
-                $final[$first_file['id']] = array(
-                    'name' => $first_file['name'],
-                    'file' => $first_file['file'],
-                    'context' => $first_file['context'],
-                    'loading_order' => $first_file['loading_order']
-                );
+                $final[$first_file['id']] = $first_file;
                 
-                // Rest go to duplicates
-                for ($i = 1; $i < count($group_files); $i++) {
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($group_files[$i]);
+                // Process all duplicates
+                foreach ($group_files as $index => $file) {
+                    if ($index === 0) continue; // Skip first file
+                    
+                    // Get all files with same path for this duplicate
+                    $duplicate_data = array(
+                        'file' => $file['file'],
+                        'name' => $file['name'],
+                        'loading_order' => $file['loading_order'],
+                        'first_source' => $first_file['source_name'],
+                        'first_name' => $first_file['name'],
+                        'first_loading_order' => $first_file['loading_order'],
+                        'total_duplicates' => count($group_files),
+                        'duplicate_names' => array_map(function($f) use ($first_file) {
+                            return $f['name'];
+                        }, array_filter($group_files, function($f) use ($first_file) {
+                            return $f['name'] !== $first_file['name'];
+                        }))
+                    );
+                    
+                    $duplicates[] = $duplicate_data;
                 }
             }
         }

@@ -132,64 +132,50 @@ class Helper {
     }
 
     /**
-     * Process duplicate file data for storage
+     * Process duplicate file data
      *
-     * @param array $addon_data The addon data containing file, name, and optional loading_order
-     * @return array Processed duplicate file data
+     * @param array $file_data File data to process
+     * @return array Processed duplicate data
      */
-    public static function process_duplicate_data($addon_data) {
-        // Get the source name for the current file
-        $path_info = self::normalize_path($addon_data['file']);
-        
-        // Get all available files through filters
-        $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
-        $css_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
-        $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
-        
-        // Combine all files
-        $all_files = array_merge($php_files, $css_files, $js_files);
-        
-        // Find all files that use this path, excluding the current file
-        $files_with_same_path = array();
-        foreach ($all_files as $file_data) {
-            if (isset($file_data['file']) && 
-                $file_data['file'] === $addon_data['file'] && 
-                $file_data['name'] !== $addon_data['name']) {
-                $files_with_same_path[] = $file_data;
-            }
+    public static function process_duplicate_data($file_data) {
+        if (!isset($file_data['file'])) {
+            return array();
         }
+
+        // Normalize file path
+        $file_path = self::normalize_path($file_data['file']);
         
-        // Add the current file to the collection for sorting
-        $files_with_same_path[] = $addon_data;
+        // Get all files with same path
+        $duplicate_files = self::get_duplicate_file_data($file_path);
         
-        // Sort files by loading order
-        usort($files_with_same_path, function($a, $b) {
-            $loading_order_a = self::get_loading_order($a);
-            $loading_order_b = self::get_loading_order($b);
-            return $loading_order_a - $loading_order_b;
+        if (empty($duplicate_files)) {
+            return array();
+        }
+
+        // Sort by loading order
+        usort($duplicate_files, function($a, $b) {
+            return $a['loading_order'] - $b['loading_order'];
         });
+
+        // Get first file (lowest loading order)
+        $first_file = $duplicate_files[0];
         
-        // The first file in the sorted array is the one with lowest loading order
-        $first_file = $files_with_same_path[0];
-        $first_path_info = self::normalize_path($first_file['file']);
-        
-        // Get all duplicate names for display, excluding the first file
-        $duplicate_names = array();
-        foreach ($files_with_same_path as $file) {
-            if ($file['name'] !== $first_file['name']) {
-                $duplicate_names[] = $file['name'];
-            }
-        }
-        
+        // Get all other files
+        $other_files = array_filter($duplicate_files, function($f) use ($first_file) {
+            return $f['name'] !== $first_file['name'];
+        });
+
         return array(
-            'file' => $addon_data['file'],
-            'name' => $addon_data['name'],
-            'loading_order' => self::get_loading_order($addon_data),
-            'first_source' => $first_path_info['source_name'],
+            'file' => $file_path,
+            'name' => $file_data['name'],
+            'loading_order' => $file_data['loading_order'],
+            'first_source' => $first_file['source_name'],
             'first_name' => $first_file['name'],
-            'first_loading_order' => self::get_loading_order($first_file),
-            'total_duplicates' => count($files_with_same_path),
-            'duplicate_names' => $duplicate_names
+            'first_loading_order' => $first_file['loading_order'],
+            'total_duplicates' => count($duplicate_files),
+            'duplicate_names' => array_map(function($f) {
+                return $f['name'];
+            }, $other_files)
         );
     }
 } 

@@ -31,7 +31,7 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_data['file']);
         ?>
         <div class="arsol-addon-info">
             <small class="arsol-addon-error">
-                <strong>Duplicate file path detected at → </strong> <?php echo esc_html($path_info['display_path']); ?>
+                  <strong>Duplicate file path detected:</strong> <?php echo '<strong>' . esc_html($path_info['source_name']) . '</strong>' . esc_html($path_info['display_path']); ?>
             </small>
         </div>
     </div>

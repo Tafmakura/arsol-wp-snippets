@@ -2,14 +2,19 @@
 
 namespace Arsol_WP_Snippets;
 
-if (!defined('ABSPATH')) {
+/**
+ * Admin Settings Class
+ *
+ * @package Arsol_CSS_Addons
+ */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-/**
- * Assets class to manage CSS and JS files
- */
 class Assets {
+
     /**
      * Constructor
      */

@@ -61,44 +61,31 @@
 
 /* Enabled file state */
 .arsol-addon-container.enabled {
+    border-color: #46b450;
     border-left-color: #46b450;
 }
 
 /* Disabled file state */
 .arsol-addon-container.disabled {
+    border-color: #8c8f94;
     border-left-color: #8c8f94;
 }
 
 /* Error state */
 .arsol-addon-container.arsol-error {
-    border: 1px solid #d63638;
-    border-left: 4px solid #d63638;
+    border-color: #d63638;
+    border-left-color: #d63638;
     background-color: #fef7f7;
 }
 
-.arsol-addon-error {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #d63638;
-}
-
-
-
-
-.arsol-addon-error .dashicons,
-.arsol-addon-error .dashicons-warning,
-.arsol-addon-error .dashicons-warning:before {
+.arsol-addon-container.arsol-error .dashicons,
+.arsol-addon-container.arsol-error .dashicons-warning,
+.arsol-addon-container.arsol-error .dashicons-warning:before {
     color: #d63638 !important;
     vertical-align: middle;
 }
 
-.arsol-addon-error span {
-    color: #d63638;
-}
-
-.arsol-addon-error small {
+.arsol-addon-container.arsol-error small {
     color: #d63638;
 }
 

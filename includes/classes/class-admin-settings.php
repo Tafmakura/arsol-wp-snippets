@@ -422,9 +422,6 @@ class Admin_Settings {
             return;
         }
         
-        // Enqueue WordPress's tooltip script
-        wp_enqueue_script('wp-tooltip');
-        
         $options = get_option('arsol_wp_snippets_options', array());
         
         // Load CSS snippets
@@ -495,15 +492,6 @@ class Admin_Settings {
                 }
             }
         }
-
-        // Enqueue admin script
-        wp_enqueue_script(
-            'arsol-wp-snippets-admin',
-            plugins_url('assets/js/arsol-wp-snippets-admin.js', dirname(dirname(__FILE__))),
-            array('jquery', 'select2'),
-            arsol_wp_snippets_get_version(),
-            true
-        );
     }
     
     /**

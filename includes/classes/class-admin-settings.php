@@ -251,6 +251,21 @@ class Admin_Settings {
     }
     
     /**
+     * Sort addons by priority
+     *
+     * @param array $addons Array of addon data
+     * @return array Sorted addons
+     */
+    private function sort_addons_by_priority($addons) {
+        uasort($addons, function($a, $b) {
+            $priority_a = isset($a['priority']) ? intval($a['priority']) : 10;
+            $priority_b = isset($b['priority']) ? intval($b['priority']) : 10;
+            return $priority_a - $priority_b;
+        });
+        return $addons;
+    }
+    
+    /**
      * Render CSS addon options checkboxes
      */
     public function render_css_addon_options() {
@@ -264,6 +279,9 @@ class Admin_Settings {
             echo '<p>' . esc_html__('No CSS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
+        
+        // Sort CSS addons by priority
+        $available_css_addons = $this->sort_addons_by_priority($available_css_addons);
         
         foreach ($available_css_addons as $addon_id => $addon_data) {
             // Set variables that will be available to the template
@@ -291,6 +309,9 @@ class Admin_Settings {
             echo '<p>' . esc_html__('No JS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
+        
+        // Sort JS addons by priority
+        $available_js_addons = $this->sort_addons_by_priority($available_js_addons);
         
         foreach ($available_js_addons as $addon_id => $addon_data) {
             // Set variables that will be available to the template

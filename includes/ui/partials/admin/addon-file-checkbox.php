@@ -100,6 +100,14 @@ if ($file_exists) {
                        name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
                        value="1" <?php checked(1, $checked); ?>/>
             </span>
+            <?php if ($addon_data['type'] === 'js' || $addon_data['type'] === 'css'): ?>
+            <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
+                <?php 
+                $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                echo esc_html($priority); 
+                ?>
+            </span>
+            <?php endif; ?>
         </div>
         <div class="arsol-label-container">
             <div class="arsol-addon-info">
@@ -125,7 +133,21 @@ if ($file_exists) {
                     <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
                 </span>
                 <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> <?php echo isset($addon_data['priority']) ? intval($addon_data['priority']) : '10'; ?>
+                    <strong>Priority:</strong> 
+                    <?php 
+                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                    $priority_group = '';
+                    if ($priority <= 5) {
+                        $priority_group = ' (Early)';
+                    } elseif ($priority <= 10) {
+                        $priority_group = ' (Default)';
+                    } elseif ($priority <= 20) {
+                        $priority_group = ' (Late)';
+                    } else {
+                        $priority_group = ' (Very Late)';
+                    }
+                    echo $priority . $priority_group;
+                    ?>
                 </span>
                 <?php elseif ($addon_data['type'] === 'css'): ?>
                 <span class="arsol-addon-meta">

@@ -132,7 +132,11 @@ if ($file_exists) {
                 <span class="arsol-addon-meta">
                     <strong>Context:</strong> <?php echo ucfirst($addon_data['context'] ?? 'global'); ?>
                 </span>
-                <?php if ($addon_type === 'js'): ?>
+                <?php 
+                // Define addon type for use in the template
+                $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
+                if ($addon_type === 'js'): 
+                ?>
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
                 </span>

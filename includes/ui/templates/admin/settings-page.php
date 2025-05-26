@@ -9,9 +9,6 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-
-// Get current options
-$options = get_option('arsol_wp_snippets_options', array());
 ?>
 
 <div class="wrap">
@@ -24,8 +21,8 @@ $options = get_option('arsol_wp_snippets_options', array());
 
     <form method="post" action="options.php">
         <?php
-        settings_fields('arsol_wp_snippets_settings');
-        do_settings_sections('arsol-wp-snippets');
+        settings_fields('arsol_wp_snippets_options');
+        do_settings_sections('arsol_wp_snippets_options');
         submit_button();
         ?>
     </form>

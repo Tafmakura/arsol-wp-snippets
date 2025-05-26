@@ -206,15 +206,11 @@ If you encounter any issues:
 ## Changelog
 
 ### Version 0.0.13
-- Replaced 'priority' parameter with 'loading_order' for better clarity in CSS and JS loaders
-- Added comprehensive examples of conditional loading based on:
-  - User login status
-  - Mobile device detection
-  - User roles
-  - Time-based conditions
-- Updated documentation to reflect new parameter names and loading conditions
-- Improved code organization and readability
-- Added detailed comments explaining conditional loading logic
+- Updated plugin header with GitHub repository links
+- Added welcome message to admin settings page
+- Made plugin URL clickable in WordPress plugin listing
+- Added links to GitHub repository and packet template
+- Improved documentation with better examples
 
 ### Version 0.0.12
 - Added loading order control for all file types
@@ -230,7 +226,10 @@ If you encounter any issues:
 - Enhanced error handling
 
 ### Version 0.0.1 - 0.0.10
-- Prototype experiments
+- Initial plugin development
+- Basic snippet management functionality
+- Admin interface implementation
+- File loading system setup
 
 ## License
 

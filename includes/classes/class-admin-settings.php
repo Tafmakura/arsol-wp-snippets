@@ -279,7 +279,7 @@ class Admin_Settings {
             }
             
             if (in_array($addon_data['file'], $seen_paths)) {
-                $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
+                $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
                 
                 // Check if this file should be considered the first one based on loading order
                 if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < $path_to_first_file[$addon_data['file']]['loading_order']) {
@@ -323,7 +323,7 @@ class Admin_Settings {
             }
             
             if (in_array($addon_data['file'], $seen_paths)) {
-                $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
+                $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
                 
                 // Check if this file should be considered the first one based on loading order
                 if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < $path_to_first_file[$addon_data['file']]['loading_order']) {

@@ -110,7 +110,6 @@ class Setup {
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-theme-support.php';
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-snippet-loader.php';
-        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-script-filter.php';
 
         // Core Functions 
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-admin.php';
@@ -125,6 +124,5 @@ class Setup {
         new \Arsol_WP_Snippets\Shortcodes();
         new \Arsol_WP_Snippets\Theme_Support();
         new \Arsol_WP_Snippets\Snippet_Loader();
-        new \Arsol_WP_Snippets\Script_Filter();
     }
 }

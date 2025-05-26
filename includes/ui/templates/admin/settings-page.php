@@ -1,28 +1,29 @@
 <?php
 /**
- * Settings Page Template
- *
- * @package Arsol_WP_Snippets
- * @subpackage Arsol_WP_Snippets/includes/ui/templates/admin
+ * Admin Settings Page Template
+ * 
+ * Available variables:
+ * @var string $page_title - The page title
+ * @var string $settings_slug - The settings slug
+ * @var Admin_Settings $admin_settings - The admin settings instance
  */
 
+// Exit if accessed directly
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
+
+// Get current options
+$options = get_option('arsol_wp_snippets_options', array());
 ?>
 
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <h1><?php echo esc_html($page_title); ?></h1>
     
-    <?php 
-    // Include the packet filter partial
-    require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/packet-filter.php';
-    ?>
-
     <form method="post" action="options.php">
         <?php
-        settings_fields('arsol_wp_snippets_options');
-        do_settings_sections('arsol_wp_snippets_options');
+        settings_fields('arsol_wp_snippets_settings');
+        do_settings_sections($settings_slug);
         submit_button();
         ?>
     </form>

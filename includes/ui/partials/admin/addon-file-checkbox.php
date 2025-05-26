@@ -199,9 +199,6 @@ if (!$file_exists) {
                 </span>
                 <?php endif; ?>
                 <div class="arsol-addon-meta">
-                    <strong><?php echo esc_html__('Source:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($source_name); ?>
-                </div>
-                <div class="arsol-addon-meta">
                     <strong><?php echo esc_html__('Timing:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($loading_order_category); ?>
                 </div>
                 <?php if (!empty($addon_data['dependencies'])): ?>

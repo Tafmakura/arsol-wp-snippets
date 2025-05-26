@@ -88,8 +88,69 @@ if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
     $file_exists = file_exists($file_reference);
 }
 
-if ($file_exists) {
-    // File exists - show checkbox
+// Check dependencies if file exists
+$missing_dependencies = array();
+if ($file_exists && !empty($addon_data['dependencies'])) {
+    $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
+    
+    if ($addon_type === 'css') {
+        $wp_styles = wp_styles();
+        foreach ($addon_data['dependencies'] as $dependency) {
+            if (!isset($wp_styles->registered[$dependency])) {
+                $missing_dependencies[] = $dependency;
+            }
+        }
+    } elseif ($addon_type === 'js') {
+        $wp_scripts = wp_scripts();
+        foreach ($addon_data['dependencies'] as $dependency) {
+            if (!isset($wp_scripts->registered[$dependency])) {
+                $missing_dependencies[] = $dependency;
+            }
+        }
+    }
+}
+
+if (!$file_exists) {
+    // File doesn't exist - show error message
+    ?>
+    <div class="arsol-addon-container arsol-error">
+        <div class="arsol-first-column">
+            <span class="dashicons dashicons-warning"></span>
+        </div>
+        <div class="arsol-label-container">
+            <h4 class="arsol-addon-title">
+                <?php echo esc_html($addon_data['name']); ?>
+            </h4>
+            <small class="arsol-addon-error">
+                <strong><?php echo esc_html__('Could not be found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
+            </small>
+        </div>
+    </div>
+    <?php
+} elseif (!empty($missing_dependencies)) {
+    // File exists but dependencies are missing - show dependency error
+    ?>
+    <div class="arsol-addon-container arsol-error">
+        <div class="arsol-first-column">
+            <span class="dashicons dashicons-warning"></span>
+        </div>
+        <div class="arsol-label-container">
+            <h4 class="arsol-addon-title">
+                <?php echo esc_html($addon_data['name']); ?>
+            </h4>
+            <small class="arsol-addon-error">
+                <strong><?php echo esc_html__('Missing Dependencies:', 'arsol-wp-snippets'); ?></strong>
+                <ul class="arsol-dependency-list">
+                    <?php foreach ($missing_dependencies as $dependency): ?>
+                    <li><?php echo esc_html($dependency); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </small>
+        </div>
+    </div>
+    <?php
+} else {
+    // File exists and all dependencies are present - show normal display
     $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
     $state_class = $checked ? 'enabled' : 'disabled';
     ?>
@@ -185,23 +246,6 @@ if ($file_exists) {
                 </span>
                 <?php endif; ?>
             </div>
-        </div>
-    </div>
-    <?php
-} else {
-    // File doesn't exist - show error message
-    ?>
-    <div class="arsol-addon-container arsol-error">
-        <div class="arsol-first-column">
-            <span class="dashicons dashicons-warning"></span>
-        </div>
-        <div class="arsol-label-container">
-            <h4 class="arsol-addon-title">
-                <?php echo esc_html($addon_data['name']); ?>
-            </h4>
-            <small class="arsol-addon-error">
-                <strong><?php echo esc_html__('Could not be found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
-            </small>
         </div>
     </div>
     <?php

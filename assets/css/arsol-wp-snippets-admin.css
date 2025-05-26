@@ -5,20 +5,23 @@
 
 /* Addon file container styles */
 .arsol-addon-container {
-    border: 1px solid #ddd;
-    border-left: 4px solid #ddd;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 0 4px 4px 0;
-    background-color: #f9f9f9;
     display: flex;
     align-items: flex-start;
-    column-gap: 10px;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background: #fff;
+    transition: all 0.2s ease;
 }
 
 .arsol-first-column {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
 }
 
@@ -44,23 +47,18 @@
 
 .arsol-label-container {
     flex: 1;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    column-gap: 10px;
+    min-width: 0;
 }
 
 .arsol-addon-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    margin-bottom: 8px;
 }
 
 .arsol-addon-title {
-    margin: 0;
-    font-size: 1.1em;
+    margin: 0 0 4px 0;
+    font-size: 14px;
     font-weight: 600;
-    line-height: 1.4;
+    color: #1e1e1e;
 }
 
 .arsol-addon-title label {
@@ -68,9 +66,11 @@
 }
 
 .arsol-addon-source {
-    color: #666;
+    display: block;
+    color: #646970;
     font-size: 0.9em;
     line-height: 1.4;
+    word-break: break-all;
 }
 
 .arsol-addon-container,
@@ -86,14 +86,26 @@
 
 /* Enabled file state */
 .arsol-addon-container.enabled {
-    border-left-color: #46b450;
+    border-color: #2271b1;
+    background-color: #f0f6fc;
 }
 
 /* Error state */
 .arsol-addon-container.arsol-error {
     border-color: #d63638;
-    border-left-color: #d63638;
-    background-color: #fef7f7;
+    background-color: #fcf0f1;
+}
+
+.arsol-addon-container.arsol-error .arsol-addon-title {
+    color: #d63638;
+}
+
+.arsol-addon-container.arsol-error .arsol-addon-error {
+    color: #d63638;
+}
+
+.arsol-addon-container.arsol-error .dashicons {
+    color: #d63638;
 }
 
 .arsol-addon-container.arsol-error .dashicons,
@@ -108,23 +120,64 @@
 }
 
 .arsol-wp-snippets-checkbox {
-    padding-top: 3px;
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.arsol-wp-snippets-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+}
+
+.arsol-wp-snippets-checkbox input[type="checkbox"] + label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+    border: 2px solid #2271b1;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.arsol-wp-snippets-checkbox input[type="checkbox"]:checked + label {
+    background-color: #2271b1;
+}
+
+.arsol-wp-snippets-checkbox input[type="checkbox"]:checked + label::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .arsol-addon-footer {
-    margin-top: 8px;
-    padding-top: 8px;
-    font-size: 12px;
-    color: #666;
-    border-top-width: 1px;
-    width: 100%;
     display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #646970;
 }
 
 .arsol-addon-meta {
-    display: inline-block;
-    margin-right: 15px;
-    
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .arsol-addon-meta:last-child {
@@ -158,3 +211,42 @@
 }
 
 /* Addon container hover state */
+.arsol-addon-container:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.arsol-addon-container.enabled:hover {
+    box-shadow: 0 2px 4px rgba(34, 113, 177, 0.1);
+}
+
+.arsol-addon-container.arsol-error:hover {
+    box-shadow: 0 2px 4px rgba(214, 54, 56, 0.1);
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 782px) {
+    .arsol-addon-container {
+        padding: 8px;
+    }
+
+    .arsol-addon-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .arsol-addon-meta {
+        flex-wrap: wrap;
+    }
+}
+
+/* Dependency Error List Styles */
+.arsol-dependency-list {
+    margin: 4px 0 0 0;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.arsol-dependency-list li {
+    margin: 2px 0;
+    color: #d63638;
+}

@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: Arsol WP Snippets
- * Plugin URI: https://your-site.com/arsol-wp-snippets
- * Description: A WordPress plugin to add custom code snippets and enhancements
+ * Plugin URI: https://github.com/Tafmakura/arsol-wp-snippets
+ * Description: A WordPress plugin to add custom code snippets and enhancements with a safe mode feature for troubleshooting. Check out our <a href="https://github.com/Tafmakura/arsol-wp-snippets">GitHub repository</a> for documentation and our <a href="https://github.com/Tafmakura/arsol-wps-packet-example">packet template</a> for examples.
  * Version: 0.0.13
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Taf Makura
- * Author URI: https://your-site.com
+ * Author URI: https://github.com/Tafmakura
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: arsol-wp-snippets

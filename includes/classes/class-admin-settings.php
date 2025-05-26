@@ -63,6 +63,17 @@ class Admin_Settings {
         $page_title = get_admin_page_title();
         $settings_slug = $this->css_addons_slug;
         
+        // Display welcome message
+        ?>
+        <div class="notice notice-info">
+            <p>
+                Welcome to Arsol WP Snippets! This plugin helps you manage and load custom PHP, CSS, and JavaScript snippets in your WordPress site. 
+                For detailed documentation and examples, visit our <a href="https://github.com/Tafmakura/arsol-wp-snippets" target="_blank">GitHub repository</a> 
+                or check out our <a href="https://github.com/Tafmakura/arsol-wps-packet-example" target="_blank">packet template</a>.
+            </p>
+        </div>
+        <?php
+        
         // Display safe mode notice if enabled
         if (defined('ARSOL_WP_SNIPPETS_SAFE_MODE') && ARSOL_WP_SNIPPETS_SAFE_MODE) {
             $this->display_safe_mode_notice();

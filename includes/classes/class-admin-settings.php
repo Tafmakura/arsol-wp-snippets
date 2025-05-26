@@ -426,7 +426,7 @@ class Admin_Settings {
                                 'arsol-css-addon-' . $addon_id,
                                 $addon_data['file'],
                                 array(),
-                                ARSOL_WP_SNIPPETS_VERSION
+                                arsol_wp_snippets_get_version()
                             );
                         }, $priority);
                         
@@ -462,7 +462,7 @@ class Admin_Settings {
                                 'arsol-js-addon-' . $addon_id,
                                 $addon_data['file'],
                                 array('jquery'),
-                                ARSOL_WP_SNIPPETS_VERSION,
+                                arsol_wp_snippets_get_version(),
                                 $in_footer
                             );
                         }, $priority);
@@ -516,7 +516,7 @@ class Admin_Settings {
                                 'arsol-css-addon-' . $addon_id,
                                 $addon_data['file'],
                                 array(),
-                                ARSOL_WP_SNIPPETS_VERSION
+                                arsol_wp_snippets_get_version()
                             );
                         }, $priority);
                         
@@ -552,7 +552,7 @@ class Admin_Settings {
                                 'arsol-js-addon-' . $addon_id,
                                 $addon_data['file'],
                                 array('jquery'),
-                                ARSOL_WP_SNIPPETS_VERSION,
+                                arsol_wp_snippets_get_version(),
                                 $in_footer
                             );
                         }, $priority);

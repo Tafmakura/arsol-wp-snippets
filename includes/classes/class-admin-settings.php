@@ -262,14 +262,7 @@ class Admin_Settings {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
         foreach ($duplicates as $dup_path) {
-            $addon_data = array(
-                'name' => basename($dup_path),
-                'file' => $dup_path,
-                'loading_order' => 10
-            );
-            $addon_id = sanitize_title(basename($dup_path));
-            $option_type = 'php';
-            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     
@@ -307,14 +300,7 @@ class Admin_Settings {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
         foreach ($duplicates as $dup_path) {
-            $addon_data = array(
-                'name' => basename($dup_path),
-                'file' => $dup_path,
-                'loading_order' => 10
-            );
-            $addon_id = sanitize_title(basename($dup_path));
-            $option_type = 'css';
-            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     
@@ -337,14 +323,7 @@ class Admin_Settings {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
         foreach ($duplicates as $dup_path) {
-            $addon_data = array(
-                'name' => basename($dup_path),
-                'file' => $dup_path,
-                'loading_order' => 10
-            );
-            $addon_id = sanitize_title(basename($dup_path));
-            $option_type = 'js';
-            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     

@@ -120,20 +120,38 @@ class Helper {
         $all_files = array_merge($php_files, $css_files, $js_files);
         
         // Find the first file that used this path
-        $first_name = '';
+        $first_file = null;
+        $first_loading_order = PHP_INT_MAX;
+        
         foreach ($all_files as $file_data) {
             if (isset($file_data['file']) && $file_data['file'] === $addon_data['file']) {
-                $first_name = $file_data['name'];
-                break;
+                $loading_order = isset($file_data['loading_order']) ? intval($file_data['loading_order']) : 10;
+                if ($loading_order < $first_loading_order) {
+                    $first_loading_order = $loading_order;
+                    $first_file = $file_data;
+                }
             }
         }
         
+        // If we found a first file, use its information
+        if ($first_file) {
+            $first_path_info = self::normalize_path($first_file['file']);
+            return array(
+                'file' => $addon_data['file'],
+                'name' => $addon_data['name'],
+                'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10,
+                'first_source' => $first_path_info['source_name'],
+                'first_name' => $first_file['name']
+            );
+        }
+        
+        // Fallback to current file if no first file found
         return array(
             'file' => $addon_data['file'],
             'name' => $addon_data['name'],
             'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10,
             'first_source' => $path_info['source_name'],
-            'first_name' => $first_name ?: $addon_data['name'] // Fallback to current name if first name not found
+            'first_name' => $addon_data['name']
         );
     }
 } 

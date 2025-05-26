@@ -186,7 +186,7 @@ class Admin_Settings {
                 
                 if (in_array($file, $seen_paths)) {
                     // Check if this file should be considered the first one based on loading order
-                    if (!isset($path_to_first_file[$file]) || $loading_order < $path_to_first_file[$file]['loading_order']) {
+                    if (!isset($path_to_first_file[$file]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$file])) {
                         // This file should be the first one
                         if (isset($path_to_first_file[$file])) {
                             // Move the previous first file to duplicates
@@ -238,7 +238,7 @@ class Admin_Settings {
                 $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($data);
                 
                 // Check if this file should be considered the first one based on loading order
-                if (!isset($path_to_first_file[$data['file']]) || $loading_order < $path_to_first_file[$data['file']]['loading_order']) {
+                if (!isset($path_to_first_file[$data['file']]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$data['file']])) {
                     // This file should be the first one
                     if (isset($path_to_first_file[$data['file']])) {
                         // Move the previous first file to duplicates
@@ -282,7 +282,7 @@ class Admin_Settings {
                 $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
                 
                 // Check if this file should be considered the first one based on loading order
-                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < $path_to_first_file[$addon_data['file']]['loading_order']) {
+                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$addon_data['file']])) {
                     // This file should be the first one
                     if (isset($path_to_first_file[$addon_data['file']])) {
                         // Move the previous first file to duplicates
@@ -326,7 +326,7 @@ class Admin_Settings {
                 $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
                 
                 // Check if this file should be considered the first one based on loading order
-                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < $path_to_first_file[$addon_data['file']]['loading_order']) {
+                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$addon_data['file']])) {
                     // This file should be the first one
                     if (isset($path_to_first_file[$addon_data['file']])) {
                         // Move the previous first file to duplicates

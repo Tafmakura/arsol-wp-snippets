@@ -73,9 +73,39 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
     $file_path = $plugin_path;
     $file_exists = file_exists($file_path);
 } else {
-    // Direct file path
-    $file_path = $file_reference;
-    $file_exists = file_exists($file_path);
+    // For CSS and JS files, we need to handle both URL and file system paths
+    if ($option_type === 'css' || $option_type === 'js') {
+        // If it's a URL, try to convert it to a file system path
+        if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
+            // Try to convert URL to file system path
+            $file_path = str_replace(
+                array(
+                    get_site_url(),
+                    get_home_url(),
+                    content_url(),
+                    plugins_url(),
+                    get_stylesheet_directory_uri(),
+                    get_template_directory_uri()
+                ),
+                array(
+                    ABSPATH,
+                    ABSPATH,
+                    WP_CONTENT_DIR,
+                    WP_PLUGIN_DIR,
+                    get_stylesheet_directory(),
+                    get_template_directory()
+                ),
+                $file_reference
+            );
+        } else {
+            $file_path = $file_reference;
+        }
+        $file_exists = file_exists($file_path);
+    } else {
+        // For PHP files, check directly
+        $file_path = $file_reference;
+        $file_exists = file_exists($file_path);
+    }
 }
 
 // Check dependencies if file exists

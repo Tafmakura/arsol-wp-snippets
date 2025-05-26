@@ -178,6 +178,26 @@ if (!$file_exists) {
                 ?></small>
             </div>
             <div class="arsol-addon-footer">
+                <span class="arsol-addon-meta">
+                        <strong>Context:</strong> <?php 
+                            $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                            echo ucfirst($context);
+                        ?>
+                </span>
+                <?php if (isset($addon_data['priority'])): ?>
+                <span class="arsol-addon-meta">
+                    <strong>Priority:</strong> <?php echo intval($addon_data['priority']); ?>
+                </span>
+                <?php endif; ?>
+                <?php 
+                // Define addon type for use in the template
+                $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
+                if ($addon_type === 'js'): 
+                ?>
+                <span class="arsol-addon-meta">
+                    <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
+                </span>
+                <?php endif; ?>
                 <div class="arsol-addon-meta">
                     <strong><?php echo esc_html__('Source:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($source_name); ?>
                 </div>

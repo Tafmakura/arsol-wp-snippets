@@ -57,13 +57,37 @@ function arsol_wp_snippets_get_version() {
     return $version;
 }
 
-// Use correct namespace
-use Arsol_WP_Snippets\Setup;
+// Autoload classes
+spl_autoload_register(function ($class) {
+    // Project-specific namespace prefix
+    $prefix = 'Arsol_WP_Snippets\\';
 
-// Include the Setup class
-require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-setup.php';
+    // Base directory for the namespace prefix
+    $base_dir = plugin_dir_path(__FILE__) . 'includes/classes/';
+
+    // Does the class use the namespace prefix?
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+
+    // Get the relative class name
+    $relative_class = substr($class, $len);
+
+    // Replace namespace separators with directory separators
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+    // If the file exists, require it
+    if (file_exists($file)) {
+        require $file;
+    }
+});
 
 // Initialize the plugin
-if (class_exists('Arsol_WP_Snippets\Setup')) {
-    new Setup();
+function arsol_wp_snippets_init() {
+    // Initialize classes
+    new \Arsol_WP_Snippets\Admin_Settings();
+    new \Arsol_WP_Snippets\Snippet_Loader();
+    new \Arsol_WP_Snippets\Theme_Support();
 }
+add_action('plugins_loaded', 'arsol_wp_snippets_init');

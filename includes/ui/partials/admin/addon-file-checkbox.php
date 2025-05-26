@@ -15,98 +15,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Clean up the file path
-$file_reference = $addon_data['file'];
-
-// Remove 'functions/' from plugin paths regardless of format
-if (strpos($file_reference, 'wp-content/plugins/') !== false || strpos($file_reference, WP_PLUGIN_DIR) !== false) {
-    $file_reference = preg_replace('#/functions/snippets/#', '/snippets/', $file_reference);
-    $file_reference = preg_replace('#/functions/\.\./snippets/#', '/snippets/', $file_reference);
-    $file_reference = str_replace('/functions/', '/', $file_reference);
-}
-
-// Additional path cleanup
-if ($option_type !== 'php') {
-    $file_reference = str_replace('/../', '/', $file_reference);
-}
+// Normalize the file path
+$path_info = \Arsol_WP_Snippets\Path_Normalizer::normalize_path($addon_data['file']);
 
 // Check if file exists
-$file_exists = false;
-$file_path = '';
-
-// Get simple source name
-$source_name = '';
-if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
-    $source_name = wp_get_theme()->get('Name') . ' → ';
-    $file_path = str_replace(get_stylesheet_directory_uri(), get_stylesheet_directory(), $file_reference);
-    $file_exists = file_exists($file_path);
-} elseif (strpos($file_reference, get_template_directory_uri()) === 0) {
-    $source_name = wp_get_theme()->get('Name') . ' → ';
-    $file_path = str_replace(get_template_directory_uri(), get_template_directory(), $file_reference);
-    $file_exists = file_exists($file_path);
-} elseif (strpos($file_reference, plugins_url()) === 0 || strpos($file_reference, WP_PLUGIN_DIR) === 0) {
-    // Get plugin name from the file path
-    $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
-    $plugin_dir = dirname($plugin_path);
-    
-    // Keep going up until we find the plugin's main PHP file
-    $found_plugin = false;
-    while (!$found_plugin && strpos($plugin_dir, WP_PLUGIN_DIR) === 0) {
-        $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';
-        if (file_exists($plugin_file)) {
-            $found_plugin = true;
-        } else {
-            $plugin_dir = dirname($plugin_dir);
-        }
-    }
-    
-    if ($found_plugin) {
-        $plugin_data = get_plugin_data($plugin_file);
-        $source_name = $plugin_data['Name'] . ' → ';
-    } else {
-        // Try to get plugin name from directory
-        $plugin_name = basename($plugin_dir);
-        $source_name = ucwords(str_replace('-', ' ', $plugin_name)) . ' → ';
-    }
-    
-    // Check if file exists in plugin directory
-    $file_path = $plugin_path;
-    $file_exists = file_exists($file_path);
-} else {
-    // For CSS and JS files, we need to handle both URL and file system paths
-    if ($option_type === 'css' || $option_type === 'js') {
-        // If it's a URL, try to convert it to a file system path
-        if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
-            // Try to convert URL to file system path
-            $file_path = str_replace(
-                array(
-                    get_site_url(),
-                    get_home_url(),
-                    content_url(),
-                    plugins_url(),
-                    get_stylesheet_directory_uri(),
-                    get_template_directory_uri()
-                ),
-                array(
-                    ABSPATH,
-                    ABSPATH,
-                    WP_CONTENT_DIR,
-                    WP_PLUGIN_DIR,
-                    get_stylesheet_directory(),
-                    get_template_directory()
-                ),
-                $file_reference
-            );
-        } else {
-            $file_path = $file_reference;
-        }
-        $file_exists = file_exists($file_path);
-    } else {
-        // For PHP files, check directly
-        $file_path = $file_reference;
-        $file_exists = file_exists($file_path);
-    }
-}
+$file_exists = file_exists($path_info['normalized_path']);
 
 // Check dependencies if file exists
 $missing_dependencies = array();
@@ -141,7 +54,7 @@ if (!$file_exists) {
             <div class="arsol-addon-info">
                 <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
                 <small class="arsol-addon-error">
-                    <strong><?php echo esc_html__('Snippet file not found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
+                    <strong><?php echo esc_html__('Snippet file not found at →', 'arsol-wp-snippets'); ?></strong> <?php echo '<strong>' . esc_html($path_info['source_name']) . '</strong>' . esc_html($path_info['display_path']); ?>
                 </small>
             </div>
         </div>
@@ -188,13 +101,7 @@ if (!$file_exists) {
                 <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
             
                 <small class="arsol-addon-source"><?php 
-                    $display_path = $file_reference;
-                    if (strpos($display_path, 'wp-content/plugins/') !== false) {
-                        $display_path = preg_replace('#/functions/snippets/#', '/snippets/', $display_path);
-                        $display_path = preg_replace('#/functions/\.\./snippets/#', '/snippets/', $display_path);
-                        $display_path = str_replace('/functions/', '/', $display_path);
-                    }
-                    echo '<strong>' . esc_html($source_name) . '</strong>' . esc_html($display_path); 
+                    echo '<strong>' . esc_html($path_info['source_name']) . '</strong>' . esc_html($path_info['display_path']); 
                 ?></small>
             </div>
             <div class="arsol-addon-footer">

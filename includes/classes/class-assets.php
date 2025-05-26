@@ -29,21 +29,21 @@ class Assets {
     public function register_frontend_assets() {
         $plugin_url = plugin_dir_url(ARSOL_WP_SNIPPETS_PLUGIN_FILE);
         
-        // Register CSS (loads in header by default)
+        // Register CSS with prefixed filename
         wp_register_style(
             'arsol-wp-snippets-frontend',
             $plugin_url . 'assets/css/arsol-wp-snippets-frontend.css',
             array(),
-            ARSOL_WP_SNIPPETS_VERSION
+            ARSOL_WP_SNIPPETS_ASSETS_VERSION
         );
         
-        // Register JS (loads in footer with true parameter)
+        // Register JS with prefixed filename
         wp_register_script(
             'arsol-wp-snippets-frontend',
             $plugin_url . 'assets/js/arsol-wp-snippets-frontend.js',
             array('jquery'),
-            ARSOL_WP_SNIPPETS_VERSION,
-            true // Load in footer
+            ARSOL_WP_SNIPPETS_ASSETS_VERSION,
+            true
         );
     }
 
@@ -51,13 +51,21 @@ class Assets {
      * Enqueue frontend assets on appropriate pages
      */
     public function enqueue_frontend_assets() {
-        // Only load on frontend (not admin)
-        if (!is_admin()) {
-            // Load CSS (header)
-            wp_enqueue_style('arsol-wp-snippets-frontend');
-            
-            // Load JS (footer)
+        // Load CSS addons on all frontend pages
+        wp_enqueue_style('arsol-wp-snippets-frontend');
+        
+        // Only load JS if needed for interactive CSS features
+        if (apply_filters('arsol_wp_snippets_load_js', true)) {
             wp_enqueue_script('arsol-wp-snippets-frontend');
+            
+            // Add localized data if needed
+            wp_localize_script('arsol-wp-snippets-frontend', 'arsolCssAddons', array(
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('arsol-wp-snippets-frontend'),
+                'i18n' => array(
+                    'loadingMessage' => __('Loading styles...', 'arsol-wp-snippets'),
+                )
+            ));
         }
     }
 
@@ -67,21 +75,21 @@ class Assets {
     public function register_admin_assets() {
         $plugin_url = plugin_dir_url(ARSOL_WP_SNIPPETS_PLUGIN_FILE);
         
-        // Register CSS (loads in header by default)
+        // Register CSS with prefixed filename
         wp_register_style(
             'arsol-wp-snippets-admin',
             $plugin_url . 'assets/css/arsol-wp-snippets-admin.css',
             array(),
-            ARSOL_WP_SNIPPETS_VERSION
+            ARSOL_WP_SNIPPETS_ASSETS_VERSION
         );
         
-        // Register JS (loads in footer with true parameter)
+        // Register JS with prefixed filename
         wp_register_script(
             'arsol-wp-snippets-admin',
             $plugin_url . 'assets/js/arsol-wp-snippets-admin.js',
             array('jquery'),
-            ARSOL_WP_SNIPPETS_VERSION,
-            true // Load in footer
+            ARSOL_WP_SNIPPETS_ASSETS_VERSION,
+            true
         );
 
         // For code editor if used in the admin settings
@@ -89,8 +97,8 @@ class Assets {
             'arsol-wp-snippets-editor',
             $plugin_url . 'assets/js/arsol-wp-snippets-editor.js',
             array('jquery', 'wp-codemirror'),
-            ARSOL_WP_SNIPPETS_VERSION,
-            true // Load in footer
+            ARSOL_WP_SNIPPETS_ASSETS_VERSION,
+            true
         );
     }
 
@@ -100,27 +108,40 @@ class Assets {
      * @param string $hook Current admin page hook
      */
     public function enqueue_admin_assets($hook) {
-        // Load on all admin pages for now - you can make this more specific later
-        wp_enqueue_style('arsol-wp-snippets-admin');
-        wp_enqueue_script('arsol-wp-snippets-admin');
+        // Get current screen to check page
+        $screen = get_current_screen();
         
-        // Load code editor assets only on specific pages
+        // Only load on specific admin pages (CSS settings, customizer, etc.)
+        $load_assets = false;
+        
+        // Check if we're on our plugin's settings page
         if (
-            $hook === 'toplevel_page_arsol-wp-snippets' || 
-            strpos($hook, 'arsol-wp-snippets') !== false
+            $hook === 'settings_page_arsol-wp-snippets' || 
+            $hook === 'appearance_page_arsol-wp-snippets' ||
+            ($hook === 'customize.php') ||
+            ($hook === 'post.php' && function_exists('get_current_screen') && 
+             in_array($screen->post_type, apply_filters('arsol_wp_snippets_post_types', array('post', 'page'))))
         ) {
-            if (function_exists('wp_enqueue_code_editor')) {
-                wp_enqueue_code_editor(array('type' => 'text/css'));
-            }
-            wp_enqueue_script('arsol-wp-snippets-editor');
+            $load_assets = true;
+        }
+        
+        if ($load_assets) {
+            wp_enqueue_style('arsol-wp-snippets-admin');
+            wp_enqueue_script('arsol-wp-snippets-admin');
             
-            // Add localized data
-            wp_localize_script('arsol-wp-snippets-admin', 'arsolWpSnippets', array(
+            // Load code editor assets if on settings page
+            if ($hook === 'settings_page_arsol-wp-snippets' || $hook === 'appearance_page_arsol-wp-snippets') {
+                wp_enqueue_code_editor(array('type' => 'text/css'));
+                wp_enqueue_script('arsol-wp-snippets-editor');
+            }
+            
+            // Add localized data if needed
+            wp_localize_script('arsol-wp-snippets-admin', 'arsolCssAddons', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-wp-snippets-admin'),
                 'i18n' => array(
-                    'confirmReset' => __('Are you sure you want to reset all settings? This cannot be undone.', 'arsol-wp-snippets'),
-                    'saved' => __('Settings saved successfully.', 'arsol-wp-snippets'),
+                    'confirmReset' => __('Are you sure you want to reset all custom CSS? This cannot be undone.', 'arsol-wp-snippets'),
+                    'saved' => __('CSS saved successfully.', 'arsol-wp-snippets'),
                 )
             ));
         }

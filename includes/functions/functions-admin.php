@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin functions for Arsol WP Snippets
+ * Admin functions for Arsol CSS Addons
  * 
  * Includes all addon function files.
  *

@@ -30,7 +30,7 @@ class Admin_Settings {
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
         
-        // Enqueue snippets based on settings
+        // Enqueue addon files based on settings
         add_action('admin_enqueue_scripts', array($this, 'load_admin_addon_files'));
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_addon_files'));
         add_action('init', array($this, 'load_php_addon_files'));
@@ -42,8 +42,8 @@ class Admin_Settings {
     public function add_admin_menu() {
         // Add main menu page
         add_menu_page(
-            __('Arsol WP Snippets', 'arsol-wp-snippets'), // Page title
-            __('Arsol WP Snippets', 'arsol-wp-snippets'), // Menu title
+            __('Arsol CSS Addons', 'arsol-wp-snippets'), // Page title
+            __('Arsol CSS Addons', 'arsol-wp-snippets'), // Menu title
             'manage_options',
             $this->css_addons_slug,
             array($this, 'display_css_addons_page'),
@@ -63,31 +63,8 @@ class Admin_Settings {
         $page_title = get_admin_page_title();
         $settings_slug = $this->css_addons_slug;
         
-        // Display safe mode notice if enabled
-        if (defined('ARSOL_WP_SNIPPETS_SAFE_MODE') && ARSOL_WP_SNIPPETS_SAFE_MODE) {
-            $this->display_safe_mode_notice();
-        }
-        
         // Include the template file
         include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/templates/admin/settings-page.php';
-    }
-    
-    /**
-     * Display safe mode notice
-     */
-    private function display_safe_mode_notice() {
-        ?>
-        <div class="notice notice-warning">
-            <h3 style="margin: 0.5em 0;">⚠️ Safe Mode Active</h3>
-            <p>
-                <strong>Safe Mode is currently enabled.</strong> This means that while you can still manage which files are selected, 
-                none of the selected files will be loaded. This is useful when troubleshooting fatal errors.
-            </p>
-            <p>
-                To disable Safe Mode, you'll need to set <code>ARSOL_WP_SNIPPETS_SAFE_MODE</code> to <code>false</code> in your wp-config.php file.
-            </p>
-        </div>
-        <?php
     }
     
     /**
@@ -105,13 +82,18 @@ class Admin_Settings {
             'arsol_wp_snippets_php',
             __('PHP Addons', 'arsol-wp-snippets'),
             function() {
-                echo '<h4>' . esc_html__('Select PHP snippets to include.', 'arsol-wp-snippets') . '</h4>';
-                echo '<div class="arsol-addon-list">';
-                // Render PHP addons directly here instead of using add_settings_field
-                $this->render_php_addon_options();
-                echo '</div>';
+                echo '<p>' . esc_html__('Select PHP addon files to include.', 'arsol-wp-snippets') . '</p>';
             },
             $this->css_addons_slug
+        );
+        
+        // Add PHP addon options
+        add_settings_field(
+            'php_addon_options',
+            __('PHP addon files', 'arsol-wp-snippets'),
+            array($this, 'render_php_addon_options'),
+            $this->css_addons_slug,
+            'arsol_wp_snippets_php'
         );
         
         // Add CSS Addon Section
@@ -119,13 +101,18 @@ class Admin_Settings {
             'arsol_wp_snippets_css',
             __('CSS Addons', 'arsol-wp-snippets'),
             function() {
-                echo '<h4>' . esc_html__('Select CSS snippets to include.', 'arsol-wp-snippets') . '</h4>';
-                echo '<div class="arsol-addon-list">';
-                // Render CSS addons directly here instead of using add_settings_field
-                $this->render_css_addon_options();
-                echo '</div>';
+                echo '<p>' . esc_html__('Select CSS addon files to include.', 'arsol-wp-snippets') . '</p>';
             },
             $this->css_addons_slug
+        );
+        
+        // Add CSS addon options
+        add_settings_field(
+            'css_addon_options',
+            __('CSS addon files', 'arsol-wp-snippets'),
+            array($this, 'render_css_addon_options'),
+            $this->css_addons_slug,
+            'arsol_wp_snippets_css'
         );
         
         // Add JS Addon Section
@@ -133,16 +120,19 @@ class Admin_Settings {
             'arsol_wp_snippets_js',
             __('JS Addons', 'arsol-wp-snippets'),
             function() {
-                echo '<h4>' . esc_html__('Select JavaScript snippets to include.', 'arsol-wp-snippets') . '</h4>';
-                echo '<div class="arsol-addon-list">';
-                // Render JS addons directly here instead of using add_settings_field
-                $this->render_js_addon_options();
-                echo '</div>';
+                echo '<p>' . esc_html__('Select JavaScript addon files to include.', 'arsol-wp-snippets') . '</p>';
             },
             $this->css_addons_slug
         );
         
-        // Don't add any add_settings_field() calls - that's what creates the table structure
+        // Add JS addon options
+        add_settings_field(
+            'js_addon_options',
+            __('JS addon files', 'arsol-wp-snippets'),
+            array($this, 'render_js_addon_options'),
+            $this->css_addons_slug,
+            'arsol_wp_snippets_js'
+        );
     }
     
     /**
@@ -159,15 +149,12 @@ class Admin_Settings {
          */
         $filtered_options = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
         
-        // Validate that all files are PHP files and add type
+        // Validate that all files are PHP files
         foreach ($filtered_options as $addon_id => $addon_data) {
             // Check if file path exists and ends with .php
             if (!isset($addon_data['file']) || substr($addon_data['file'], -4) !== '.php') {
                 // Remove invalid entries
                 unset($filtered_options[$addon_id]);
-            } else {
-                // Add type for PHP files
-                $filtered_options[$addon_id]['type'] = 'php';
             }
         }
         
@@ -237,7 +224,7 @@ class Admin_Settings {
         $available_php_addons = $this->get_php_addon_options();
         
         if (empty($available_php_addons)) {
-            echo '<p>' . esc_html__('No PHP snippets available.', 'arsol-wp-snippets') . '</p>';
+            echo '<p>' . esc_html__('No PHP addon files available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
         
@@ -254,21 +241,6 @@ class Admin_Settings {
     }
     
     /**
-     * Sort addons by priority
-     *
-     * @param array $addons Array of addon data
-     * @return array Sorted addons
-     */
-    private function sort_addons_by_priority($addons) {
-        uasort($addons, function($a, $b) {
-            $priority_a = isset($a['priority']) ? intval($a['priority']) : 10;
-            $priority_b = isset($b['priority']) ? intval($b['priority']) : 10;
-            return $priority_a - $priority_b;
-        });
-        return $addons;
-    }
-    
-    /**
      * Render CSS addon options checkboxes
      */
     public function render_css_addon_options() {
@@ -279,12 +251,9 @@ class Admin_Settings {
         $available_css_addons = $this->get_css_addon_options();
         
         if (empty($available_css_addons)) {
-            echo '<p>' . esc_html__('No CSS snippets available.', 'arsol-wp-snippets') . '</p>';
+            echo '<p>' . esc_html__('No CSS addon files available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
-        
-        // Sort CSS addons by priority
-        $available_css_addons = $this->sort_addons_by_priority($available_css_addons);
         
         foreach ($available_css_addons as $addon_id => $addon_data) {
             // Set variables that will be available to the template
@@ -309,12 +278,9 @@ class Admin_Settings {
         $available_js_addons = $this->get_js_addon_options();
         
         if (empty($available_js_addons)) {
-            echo '<p>' . esc_html__('No JS snippets available.', 'arsol-wp-snippets') . '</p>';
+            echo '<p>' . esc_html__('No JS addon files available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
-        
-        // Sort JS addons by priority
-        $available_js_addons = $this->sort_addons_by_priority($available_js_addons);
         
         foreach ($available_js_addons as $addon_id => $addon_data) {
             // Set variables that will be available to the template
@@ -365,7 +331,7 @@ class Admin_Settings {
     }
     
     /**
-     * Load PHP snippets based on settings
+     * Load PHP addon files based on settings
      */
     public function load_php_addon_files() {
         $options = get_option('arsol_wp_snippets_options', array());
@@ -378,7 +344,7 @@ class Admin_Settings {
         // Get PHP addon definitions
         $php_addon_options = $this->get_php_addon_options();
         
-        // Get enabled PHP snippets
+        // Get enabled PHP addon files
         $enabled_options = $options['php_addon_options'];
         
         // Loop through enabled files and include them
@@ -394,7 +360,7 @@ class Admin_Settings {
     }
     
     /**
-     * Load admin snippets based on settings
+     * Load admin addon files based on settings
      */
     public function load_admin_addon_files() {
         // Only run in admin
@@ -404,7 +370,7 @@ class Admin_Settings {
         
         $options = get_option('arsol_wp_snippets_options', array());
         
-        // Load CSS snippets
+        // Load CSS addon files
         if (isset($options['css_addon_options']) && !empty($options['css_addon_options'])) {
             $css_addon_options = $this->get_css_addon_options();
             $enabled_css_options = $options['css_addon_options'];
@@ -417,18 +383,13 @@ class Admin_Settings {
                     // Check context - load if global or admin
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
                     if ($context === 'global' || $context === 'admin') {
-                        // Get priority - DEFAULT TO 10
-                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                        
-                        // Hook into admin_enqueue_scripts with the specified priority
-                        add_action('admin_enqueue_scripts', function() use ($addon_data, $addon_id) {
-                            wp_enqueue_style(
-                                'arsol-css-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array(),
-                                ARSOL_WP_SNIPPETS_VERSION
-                            );
-                        }, $priority);
+                        wp_enqueue_style(
+                            'arsol-css-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array(),
+                            ARSOL_WP_SNIPPETS_VERSION
+                        );
+                        // Note: CSS position doesn't matter much - always loads in header
                         
                         do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $addon_data['file']);
                     }
@@ -436,7 +397,7 @@ class Admin_Settings {
             }
         }
         
-        // Load JS snippets
+        // Load JS addon files
         if (isset($options['js_addon_options']) && !empty($options['js_addon_options'])) {
             $js_addon_options = $this->get_js_addon_options();
             $enabled_js_options = $options['js_addon_options'];
@@ -453,19 +414,13 @@ class Admin_Settings {
                         $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
                         $in_footer = ($position === 'footer');
                         
-                        // Get priority - DEFAULT TO 10
-                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                        
-                        // Hook into admin_enqueue_scripts with the specified priority
-                        add_action('admin_enqueue_scripts', function() use ($addon_data, $addon_id, $in_footer) {
-                            wp_enqueue_script(
-                                'arsol-js-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array('jquery'),
-                                ARSOL_WP_SNIPPETS_VERSION,
-                                $in_footer
-                            );
-                        }, $priority);
+                        wp_enqueue_script(
+                            'arsol-js-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array('jquery'),
+                            ARSOL_WP_SNIPPETS_VERSION,
+                            $in_footer  // true for footer (default), false for header
+                        );
                         
                         do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
                     }
@@ -475,7 +430,7 @@ class Admin_Settings {
     }
     
     /**
-     * Load frontend snippets based on settings
+     * Load frontend addon files based on settings
      */
     public function load_frontend_addon_files() {
         // Don't run in admin
@@ -485,7 +440,7 @@ class Admin_Settings {
         
         $options = get_option('arsol_wp_snippets_options', array());
         
-        // Load CSS snippets
+        // Load CSS addon files
         if (isset($options['css_addon_options']) && !empty($options['css_addon_options'])) {
             $css_addon_options = $this->get_css_addon_options();
             $enabled_css_options = $options['css_addon_options'];
@@ -498,18 +453,13 @@ class Admin_Settings {
                     // Check context - load if global or frontend
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
                     if ($context === 'global' || $context === 'frontend') {
-                        // Get priority - DEFAULT TO 10
-                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                        
-                        // Hook into wp_enqueue_scripts with the specified priority
-                        add_action('wp_enqueue_scripts', function() use ($addon_data, $addon_id) {
-                            wp_enqueue_style(
-                                'arsol-css-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array(),
-                                ARSOL_WP_SNIPPETS_VERSION
-                            );
-                        }, $priority);
+                        wp_enqueue_style(
+                            'arsol-css-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array(),
+                            ARSOL_WP_SNIPPETS_VERSION
+                        );
+                        // Note: CSS always loads in header regardless of position setting
                         
                         do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $css_addon_options[$addon_id]['file']);
                     }
@@ -517,7 +467,7 @@ class Admin_Settings {
             }
         }
         
-        // Load JS snippets
+        // Load JS addon files
         if (isset($options['js_addon_options']) && !empty($options['js_addon_options'])) {
             $js_addon_options = $this->get_js_addon_options();
             $enabled_js_options = $options['js_addon_options'];
@@ -534,19 +484,13 @@ class Admin_Settings {
                         $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
                         $in_footer = ($position === 'footer');
                         
-                        // Get priority - DEFAULT TO 10
-                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                        
-                        // Hook into wp_enqueue_scripts with the specified priority
-                        add_action('wp_enqueue_scripts', function() use ($addon_data, $addon_id, $in_footer) {
-                            wp_enqueue_script(
-                                'arsol-js-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array('jquery'),
-                                ARSOL_WP_SNIPPETS_VERSION,
-                                $in_footer
-                            );
-                        }, $priority);
+                        wp_enqueue_script(
+                            'arsol-js-addon-' . $addon_id,
+                            $addon_data['file'],
+                            array('jquery'),
+                            ARSOL_WP_SNIPPETS_VERSION,
+                            $in_footer  // true for footer (default), false for header
+                        );
                         
                         do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
                     }

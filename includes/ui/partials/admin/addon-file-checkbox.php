@@ -15,239 +15,30 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Clean up the file path
-$file_reference = $addon_data['file'];
+// Check if file exists by converting URL to file path
+$file_url = $addon_data['file'];
+$file_path = str_replace(ARSOL_WP_SNIPPETS_PLUGIN_URL, ARSOL_WP_SNIPPETS_PLUGIN_DIR, $file_url);
+$file_exists = file_exists($file_path);
 
-// Remove 'functions/' from plugin paths regardless of format
-if (strpos($file_reference, 'wp-content/plugins/') !== false || strpos($file_reference, WP_PLUGIN_DIR) !== false) {
-    $file_reference = preg_replace('#/functions/snippets/#', '/snippets/', $file_reference);
-    $file_reference = preg_replace('#/functions/\.\./snippets/#', '/snippets/', $file_reference);
-    $file_reference = str_replace('/functions/', '/', $file_reference);
-}
-
-// Additional path cleanup
-if ($option_type !== 'php') {
-    $file_reference = str_replace('/../', '/', $file_reference);
-}
-
-// Check if file exists
-$file_exists = true;
-
-// Get simple source name
-$source_name = '';
-if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
-    $source_name = wp_get_theme()->get('Name') . ' → ';
-} elseif (strpos($file_reference, get_template_directory_uri()) === 0) {
-    $source_name = wp_get_theme()->get('Name') . ' → ';
-} elseif (strpos($file_reference, plugins_url()) === 0 || strpos($file_reference, WP_PLUGIN_DIR) === 0) {
-    // Get plugin name from the file path
-    $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
-    $plugin_dir = dirname($plugin_path);
-    
-    // Keep going up until we find the plugin's main PHP file
-    $found_plugin = false;
-    while (!$found_plugin && strpos($plugin_dir, WP_PLUGIN_DIR) === 0) {
-        $plugin_file = $plugin_dir . '/' . basename($plugin_dir) . '.php';
-        if (file_exists($plugin_file)) {
-            $found_plugin = true;
-        } else {
-            $plugin_dir = dirname($plugin_dir);
-        }
-    }
-    
-    if ($found_plugin) {
-        $plugin_data = get_plugin_data($plugin_file);
-        $source_name = $plugin_data['Name'] . ' → ';
-    } else {
-        // Try to get plugin name from directory
-        $plugin_name = basename($plugin_dir);
-        $source_name = ucwords(str_replace('-', ' ', $plugin_name)) . ' → ';
-    }
-}
-
-// Determine how to check file existence based on file type
-if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
-    // It's a URL - convert to file path for theme files
-    $theme_child_uri = get_stylesheet_directory_uri();
-    $theme_parent_uri = get_template_directory_uri();
-    
-    if (strpos($file_reference, $theme_child_uri) === 0) {
-        // Child theme file
-        $file_path = str_replace($theme_child_uri, get_stylesheet_directory(), $file_reference);
-        $file_exists = file_exists($file_path);
-    } elseif (strpos($file_reference, $theme_parent_uri) === 0) {
-        // Parent theme file
-        $file_path = str_replace($theme_parent_uri, get_template_directory(), $file_reference);
-        $file_exists = file_exists($file_path);
-    } else {
-        // External URL or plugin file - assume it exists
-        $file_exists = true;
-    }
-} else {
-    // It's a file path - check directly
-    $file_exists = file_exists($file_reference);
-}
-
-// Check dependencies if file exists
-$missing_dependencies = array();
-if ($file_exists && !empty($addon_data['dependencies'])) {
-    $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-    
-    if ($addon_type === 'css') {
-        $wp_styles = wp_styles();
-        foreach ($addon_data['dependencies'] as $dependency) {
-            if (!isset($wp_styles->registered[$dependency])) {
-                $missing_dependencies[] = $dependency;
-            }
-        }
-    } elseif ($addon_type === 'js') {
-        $wp_scripts = wp_scripts();
-        foreach ($addon_data['dependencies'] as $dependency) {
-            if (!isset($wp_scripts->registered[$dependency])) {
-                $missing_dependencies[] = $dependency;
-            }
-        }
-    }
-}
-
-if (!$file_exists) {
-    // File doesn't exist - show error message
-    ?>
-    <div class="arsol-addon-container arsol-error">
-        <div class="arsol-first-column">
-            <span class="dashicons dashicons-warning"></span>
-        </div>
-        <div class="arsol-label-container">
-            <h4 class="arsol-addon-title">
-                <?php echo esc_html($addon_data['name']); ?>
-            </h4>
-            <small class="arsol-addon-error">
-                <strong><?php echo esc_html__('Could not be found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
-            </small>
-        </div>
-    </div>
-    <?php
-} elseif (!empty($missing_dependencies)) {
-    // File exists but dependencies are missing - show dependency error
-    ?>
-    <div class="arsol-addon-container arsol-error">
-        <div class="arsol-first-column">
-            <span class="dashicons dashicons-warning"></span>
-        </div>
-        <div class="arsol-label-container">
-            <h4 class="arsol-addon-title">
-                <?php echo esc_html($addon_data['name']); ?>
-            </h4>
-            <small class="arsol-addon-error">
-                <strong><?php echo esc_html__('Missing Dependencies:', 'arsol-wp-snippets'); ?></strong>
-                <ul class="arsol-dependency-list">
-                    <?php foreach ($missing_dependencies as $dependency): ?>
-                    <li><?php echo esc_html($dependency); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </small>
-        </div>
-    </div>
-    <?php
-} else {
-    // File exists and all dependencies are present - show normal display
+if ($file_exists) {
+    // File exists - show checkbox
     $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
-    $state_class = $checked ? 'enabled' : 'disabled';
     ?>
-    <div class="arsol-addon-container <?php echo esc_attr($state_class); ?>">
-        <div class="arsol-first-column">
-            <span class="arsol-wp-snippets-checkbox" >
-                <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
-                       name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
-                       value="1" <?php checked(1, $checked); ?>/>
-            </span>
-            <?php 
-            // Removing the priority number display from first column
-            // $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-            // if ($addon_type === 'js' || $addon_type === 'css'): 
-            ?>
-            <!-- <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
-                <?php 
-                // $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                // echo esc_html($priority); 
-                ?>
-            </span> -->
-            <?php // endif; ?>
-        </div>
-        <div class="arsol-label-container">
-            <div class="arsol-addon-info">
-                <h4 class="arsol-addon-title">
-                    <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
-                </h4>
-                <small class="arsol-addon-source"><?php 
-                    $display_path = $file_reference;
-                    if (strpos($display_path, 'wp-content/plugins/') !== false) {
-                        $display_path = preg_replace('#/functions/snippets/#', '/snippets/', $display_path);
-                        $display_path = preg_replace('#/functions/\.\./snippets/#', '/snippets/', $display_path);
-                        $display_path = str_replace('/functions/', '/', $display_path);
-                    }
-                    echo '<strong>' . esc_html($source_name) . '</strong>' . esc_html($display_path); 
-                ?></small>
-            </div>
-            <div class="arsol-addon-footer">
-                <span class="arsol-addon-meta">
-                    <strong>Context:</strong> <?php echo ucfirst($addon_data['context'] ?? 'global'); ?>
-                </span>
-                <?php 
-                // Define addon type for use in the template
-                $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-                if ($addon_type === 'js'): 
-                ?>
-                <span class="arsol-addon-meta">
-                    <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
-                </span>
-                <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> 
-                    <?php 
-                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                    $priority_group = '';
-                    if ($priority <= 5) {
-                        $priority_group = ' (Early)';
-                    } elseif ($priority <= 10) {
-                        $priority_group = ' (Default)';
-                    } elseif ($priority <= 20) {
-                        $priority_group = ' (Late)';
-                    } else {
-                        $priority_group = ' (Very Late)';
-                    }
-                    echo $priority . $priority_group;
-                    ?>
-                </span>
-                <?php elseif ($addon_type === 'css'): ?>
-                <span class="arsol-addon-meta">
-                    <strong>Position:</strong> Header
-                </span>
-                <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> 
-                    <?php 
-                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                    $priority_group = '';
-                    if ($priority <= 5) {
-                        $priority_group = ' (Early)';
-                    } elseif ($priority <= 10) {
-                        $priority_group = ' (Default)';
-                    } elseif ($priority <= 20) {
-                        $priority_group = ' (Late)';
-                    } else {
-                        $priority_group = ' (Very Late)';
-                    }
-                    echo $priority . $priority_group;
-                    ?>
-                </span>
-                <?php endif; ?>
-                <?php if (!empty($addon_data['dependencies'])): ?>
-                <span class="arsol-addon-meta">
-                    <strong>Dependencies:</strong> <?php echo esc_html(implode(', ', $addon_data['dependencies'])); ?>
-                </span>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
+    <p>
+        <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
+               name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
+               value="1" <?php checked(1, $checked); ?>/>
+        <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+    </p>
+    <?php
+} else {
+    // File doesn't exist - show error message with file path
+    ?>
+    <p class="arsol-addon-error">
+        <span class="dashicons dashicons-warning" style="color: #d63638; vertical-align: middle;"></span>
+        <span style="color: #d63638;">
+            <?php echo esc_html(sprintf(__('Addon file for "%s" could not be found at: %s', 'arsol-wp-snippets'), $addon_data['name'], $file_path)); ?>
+        </span>
+    </p>
     <?php
 }
-?>

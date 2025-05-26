@@ -11,6 +11,13 @@ if (!defined('ABSPATH')) {
  */
 class Snippet_Loader {
     
+    /**
+     * Track loaded files to prevent duplicates
+     *
+     * @var array
+     */
+    private static $loaded_files = array();
+    
     public function __construct() {
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_snippets'));
         add_action('admin_enqueue_scripts', array($this, 'load_admin_snippets'));
@@ -22,6 +29,43 @@ class Snippet_Loader {
      */
     private function is_safe_mode() {
         return defined('ARSOL_WP_SNIPPETS_SAFE_MODE') && ARSOL_WP_SNIPPETS_SAFE_MODE;
+    }
+
+    /**
+     * Check if a file has already been loaded
+     *
+     * @param string $file_path The file path to check
+     * @return bool True if file is already loaded
+     */
+    private function is_file_already_loaded($file_path) {
+        return in_array($file_path, self::$loaded_files);
+    }
+
+    /**
+     * Add a file to the loaded files list
+     *
+     * @param string $file_path The file path to add
+     */
+    private function add_loaded_file($file_path) {
+        self::$loaded_files[] = $file_path;
+    }
+
+    /**
+     * Display an admin notice for duplicate files
+     *
+     * @param string $file_path The duplicate file path
+     */
+    private function display_duplicate_file_notice($file_path) {
+        add_action('admin_notices', function() use ($file_path) {
+            ?>
+            <div class="notice notice-error">
+                <p>
+                    <strong>Arsol WP Snippets:</strong> 
+                    Attached snippet already loaded → <?php echo esc_html($file_path); ?>
+                </p>
+            </div>
+            <?php
+        });
     }
 
     /**
@@ -97,6 +141,13 @@ class Snippet_Loader {
                 continue;
             }
 
+            // Check for duplicate files
+            if ($this->is_file_already_loaded($file_data['file'])) {
+                $this->display_duplicate_file_notice($file_data['file']);
+                error_log('Arsol WP Snippets: Duplicate CSS file detected - ' . $file_data['file']);
+                continue;
+            }
+
             // Register and enqueue the CSS file
             $handle = 'arsol-wp-snippets-css-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
@@ -112,6 +163,9 @@ class Snippet_Loader {
             );
 
             wp_enqueue_style($handle);
+
+            // Add to loaded files
+            $this->add_loaded_file($file_data['file']);
 
             // Trigger action when CSS file is loaded
             do_action('arsol_wp_snippets_loaded_css_addon', $file_key, $file_data);
@@ -150,6 +204,13 @@ class Snippet_Loader {
                 continue;
             }
 
+            // Check for duplicate files
+            if ($this->is_file_already_loaded($file_data['file'])) {
+                $this->display_duplicate_file_notice($file_data['file']);
+                error_log('Arsol WP Snippets: Duplicate JS file detected - ' . $file_data['file']);
+                continue;
+            }
+
             // Register and enqueue the JS file
             $handle = 'arsol-wp-snippets-js-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
@@ -167,6 +228,9 @@ class Snippet_Loader {
             );
 
             wp_enqueue_script($handle);
+
+            // Add to loaded files
+            $this->add_loaded_file($file_data['file']);
 
             // Trigger action when JS file is loaded
             do_action('arsol_wp_snippets_loaded_js_addon', $file_key, $file_data);
@@ -189,9 +253,19 @@ class Snippet_Loader {
 
         $file_data = $php_files[$file_key];
         
+        // Check for duplicate files
+        if ($this->is_file_already_loaded($file_data['file'])) {
+            $this->display_duplicate_file_notice($file_data['file']);
+            error_log('Arsol WP Snippets: Duplicate PHP file detected - ' . $file_data['file']);
+            return;
+        }
+        
         if (file_exists($file_data['file'])) {
             include_once $file_data['file'];
             error_log('Arsol WP Snippets: Loaded PHP file - ' . $file_data['file']);
+            
+            // Add to loaded files
+            $this->add_loaded_file($file_data['file']);
             
             // Trigger action when PHP file is loaded
             do_action('arsol_wp_snippets_loaded_php_addon', $file_key, $file_data);

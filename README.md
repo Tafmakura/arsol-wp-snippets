@@ -222,6 +222,11 @@ If you encounter any issues:
   - Added debug logging for safe mode status
   - Improved safe mode checks across all file types
   - Better handling of safe mode transitions
+- Added duplicate file detection
+  - Prevents loading the same file multiple times
+  - Shows admin notice for duplicate files
+  - Logs duplicate file attempts
+  - Works across all file types (PHP, CSS, JS)
 
 ### Version 0.0.13
 - Updated plugin header with GitHub repository links

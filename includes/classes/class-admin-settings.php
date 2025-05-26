@@ -252,10 +252,6 @@ class Admin_Settings {
         $php_addon_options = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
         $available_php_addons = $this->get_php_addon_options();
         $duplicates = isset($this->php_duplicates) ? $this->php_duplicates : array();
-        
-        // Store duplicates in global variable for template access
-        $GLOBALS['arsol_duplicate_files'] = $duplicates;
-        
         if (empty($available_php_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No PHP snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
@@ -264,6 +260,9 @@ class Admin_Settings {
             $enabled_options = $php_addon_options;
             $option_type = 'php';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_path) {
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     
@@ -290,10 +289,6 @@ class Admin_Settings {
         $css_addon_options = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
         $available_css_addons = $this->get_css_addon_options();
         $duplicates = isset($this->css_duplicates) ? $this->css_duplicates : array();
-        
-        // Store duplicates in global variable for template access
-        $GLOBALS['arsol_duplicate_files'] = $duplicates;
-        
         if (empty($available_css_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No CSS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
@@ -303,6 +298,9 @@ class Admin_Settings {
             $enabled_options = $css_addon_options;
             $option_type = 'css';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_path) {
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     
@@ -314,10 +312,6 @@ class Admin_Settings {
         $js_addon_options = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
         $available_js_addons = $this->get_js_addon_options();
         $duplicates = isset($this->js_duplicates) ? $this->js_duplicates : array();
-        
-        // Store duplicates in global variable for template access
-        $GLOBALS['arsol_duplicate_files'] = $duplicates;
-        
         if (empty($available_js_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No JS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
@@ -327,6 +321,9 @@ class Admin_Settings {
             $enabled_options = $js_addon_options;
             $option_type = 'js';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_path) {
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     

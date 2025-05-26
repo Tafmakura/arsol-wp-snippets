@@ -184,11 +184,6 @@ if (!$file_exists) {
                             echo ucfirst($context);
                         ?>
                 </span>
-                <?php if (isset($addon_data['loading_order'])): ?>
-                <span class="arsol-addon-meta">
-                    <strong>Loading Order:</strong> <?php echo intval($addon_data['loading_order']); ?>
-                </span>
-                <?php endif; ?>
                 <?php 
                 // Define addon type for use in the template
                 $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;

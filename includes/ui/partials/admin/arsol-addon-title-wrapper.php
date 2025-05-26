@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Get loading order and determine its category
-$loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
+$loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
 $loading_order_category = '';
 if ($loading_order <= 5) {
     $loading_order_category = 'Early';

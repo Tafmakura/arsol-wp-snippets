@@ -422,6 +422,9 @@ class Admin_Settings {
             return;
         }
         
+        // Enqueue WordPress's tooltip script
+        wp_enqueue_script('wp-tooltip');
+        
         $options = get_option('arsol_wp_snippets_options', array());
         
         // Load CSS snippets

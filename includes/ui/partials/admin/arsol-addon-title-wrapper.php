@@ -39,7 +39,7 @@ if ($priority <= 5) {
         $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
         if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
         ?>
-        <span class="arsol-loading-order wp-tooltip" data-tooltip="<?php 
+        <span class="arsol-loading-order" title="<?php 
             echo esc_attr(sprintf(
                 __('Loading Order: %d%s - Lower numbers load earlier, higher numbers load later', 'arsol-wp-snippets'),
                 $priority,

@@ -15,6 +15,9 @@ Arsol WP Snippets allows you to easily manage and load custom PHP, CSS, and Java
 - Easy-to-use admin interface
 - Context-aware loading (admin/frontend)
 - Position control for JavaScript files
+- Loading order control for all file types
+- Dependency management for CSS and JS files
+- Flexible filter system for custom integration
 
 ## Safe Mode
 
@@ -48,20 +51,86 @@ define('ARSOL_WP_SNIPPETS_SAFE_MODE', false);
 
 1. Navigate to Arsol WP Snippets in the admin menu
 2. Select the PHP snippets you want to include
-3. Save your changes
+3. Configure loading order (default: 10)
+4. Save your changes
 
 ### Adding CSS Styles
 
 1. Navigate to Arsol WP Snippets in the admin menu
 2. Select the CSS files you want to include
-3. Save your changes
+3. Configure loading order (default: 10)
+4. Add any required dependencies
+5. Save your changes
 
 ### Adding JavaScript
 
 1. Navigate to Arsol WP Snippets in the admin menu
 2. Select the JavaScript files you want to include
 3. Choose whether to load in header or footer
-4. Save your changes
+4. Configure loading order (default: 10)
+5. Add any required dependencies
+6. Save your changes
+
+## Advanced Configuration
+
+### Loading Order
+
+The loading order determines when your snippets are loaded relative to other scripts and styles. Lower numbers load earlier, higher numbers load later.
+
+```php
+// Example of setting loading order in a filter
+add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
+    $addons['my-custom-style'] = array(
+        'name' => 'My Custom Style',
+        'file' => 'path/to/style.css',
+        'loading_order' => 5, // Loads earlier than default (10)
+        'context' => 'frontend'
+    );
+    return $addons;
+});
+```
+
+### Dependencies
+
+For CSS and JavaScript files, you can specify dependencies that must be loaded before your snippet:
+
+```php
+// Example of adding dependencies
+add_filter('arsol_wp_snippets_js_addon_files', function($addons) {
+    $addons['my-custom-script'] = array(
+        'name' => 'My Custom Script',
+        'file' => 'path/to/script.js',
+        'dependencies' => array('jquery', 'wp-api'),
+        'loading_order' => 20,
+        'position' => 'footer'
+    );
+    return $addons;
+});
+```
+
+### Filter Hooks
+
+The plugin provides several filter hooks for custom integration:
+
+```php
+// PHP Snippets
+add_filter('arsol_wp_snippets_php_addon_files', 'your_callback_function');
+
+// CSS Files
+add_filter('arsol_wp_snippets_css_addon_files', 'your_callback_function');
+
+// JavaScript Files
+add_filter('arsol_wp_snippets_js_addon_files', 'your_callback_function');
+
+// Action when a PHP snippet is loaded
+add_action('arsol_wp_snippets_loaded_php_addon', 'your_callback_function', 10, 2);
+
+// Action when a CSS file is loaded
+add_action('arsol_wp_snippets_loaded_css_addon', 'your_callback_function', 10, 2);
+
+// Action when a JS file is loaded
+add_action('arsol_wp_snippets_loaded_js_addon', 'your_callback_function', 10, 2);
+```
 
 ## Troubleshooting
 
@@ -79,6 +148,13 @@ If you encounter any issues:
 - PHP 7.4 or higher
 
 ## Changelog
+
+### 1.0.10
+- Added loading order control for all file types
+- Added dependency management for CSS and JS files
+- Enhanced filter system for better integration
+- Improved admin interface with loading order display
+- Added timing categories (Early, Default, Late, Very Late)
 
 ### 1.0.9
 - Added safe mode feature

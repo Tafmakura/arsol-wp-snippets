@@ -118,12 +118,12 @@ if (!$file_exists) {
             <span class="dashicons dashicons-warning"></span>
         </div>
         <div class="arsol-label-container">
-            <h4 class="arsol-addon-title">
-                <?php echo esc_html($addon_data['name']); ?>
-            </h4>
-            <small class="arsol-addon-error">
-                <strong><?php echo esc_html__('Could not be found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
-            </small>
+            <div class="arsol-addon-info">
+                <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
+                <small class="arsol-addon-error">
+                    <strong><?php echo esc_html__('Snippet file not found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
+                </small>
+            </div>
         </div>
     </div>
     <?php
@@ -135,17 +135,17 @@ if (!$file_exists) {
             <span class="dashicons dashicons-warning"></span>
         </div>
         <div class="arsol-label-container">
-            <h4 class="arsol-addon-title">
-                <?php echo esc_html($addon_data['name']); ?>
-            </h4>
-            <small class="arsol-addon-error">
-                <strong><?php echo esc_html__('Missing Dependencies:', 'arsol-wp-snippets'); ?></strong>
-                <ul class="arsol-dependency-list">
-                    <?php foreach ($missing_dependencies as $dependency): ?>
-                    <li><?php echo esc_html($dependency); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </small>
+            <div class="arsol-addon-info">
+                <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
+                <small class="arsol-addon-error">
+                    <strong><?php echo esc_html__('Missing Dependencies:', 'arsol-wp-snippets'); ?></strong>
+                    <ul class="arsol-dependency-list">
+                        <?php foreach ($missing_dependencies as $dependency): ?>
+                        <li><?php echo esc_html($dependency); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </small>
+            </div>
         </div>
     </div>
     <?php
@@ -161,24 +161,12 @@ if (!$file_exists) {
                        name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
                        value="1" <?php checked(1, $checked); ?>/>
             </span>
-            <?php 
-            // Removing the priority number display from first column
-            // $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-            // if ($addon_type === 'js' || $addon_type === 'css'): 
-            ?>
-            <!-- <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
-                <?php 
-                // $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                // echo esc_html($priority); 
-                ?>
-            </span> -->
-            <?php // endif; ?>
+           
         </div>
         <div class="arsol-label-container">
             <div class="arsol-addon-info">
-                <h4 class="arsol-addon-title">
-                    <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
-                </h4>
+                <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
+            
                 <small class="arsol-addon-source"><?php 
                     $display_path = $file_reference;
                     if (strpos($display_path, 'wp-content/plugins/') !== false) {
@@ -191,7 +179,10 @@ if (!$file_exists) {
             </div>
             <div class="arsol-addon-footer">
                 <span class="arsol-addon-meta">
-                    <strong>Context:</strong> <?php echo ucfirst($addon_data['context'] ?? 'global'); ?>
+                        <strong>Context:</strong> <?php 
+                            $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
+                            echo ucfirst($context);
+                        ?>
                 </span>
                 <?php 
                 // Define addon type for use in the template
@@ -201,49 +192,14 @@ if (!$file_exists) {
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
                 </span>
-                <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> 
-                    <?php 
-                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                    $priority_group = '';
-                    if ($priority <= 5) {
-                        $priority_group = ' (Early)';
-                    } elseif ($priority <= 10) {
-                        $priority_group = ' (Default)';
-                    } elseif ($priority <= 20) {
-                        $priority_group = ' (Late)';
-                    } else {
-                        $priority_group = ' (Very Late)';
-                    }
-                    echo $priority . $priority_group;
-                    ?>
-                </span>
-                <?php elseif ($addon_type === 'css'): ?>
-                <span class="arsol-addon-meta">
-                    <strong>Position:</strong> Header
-                </span>
-                <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> 
-                    <?php 
-                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                    $priority_group = '';
-                    if ($priority <= 5) {
-                        $priority_group = ' (Early)';
-                    } elseif ($priority <= 10) {
-                        $priority_group = ' (Default)';
-                    } elseif ($priority <= 20) {
-                        $priority_group = ' (Late)';
-                    } else {
-                        $priority_group = ' (Very Late)';
-                    }
-                    echo $priority . $priority_group;
-                    ?>
-                </span>
                 <?php endif; ?>
+                <div class="arsol-addon-meta">
+                    <strong><?php echo esc_html__('Timing:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($loading_order_category); ?>
+                </div>
                 <?php if (!empty($addon_data['dependencies'])): ?>
-                <span class="arsol-addon-meta">
-                    <strong>Dependencies:</strong> <?php echo esc_html(implode(', ', $addon_data['dependencies'])); ?>
-                </span>
+                <div class="arsol-addon-meta">
+                    <strong><?php echo esc_html__('Dependencies:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(implode(', ', $addon_data['dependencies'])); ?>
+                </div>
                 <?php endif; ?>
             </div>
         </div>

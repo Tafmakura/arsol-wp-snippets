@@ -181,19 +181,21 @@ class Admin_Settings {
             foreach ($theme_files as $file) {
                 $file_name = basename($file);
                 $addon_id = 'theme-' . sanitize_title($file_name);
-                $loading_order = \Arsol_WP_Snippets\Helper::get_default_options('loading_order');
+                
+                // Ensure default values are set
+                $file_data = array(
+                    'id' => $addon_id,
+                    'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
+                    'file' => $file,
+                    'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
+                    'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
+                );
                 
                 // Add file to path tracking
                 if (!isset($path_to_files[$file])) {
                     $path_to_files[$file] = array();
                 }
-                $path_to_files[$file][] = array(
-                    'id' => $addon_id,
-                    'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
-                    'file' => $file,
-                    'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
-                    'loading_order' => $loading_order
-                );
+                $path_to_files[$file][] = $file_data;
             }
         }
         
@@ -204,11 +206,17 @@ class Admin_Settings {
         foreach ($php_addon_options as $id => $data) {
             if (!isset($data['file'])) continue;
             
+            // Ensure default values are set for filtered options
+            $file_data = array_merge(array(
+                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
+                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
+            ), $data, array('id' => $id));
+            
             // Add file to path tracking
             if (!isset($path_to_files[$data['file']])) {
                 $path_to_files[$data['file']] = array();
             }
-            $path_to_files[$data['file']][] = array_merge($data, array('id' => $id));
+            $path_to_files[$data['file']][] = $file_data;
         }
         
         // Process all paths and their files
@@ -269,11 +277,17 @@ class Admin_Settings {
                 continue;
             }
             
+            // Ensure default values are set
+            $file_data = array_merge(array(
+                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
+                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
+            ), $addon_data, array('id' => $addon_id));
+            
             // Add file to path tracking
             if (!isset($path_to_files[$addon_data['file']])) {
                 $path_to_files[$addon_data['file']] = array();
             }
-            $path_to_files[$addon_data['file']][] = array_merge($addon_data, array('id' => $addon_id));
+            $path_to_files[$addon_data['file']][] = $file_data;
         }
         
         // Process all paths and their files
@@ -334,11 +348,17 @@ class Admin_Settings {
                 continue;
             }
             
+            // Ensure default values are set
+            $file_data = array_merge(array(
+                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
+                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
+            ), $addon_data, array('id' => $addon_id));
+            
             // Add file to path tracking
             if (!isset($path_to_files[$addon_data['file']])) {
                 $path_to_files[$addon_data['file']] = array();
             }
-            $path_to_files[$addon_data['file']][] = array_merge($addon_data, array('id' => $addon_id));
+            $path_to_files[$addon_data['file']][] = $file_data;
         }
         
         // Process all paths and their files

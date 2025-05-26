@@ -65,7 +65,7 @@
     width: 100%;
 }
 
-.arsol-addon-title wrapper {
+.arsol-addon-title-wrapper {
     display: flex;
     justify-content: space-between;
 }

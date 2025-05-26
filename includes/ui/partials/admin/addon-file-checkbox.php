@@ -101,16 +101,17 @@ if ($file_exists) {
                        value="1" <?php checked(1, $checked); ?>/>
             </span>
             <?php 
-            $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-            if ($addon_type === 'js' || $addon_type === 'css'): 
+            // Removing the priority number display from first column
+            // $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
+            // if ($addon_type === 'js' || $addon_type === 'css'): 
             ?>
-            <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
+            <!-- <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
                 <?php 
-                $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                echo esc_html($priority); 
+                // $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                // echo esc_html($priority); 
                 ?>
-            </span>
-            <?php endif; ?>
+            </span> -->
+            <?php // endif; ?>
         </div>
         <div class="arsol-label-container">
             <div class="arsol-addon-info">

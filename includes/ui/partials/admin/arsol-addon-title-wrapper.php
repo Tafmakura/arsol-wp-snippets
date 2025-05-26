@@ -18,13 +18,13 @@ if (!defined('ABSPATH')) {
 $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
 $priority_category = '';
 if ($priority <= 5) {
-    $priority_category = ' (Early)';
+    $priority_category = 'Early';
 } elseif ($priority <= 10) {
-    $priority_category = ' (Default)';
+    $priority_category = 'Default';
 } elseif ($priority <= 20) {
-    $priority_category = ' (Late)';
+    $priority_category = 'Late';
 } else {
-    $priority_category = ' (Very Late)';
+    $priority_category = 'Very Late';
 }
 ?>
 <div class="arsol-addon-title-wrapper">
@@ -40,7 +40,7 @@ if ($priority <= 5) {
         if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
         ?>
         <span class="arsol-loading-order">
-            <?php echo esc_html($priority . $priority_category); ?>
+            <?php echo esc_html($priority); ?>
         </span>
         <?php endif; ?>
     </div>

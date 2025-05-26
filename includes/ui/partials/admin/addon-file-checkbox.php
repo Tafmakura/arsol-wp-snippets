@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Normalize the file path
-$path_info = \Arsol_WP_Snippets\Path_Normalizer::normalize_path($addon_data['file']);
+$path_info = \Arsol_WP_Snippets\Helper::normalize_path($addon_data['file']);
 
 // Check if file exists
 $file_exists = file_exists($path_info['normalized_path']);

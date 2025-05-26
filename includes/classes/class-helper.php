@@ -2,7 +2,7 @@
 namespace Arsol_WP_Snippets;
 
 /**
- * Path Normalizer Class
+ * Helper Class
  *
  * @package Arsol_WP_Snippets
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class Path_Normalizer {
+class Helper {
     /**
      * Normalize a file path and get its display information
      *

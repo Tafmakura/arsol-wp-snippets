@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 // Normalize the path
-$path_info = \Arsol_WP_Snippets\Path_Normalizer::normalize_path($dup_path);
+$path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_path);
 ?>
 <div class="arsol-addon-container arsol-error">
     <div class="arsol-first-column">

@@ -100,7 +100,10 @@ if ($file_exists) {
                        name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
                        value="1" <?php checked(1, $checked); ?>/>
             </span>
-            <?php if ($addon_data['type'] === 'js' || $addon_data['type'] === 'css'): ?>
+            <?php 
+            $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
+            if ($addon_type === 'js' || $addon_type === 'css'): 
+            ?>
             <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
                 <?php 
                 $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
@@ -128,7 +131,7 @@ if ($file_exists) {
                 <span class="arsol-addon-meta">
                     <strong>Context:</strong> <?php echo ucfirst($addon_data['context'] ?? 'global'); ?>
                 </span>
-                <?php if ($addon_data['type'] === 'js'): ?>
+                <?php if ($addon_type === 'js'): ?>
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
                 </span>
@@ -149,7 +152,7 @@ if ($file_exists) {
                     echo $priority . $priority_group;
                     ?>
                 </span>
-                <?php elseif ($addon_data['type'] === 'css'): ?>
+                <?php elseif ($addon_type === 'css'): ?>
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> Header
                 </span>

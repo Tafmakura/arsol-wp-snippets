@@ -159,12 +159,15 @@ class Admin_Settings {
          */
         $filtered_options = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
         
-        // Validate that all files are PHP files
+        // Validate that all files are PHP files and add type
         foreach ($filtered_options as $addon_id => $addon_data) {
             // Check if file path exists and ends with .php
             if (!isset($addon_data['file']) || substr($addon_data['file'], -4) !== '.php') {
                 // Remove invalid entries
                 unset($filtered_options[$addon_id]);
+            } else {
+                // Add type for PHP files
+                $filtered_options[$addon_id]['type'] = 'php';
             }
         }
         

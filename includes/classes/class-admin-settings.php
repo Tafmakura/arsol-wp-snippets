@@ -198,10 +198,12 @@ class Admin_Settings {
          */
         $filtered_options = apply_filters('arsol_wp_snippets_css_addon_files', $css_addon_options);
         
-        // Validate that all files are CSS files
+        // Validate that all files are CSS files and exist
         foreach ($filtered_options as $addon_id => $addon_data) {
             // Check if file path exists and ends with .css
-            if (!isset($addon_data['file']) || substr($addon_data['file'], -4) !== '.css') {
+            if (!isset($addon_data['file']) || 
+                substr($addon_data['file'], -4) !== '.css' || 
+                !file_exists($addon_data['file'])) {
                 // Remove invalid entries
                 unset($filtered_options[$addon_id]);
             }
@@ -224,10 +226,12 @@ class Admin_Settings {
          */
         $filtered_options = apply_filters('arsol_wp_snippets_js_addon_files', $js_addon_options);
         
-        // Validate that all files are JS files
+        // Validate that all files are JS files and exist
         foreach ($filtered_options as $addon_id => $addon_data) {
             // Check if file path exists and ends with .js
-            if (!isset($addon_data['file']) || substr($addon_data['file'], -3) !== '.js') {
+            if (!isset($addon_data['file']) || 
+                substr($addon_data['file'], -3) !== '.js' || 
+                !file_exists($addon_data['file'])) {
                 // Remove invalid entries
                 unset($filtered_options[$addon_id]);
             }

@@ -31,14 +31,19 @@ if ($option_type !== 'php') {
 }
 
 // Check if file exists
-$file_exists = true;
+$file_exists = false;
+$file_path = '';
 
 // Get simple source name
 $source_name = '';
 if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
     $source_name = wp_get_theme()->get('Name') . ' → ';
+    $file_path = str_replace(get_stylesheet_directory_uri(), get_stylesheet_directory(), $file_reference);
+    $file_exists = file_exists($file_path);
 } elseif (strpos($file_reference, get_template_directory_uri()) === 0) {
     $source_name = wp_get_theme()->get('Name') . ' → ';
+    $file_path = str_replace(get_template_directory_uri(), get_template_directory(), $file_reference);
+    $file_exists = file_exists($file_path);
 } elseif (strpos($file_reference, plugins_url()) === 0 || strpos($file_reference, WP_PLUGIN_DIR) === 0) {
     // Get plugin name from the file path
     $plugin_path = str_replace(plugins_url(), WP_PLUGIN_DIR, $file_reference);
@@ -63,29 +68,14 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
         $plugin_name = basename($plugin_dir);
         $source_name = ucwords(str_replace('-', ' ', $plugin_name)) . ' → ';
     }
-}
-
-// Determine how to check file existence based on file type
-if (filter_var($file_reference, FILTER_VALIDATE_URL)) {
-    // It's a URL - convert to file path for theme files
-    $theme_child_uri = get_stylesheet_directory_uri();
-    $theme_parent_uri = get_template_directory_uri();
     
-    if (strpos($file_reference, $theme_child_uri) === 0) {
-        // Child theme file
-        $file_path = str_replace($theme_child_uri, get_stylesheet_directory(), $file_reference);
-        $file_exists = file_exists($file_path);
-    } elseif (strpos($file_reference, $theme_parent_uri) === 0) {
-        // Parent theme file
-        $file_path = str_replace($theme_parent_uri, get_template_directory(), $file_reference);
-        $file_exists = file_exists($file_path);
-    } else {
-        // External URL or plugin file - assume it exists
-        $file_exists = true;
-    }
+    // Check if file exists in plugin directory
+    $file_path = $plugin_path;
+    $file_exists = file_exists($file_path);
 } else {
-    // It's a file path - check directly
-    $file_exists = file_exists($file_reference);
+    // Direct file path
+    $file_path = $file_reference;
+    $file_exists = file_exists($file_path);
 }
 
 // Check dependencies if file exists

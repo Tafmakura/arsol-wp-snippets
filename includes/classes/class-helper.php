@@ -149,19 +149,18 @@ class Helper {
         // Combine all files
         $all_files = array_merge($php_files, $css_files, $js_files);
         
-        // Add the current file to the collection if it's not already there
-        $current_file_key = array_search($addon_data['file'], array_column($all_files, 'file'));
-        if ($current_file_key === false) {
-            $all_files[] = $addon_data;
-        }
-        
-        // Find all files that use this path
+        // Find all files that use this path, excluding the current file
         $files_with_same_path = array();
         foreach ($all_files as $file_data) {
-            if (isset($file_data['file']) && $file_data['file'] === $addon_data['file']) {
+            if (isset($file_data['file']) && 
+                $file_data['file'] === $addon_data['file'] && 
+                $file_data['name'] !== $addon_data['name']) {
                 $files_with_same_path[] = $file_data;
             }
         }
+        
+        // Add the current file to the collection for sorting
+        $files_with_same_path[] = $addon_data;
         
         // Sort files by loading order
         usort($files_with_same_path, function($a, $b) {
@@ -174,7 +173,7 @@ class Helper {
         $first_file = $files_with_same_path[0];
         $first_path_info = self::normalize_path($first_file['file']);
         
-        // Get all duplicate names for display
+        // Get all duplicate names for display, excluding the first file
         $duplicate_names = array();
         foreach ($files_with_same_path as $file) {
             if ($file['name'] !== $first_file['name']) {

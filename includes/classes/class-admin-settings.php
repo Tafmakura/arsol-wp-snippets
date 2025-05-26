@@ -185,26 +185,12 @@ class Admin_Settings {
                 $loading_order = \Arsol_WP_Snippets\Helper::get_default_options('loading_order');
                 
                 if (in_array($file, $seen_paths)) {
-                    // Check if this file should be considered the first one based on loading order
-                    if (!isset($path_to_first_file[$file]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$file])) {
-                        // This file should be the first one
-                        if (isset($path_to_first_file[$file])) {
-                            // Move the previous first file to duplicates
-                            $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$file]);
-                        }
-                        $path_to_first_file[$file] = array(
-                            'file' => $file,
-                            'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
-                            'loading_order' => $loading_order
-                        );
-                    } else {
-                        // This file should be a duplicate
-                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data(array(
-                            'file' => $file,
-                            'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
-                            'loading_order' => $loading_order
-                        ));
-                    }
+                    // This is a duplicate, add it to duplicates array
+                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data(array(
+                        'file' => $file,
+                        'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
+                        'loading_order' => $loading_order
+                    ));
                     continue;
                 }
                 
@@ -215,11 +201,7 @@ class Admin_Settings {
                     'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
                     'loading_order' => $loading_order
                 );
-                $path_to_first_file[$file] = array(
-                    'file' => $file,
-                    'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
-                    'loading_order' => $loading_order
-                );
+                $path_to_first_file[$file] = $php_addon_options[$addon_id];
             }
         }
         
@@ -235,21 +217,8 @@ class Admin_Settings {
             if (!isset($data['file'])) continue;
             
             if (in_array($data['file'], $seen_paths)) {
-                $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($data);
-                
-                // Check if this file should be considered the first one based on loading order
-                if (!isset($path_to_first_file[$data['file']]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$data['file']])) {
-                    // This file should be the first one
-                    if (isset($path_to_first_file[$data['file']])) {
-                        // Move the previous first file to duplicates
-                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$data['file']]);
-                    }
-                    $path_to_first_file[$data['file']] = $data;
-                    $final[$id] = $data;
-                } else {
-                    // This file should be a duplicate
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($data);
-                }
+                // This is a duplicate, add it to duplicates array
+                $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($data);
                 continue;
             }
             
@@ -279,22 +248,9 @@ class Admin_Settings {
             }
             
             if (in_array($addon_data['file'], $seen_paths)) {
-                $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
-                
-                // Check if this file should be considered the first one based on loading order
-                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$addon_data['file']])) {
-                    // This file should be the first one
-                    if (isset($path_to_first_file[$addon_data['file']])) {
-                        // Move the previous first file to duplicates
-                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$addon_data['file']]);
-                    }
-                    $path_to_first_file[$addon_data['file']] = $addon_data;
-                    $filtered_options[$addon_id] = $addon_data;
-                } else {
-                    // This file should be a duplicate
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
-                    unset($filtered_options[$addon_id]);
-                }
+                // This is a duplicate, add it to duplicates array
+                $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
+                unset($filtered_options[$addon_id]);
                 continue;
             }
             
@@ -323,22 +279,9 @@ class Admin_Settings {
             }
             
             if (in_array($addon_data['file'], $seen_paths)) {
-                $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
-                
-                // Check if this file should be considered the first one based on loading order
-                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < \Arsol_WP_Snippets\Helper::get_loading_order($path_to_first_file[$addon_data['file']])) {
-                    // This file should be the first one
-                    if (isset($path_to_first_file[$addon_data['file']])) {
-                        // Move the previous first file to duplicates
-                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$addon_data['file']]);
-                    }
-                    $path_to_first_file[$addon_data['file']] = $addon_data;
-                    $filtered_options[$addon_id] = $addon_data;
-                } else {
-                    // This file should be a duplicate
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
-                    unset($filtered_options[$addon_id]);
-                }
+                // This is a duplicate, add it to duplicates array
+                $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
+                unset($filtered_options[$addon_id]);
                 continue;
             }
             

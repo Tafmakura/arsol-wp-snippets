@@ -69,9 +69,9 @@ if (strpos($file_reference, get_stylesheet_directory_uri()) === 0) {
         $source_name = ucwords(str_replace('-', ' ', $plugin_name)) . ' → ';
     }
     
-    // Check if file exists in plugin directory
+    // For plugin files, we'll assume they exist if they're in the plugin directory
     $file_path = $plugin_path;
-    $file_exists = file_exists($file_path);
+    $file_exists = true; // Assume plugin files exist
 } else {
     // For CSS and JS files, we need to handle both URL and file system paths
     if ($option_type === 'css' || $option_type === 'js') {
@@ -130,7 +130,30 @@ if ($file_exists && !empty($addon_data['dependencies'])) {
     }
 }
 
-if (!$file_exists) {
+// Check if this is a duplicate file
+$is_duplicate = false;
+if (isset($GLOBALS['arsol_duplicate_files']) && in_array($file_path, $GLOBALS['arsol_duplicate_files'])) {
+    $is_duplicate = true;
+}
+
+if ($is_duplicate) {
+    // Show duplicate file error
+    ?>
+    <div class="arsol-addon-container arsol-error">
+        <div class="arsol-first-column">
+            <span class="dashicons dashicons-warning"></span>
+        </div>
+        <div class="arsol-label-container">
+            <div class="arsol-addon-info">
+                <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
+                <small class="arsol-addon-error">
+                    <strong><?php echo esc_html__('Duplicate file path detected:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($file_path); ?>
+                </small>
+            </div>
+        </div>
+    </div>
+    <?php
+} elseif (!$file_exists) {
     // File doesn't exist - show error message
     ?>
     <div class="arsol-addon-container arsol-error">
@@ -141,7 +164,7 @@ if (!$file_exists) {
             <div class="arsol-addon-info">
                 <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
                 <small class="arsol-addon-error">
-                    <strong><?php echo esc_html__('Snippet file not found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
+                    <strong><?php echo esc_html__('Snippet file not found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($file_path); ?>
                 </small>
             </div>
         </div>

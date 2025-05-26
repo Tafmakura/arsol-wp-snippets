@@ -152,6 +152,21 @@ class Admin_Settings {
     }
     
     /**
+     * Sort addons by loading order
+     *
+     * @param array $addons Array of addon data
+     * @return array Sorted addons
+     */
+    private function sort_addons_by_loading_order($addons) {
+        uasort($addons, function($a, $b) {
+            $loading_order_a = \Arsol_WP_Snippets\Helper::get_loading_order($a);
+            $loading_order_b = \Arsol_WP_Snippets\Helper::get_loading_order($b);
+            return $loading_order_a - $loading_order_b;
+        });
+        return $addons;
+    }
+    
+    /**
      * Get available PHP addon options
      */
     public function get_php_addon_options() {
@@ -167,7 +182,7 @@ class Admin_Settings {
             foreach ($theme_files as $file) {
                 $file_name = basename($file);
                 $addon_id = 'theme-' . sanitize_title($file_name);
-                $loading_order = 10;
+                $loading_order = \Arsol_WP_Snippets\Helper::get_default_options('loading_order');
                 
                 if (in_array($file, $seen_paths)) {
                     // Check if this file should be considered the first one based on loading order
@@ -197,7 +212,7 @@ class Admin_Settings {
                 $php_addon_options[$addon_id] = array(
                     'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
                     'file' => $file,
-                    'context' => 'global',
+                    'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
                     'loading_order' => $loading_order
                 );
                 $path_to_first_file[$file] = array(
@@ -220,7 +235,7 @@ class Admin_Settings {
             if (!isset($data['file'])) continue;
             
             if (in_array($data['file'], $seen_paths)) {
-                $loading_order = isset($data['loading_order']) ? intval($data['loading_order']) : 10;
+                $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($data);
                 
                 // Check if this file should be considered the first one based on loading order
                 if (!isset($path_to_first_file[$data['file']]) || $loading_order < $path_to_first_file[$data['file']]['loading_order']) {
@@ -356,21 +371,6 @@ class Admin_Settings {
         foreach ($duplicates as $dup_data) {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
-    }
-    
-    /**
-     * Sort addons by loading order
-     *
-     * @param array $addons Array of addon data
-     * @return array Sorted addons
-     */
-    private function sort_addons_by_loading_order($addons) {
-        uasort($addons, function($a, $b) {
-            $loading_order_a = isset($a['loading_order']) ? intval($a['loading_order']) : 10;
-            $loading_order_b = isset($b['loading_order']) ? intval($b['loading_order']) : 10;
-            return $loading_order_a - $loading_order_b;
-        });
-        return $addons;
     }
     
     /**

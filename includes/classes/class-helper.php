@@ -102,6 +102,36 @@ class Helper {
     }
 
     /**
+     * Get default options for file types
+     *
+     * @param string $option_key The specific option key to get, or null for all defaults
+     * @return mixed The default value(s)
+     */
+    public static function get_default_options($option_key = null) {
+        $defaults = array(
+            'loading_order' => 10,
+            'context' => 'global',
+            'enabled' => false
+        );
+        
+        if ($option_key !== null) {
+            return isset($defaults[$option_key]) ? $defaults[$option_key] : null;
+        }
+        
+        return $defaults;
+    }
+
+    /**
+     * Get loading order for a file
+     *
+     * @param array $file_data The file data array
+     * @return int The loading order value
+     */
+    public static function get_loading_order($file_data) {
+        return isset($file_data['loading_order']) ? intval($file_data['loading_order']) : self::get_default_options('loading_order');
+    }
+
+    /**
      * Process duplicate file data for storage
      *
      * @param array $addon_data The addon data containing file, name, and optional loading_order
@@ -125,7 +155,7 @@ class Helper {
         
         foreach ($all_files as $file_data) {
             if (isset($file_data['file']) && $file_data['file'] === $addon_data['file']) {
-                $loading_order = isset($file_data['loading_order']) ? intval($file_data['loading_order']) : 10;
+                $loading_order = self::get_loading_order($file_data);
                 if ($loading_order < $first_loading_order) {
                     $first_loading_order = $loading_order;
                     $first_file = $file_data;
@@ -139,7 +169,7 @@ class Helper {
             return array(
                 'file' => $addon_data['file'],
                 'name' => $addon_data['name'],
-                'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10,
+                'loading_order' => self::get_loading_order($addon_data),
                 'first_source' => $first_path_info['source_name'],
                 'first_name' => $first_file['name']
             );
@@ -149,7 +179,7 @@ class Helper {
         return array(
             'file' => $addon_data['file'],
             'name' => $addon_data['name'],
-            'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10,
+            'loading_order' => self::get_loading_order($addon_data),
             'first_source' => $path_info['source_name'],
             'first_name' => $addon_data['name']
         );

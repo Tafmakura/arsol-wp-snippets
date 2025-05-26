@@ -1,10 +1,10 @@
 <?php 
-namespace Arsol_WP_Snippets;
+namespace Arsol_CSS_Addons;
 
 /**
  * Admin Settings Class
  *
- * @package Arsol_WP_Snippets
+ * @package Arsol_CSS_Addons
  */
 
 // Exit if accessed directly.

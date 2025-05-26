@@ -3,7 +3,7 @@
  * Plugin Name: Arsol WP Snippets
  * Plugin URI: https://your-site.com/arsol-wp-snippets
  * Description: A WordPress plugin to add custom code snippets and enhancements
- * Version: 0.0.11
+ * Version: 0.0.12
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Taf Makura

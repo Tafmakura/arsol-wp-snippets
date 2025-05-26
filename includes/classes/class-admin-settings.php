@@ -156,52 +156,67 @@ class Admin_Settings {
      */
     public function get_php_addon_options() {
         $php_addon_options = array();
-        
+        $duplicates = array();
+        $seen_paths = array();
         // Get PHP files from theme directory
         $theme_dir = get_stylesheet_directory();
         $theme_files = glob($theme_dir . '/includes/functions/*.php');
-        
         if ($theme_files) {
             foreach ($theme_files as $file) {
                 $file_name = basename($file);
                 $addon_id = 'theme-' . sanitize_title($file_name);
-                
+                if (in_array($file, $seen_paths)) {
+                    $duplicates[] = $file;
+                    continue;
+                }
+                $seen_paths[] = $file;
                 $php_addon_options[$addon_id] = array(
                     'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
                     'file' => $file,
-                    'context' => 'global', // Default to global
-                    'loading_order' => 10 // Default loading order
+                    'context' => 'global',
+                    'loading_order' => 10
                 );
             }
         }
-        
         // Allow filtering of PHP addon options
-        return apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
+        $php_addon_options = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
+        // Remove duplicates from filtered options
+        $final = array();
+        $seen_paths = array();
+        foreach ($php_addon_options as $id => $data) {
+            if (!isset($data['file'])) continue;
+            if (in_array($data['file'], $seen_paths)) {
+                $duplicates[] = $data['file'];
+                continue;
+            }
+            $seen_paths[] = $data['file'];
+            $final[$id] = $data;
+        }
+        $this->php_duplicates = $duplicates;
+        return $final;
     }
     
     /**
      * Get available CSS addon options
      */
     public function get_css_addon_options() {
-        // Default empty array
         $css_addon_options = array();
-        
-        /**
-         * Filter the CSS addon options
-         * 
-         * @param array $css_addon_options Array of CSS addon options with file paths
-         */
+        $duplicates = array();
+        $seen_paths = array();
         $filtered_options = apply_filters('arsol_wp_snippets_css_addon_files', $css_addon_options);
-        
-        // Validate that all files are CSS files
         foreach ($filtered_options as $addon_id => $addon_data) {
-            // Check if file path exists and ends with .css
             if (!isset($addon_data['file']) || substr($addon_data['file'], -4) !== '.css') {
-                // Remove invalid entries
                 unset($filtered_options[$addon_id]);
+                continue;
             }
+            if (in_array($addon_data['file'], $seen_paths)) {
+                $duplicates[] = $addon_data['file'];
+                unset($filtered_options[$addon_id]);
+                continue;
+            }
+            $seen_paths[] = $addon_data['file'];
         }
-        
+        $this->css_duplicates = $duplicates;
         return $filtered_options;
     }
     
@@ -209,25 +224,23 @@ class Admin_Settings {
      * Get available JS addon options
      */
     public function get_js_addon_options() {
-        // Default empty array
         $js_addon_options = array();
-        
-        /**
-         * Filter the JS addon options
-         * 
-         * @param array $js_addon_options Array of JS addon options with file paths
-         */
+        $duplicates = array();
+        $seen_paths = array();
         $filtered_options = apply_filters('arsol_wp_snippets_js_addon_files', $js_addon_options);
-        
-        // Validate that all files are JS files
         foreach ($filtered_options as $addon_id => $addon_data) {
-            // Check if file path exists and ends with .js
             if (!isset($addon_data['file']) || substr($addon_data['file'], -3) !== '.js') {
-                // Remove invalid entries
                 unset($filtered_options[$addon_id]);
+                continue;
             }
+            if (in_array($addon_data['file'], $seen_paths)) {
+                $duplicates[] = $addon_data['file'];
+                unset($filtered_options[$addon_id]);
+                continue;
+            }
+            $seen_paths[] = $addon_data['file'];
         }
-        
+        $this->js_duplicates = $duplicates;
         return $filtered_options;
     }
     
@@ -237,24 +250,19 @@ class Admin_Settings {
     public function render_php_addon_options() {
         $options = get_option('arsol_wp_snippets_options', array());
         $php_addon_options = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
-        
-        // Get PHP addon options from the filter
         $available_php_addons = $this->get_php_addon_options();
-        
-        if (empty($available_php_addons)) {
+        $duplicates = isset($this->php_duplicates) ? $this->php_duplicates : array();
+        if (empty($available_php_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No PHP snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
-        
         foreach ($available_php_addons as $addon_id => $addon_data) {
-            // Set variables that will be available to the template
             $enabled_options = $php_addon_options;
             $option_type = 'php';
-            $addon_id = $addon_id;
-            $addon_data = $addon_data;
-            
-            // Include the template file with the correct path
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_path) {
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     
@@ -279,27 +287,20 @@ class Admin_Settings {
     public function render_css_addon_options() {
         $options = get_option('arsol_wp_snippets_options', array());
         $css_addon_options = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
-        
-        // Get CSS addon options from the filter
         $available_css_addons = $this->get_css_addon_options();
-        
-        if (empty($available_css_addons)) {
+        $duplicates = isset($this->css_duplicates) ? $this->css_duplicates : array();
+        if (empty($available_css_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No CSS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
-        
-        // Sort CSS addons by loading order
         $available_css_addons = $this->sort_addons_by_loading_order($available_css_addons);
-        
         foreach ($available_css_addons as $addon_id => $addon_data) {
-            // Set variables that will be available to the template
             $enabled_options = $css_addon_options;
             $option_type = 'css';
-            $addon_id = $addon_id;
-            $addon_data = $addon_data;
-            
-            // Include the template file with the correct path
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_path) {
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     
@@ -309,27 +310,20 @@ class Admin_Settings {
     public function render_js_addon_options() {
         $options = get_option('arsol_wp_snippets_options', array());
         $js_addon_options = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
-        
-        // Get JS addon options from the filter
         $available_js_addons = $this->get_js_addon_options();
-        
-        if (empty($available_js_addons)) {
+        $duplicates = isset($this->js_duplicates) ? $this->js_duplicates : array();
+        if (empty($available_js_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No JS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
-        
-        // Sort JS addons by loading order
         $available_js_addons = $this->sort_addons_by_loading_order($available_js_addons);
-        
         foreach ($available_js_addons as $addon_id => $addon_data) {
-            // Set variables that will be available to the template
             $enabled_options = $js_addon_options;
             $option_type = 'js';
-            $addon_id = $addon_id;
-            $addon_data = $addon_data;
-            
-            // Include the template file with the correct path
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_path) {
+            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
         }
     }
     

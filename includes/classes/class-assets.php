@@ -39,7 +39,7 @@ class Assets {
             'arsol-wp-snippets-frontend',
             $plugin_url . 'assets/css/arsol-wp-snippets-frontend.css',
             array(),
-            ARSOL_WP_SNIPPETS_VERSION
+            arsol_wp_snippets_get_version()
         );
         
         // Register JS (loads in footer with true parameter)
@@ -47,7 +47,7 @@ class Assets {
             'arsol-wp-snippets-frontend',
             $plugin_url . 'assets/js/arsol-wp-snippets-frontend.js',
             array('jquery'),
-            ARSOL_WP_SNIPPETS_VERSION,
+            arsol_wp_snippets_get_version(),
             true // Load in footer
         );
     }
@@ -77,7 +77,7 @@ class Assets {
             'arsol-wp-snippets-admin',
             $plugin_url . 'assets/css/arsol-wp-snippets-admin.css',
             array(),
-            ARSOL_WP_SNIPPETS_VERSION
+            arsol_wp_snippets_get_version()
         );
         
         // Register JS (loads in footer with true parameter)
@@ -85,7 +85,7 @@ class Assets {
             'arsol-wp-snippets-admin',
             $plugin_url . 'assets/js/arsol-wp-snippets-admin.js',
             array('jquery'),
-            ARSOL_WP_SNIPPETS_VERSION,
+            arsol_wp_snippets_get_version(),
             true // Load in footer
         );
 
@@ -94,7 +94,7 @@ class Assets {
             'arsol-wp-snippets-editor',
             $plugin_url . 'assets/js/arsol-wp-snippets-editor.js',
             array('jquery', 'wp-codemirror'),
-            ARSOL_WP_SNIPPETS_VERSION,
+            arsol_wp_snippets_get_version(),
             true // Load in footer
         );
     }

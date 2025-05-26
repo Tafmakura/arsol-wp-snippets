@@ -58,7 +58,7 @@ function arsol_wp_snippets_get_version() {
 }
 
 // Setup Class
-require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-assets.php';
+require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
 // Initialize the plugin
 function arsol_wp_snippets_init() {

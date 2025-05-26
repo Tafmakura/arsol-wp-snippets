@@ -114,7 +114,8 @@ class Helper {
             'file' => $addon_data['file'],
             'name' => $addon_data['name'],
             'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10,
-            'first_source' => $path_info['source_name']
+            'first_source' => $path_info['source_name'],
+            'first_name' => $addon_data['name']
         );
     }
 } 

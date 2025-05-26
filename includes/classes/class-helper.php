@@ -138,7 +138,7 @@ class Helper {
      * @return array Processed duplicate file data
      */
     public static function process_duplicate_data($addon_data) {
-        // Get the source name for the first file
+        // Get the source name for the current file
         $path_info = self::normalize_path($addon_data['file']);
         
         // Get all available files through filters
@@ -149,39 +149,33 @@ class Helper {
         // Combine all files
         $all_files = array_merge($php_files, $css_files, $js_files);
         
-        // Find the first file that used this path
-        $first_file = null;
-        $first_loading_order = PHP_INT_MAX;
-        
+        // Find all files that use this path
+        $files_with_same_path = array();
         foreach ($all_files as $file_data) {
             if (isset($file_data['file']) && $file_data['file'] === $addon_data['file']) {
-                $loading_order = self::get_loading_order($file_data);
-                if ($loading_order < $first_loading_order) {
-                    $first_loading_order = $loading_order;
-                    $first_file = $file_data;
-                }
+                $files_with_same_path[] = $file_data;
             }
         }
         
-        // If we found a first file, use its information
-        if ($first_file) {
-            $first_path_info = self::normalize_path($first_file['file']);
-            return array(
-                'file' => $addon_data['file'],
-                'name' => $addon_data['name'],
-                'loading_order' => self::get_loading_order($addon_data),
-                'first_source' => $first_path_info['source_name'],
-                'first_name' => $first_file['name']
-            );
-        }
+        // Sort files by loading order
+        usort($files_with_same_path, function($a, $b) {
+            $loading_order_a = self::get_loading_order($a);
+            $loading_order_b = self::get_loading_order($b);
+            return $loading_order_a - $loading_order_b;
+        });
         
-        // Fallback to current file if no first file found
+        // The first file in the sorted array is the one with lowest loading order
+        $first_file = $files_with_same_path[0];
+        $first_path_info = self::normalize_path($first_file['file']);
+        
         return array(
             'file' => $addon_data['file'],
             'name' => $addon_data['name'],
             'loading_order' => self::get_loading_order($addon_data),
-            'first_source' => $path_info['source_name'],
-            'first_name' => $addon_data['name']
+            'first_source' => $first_path_info['source_name'],
+            'first_name' => $first_file['name'],
+            'first_loading_order' => self::get_loading_order($first_file),
+            'total_duplicates' => count($files_with_same_path)
         );
     }
 } 

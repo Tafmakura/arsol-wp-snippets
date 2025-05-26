@@ -34,6 +34,12 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_data['file']);
                 <strong>Duplicate file path detected for → </strong> <?php echo '<strong>' . esc_html($path_info['source_name']) . '</strong>' . esc_html($path_info['display_path']); ?>
                 <strong>→ first used by → </strong> <?php echo '<strong>' . esc_html($dup_data['first_source']) . '</strong>'; ?>
                 <strong><?php echo esc_html($dup_data['first_name']); ?></strong>
+                <br>
+                <small>
+                    Loading Order: <?php echo esc_html($dup_data['loading_order']); ?> 
+                    (First file: <?php echo esc_html($dup_data['first_loading_order']); ?>)
+                    | Total Duplicates: <?php echo esc_html($dup_data['total_duplicates']); ?>
+                </small>
             </small>
         </div>
     </div>

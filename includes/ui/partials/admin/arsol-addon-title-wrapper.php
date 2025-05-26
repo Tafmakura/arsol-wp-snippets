@@ -31,6 +31,7 @@ if ($priority <= 5) {
     <div class="arsol-addon-title">
         <h4 class="arsol-addon-title">
             <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
+            <?php echo wc_help_tip('Hello World'); ?>
         </h4>
     </div>
     <div class="arsol-addon-priority">

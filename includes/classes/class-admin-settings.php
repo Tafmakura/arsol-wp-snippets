@@ -187,6 +187,12 @@ class Admin_Settings {
             if ($type === 'js' && substr($data['file'], -3) !== '.js') continue;
             if ($type === 'php' && substr($data['file'], -4) !== '.php') continue;
             
+            // Ensure required keys exist
+            $data = array_merge(array(
+                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
+                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
+            ), $data);
+            
             $path = $data['file'];
             if (!isset($path_groups[$path])) {
                 $path_groups[$path] = array();
@@ -242,27 +248,8 @@ class Admin_Settings {
      * Get available PHP addon options
      */
     public function get_php_addon_options() {
-        $php_addon_options = array();
-        
-        // Get PHP files from theme directory
-        $theme_dir = get_stylesheet_directory();
-        $theme_files = glob($theme_dir . '/includes/functions/*.php');
-        if ($theme_files) {
-            foreach ($theme_files as $file) {
-                $file_name = basename($file);
-                $addon_id = 'theme-' . sanitize_title($file_name);
-                
-                $php_addon_options[$addon_id] = array(
-                    'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
-                    'file' => $file,
-                    'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
-                    'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
-                );
-            }
-        }
-        
         // Get all files after filters are applied
-        $all_files = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
+        $all_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
         
         // Process files and handle duplicates
         $result = $this->process_files($all_files, 'php');
@@ -275,10 +262,8 @@ class Admin_Settings {
      * Get available CSS addon options
      */
     public function get_css_addon_options() {
-        $css_addon_options = array();
-        
         // Get all files after filters are applied
-        $all_files = apply_filters('arsol_wp_snippets_css_addon_files', $css_addon_options);
+        $all_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
         
         // Process files and handle duplicates
         $result = $this->process_files($all_files, 'css');
@@ -291,10 +276,8 @@ class Admin_Settings {
      * Get available JS addon options
      */
     public function get_js_addon_options() {
-        $js_addon_options = array();
-        
         // Get all files after filters are applied
-        $all_files = apply_filters('arsol_wp_snippets_js_addon_files', $js_addon_options);
+        $all_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
         
         // Process files and handle duplicates
         $result = $this->process_files($all_files, 'js');

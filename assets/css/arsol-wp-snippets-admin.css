@@ -53,8 +53,9 @@
     line-height: 1.4;
 }
 
-.arsol-addon-container{
-    border-color: #8c8f94;
+.arsol-addon-container,
+.arsol-addon-footer {
+    border-color: #ddd;
 }
 
 /* Small text size consistency */
@@ -66,11 +67,6 @@
 /* Enabled file state */
 .arsol-addon-container.enabled {
     border-left-color: #46b450;
-}
-
-/* Disabled file state */
-.arsol-addon-container.disabled {
-    border-left-color: #8c8f94;
 }
 
 /* Error state */
@@ -100,7 +96,7 @@
     padding-top: 8px;
     font-size: 12px;
     color: #666;
-    border-top: 1px solid #ddd;
+    border-top-width: 1px;
     width: 100%;
     display: flex;
 }

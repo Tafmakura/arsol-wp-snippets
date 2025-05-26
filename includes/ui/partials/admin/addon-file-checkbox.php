@@ -166,20 +166,7 @@ if (!$file_exists) {
         <div class="arsol-label-container">
             <div class="arsol-addon-info">
                 <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
-                <div class="arsol-addon-priority">
-                    <?php 
-                        // Display priority number in first column
-                        $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-                        if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
-                    ?>
-                    <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
-                        <?php 
-                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                        echo esc_html($priority); 
-                        ?>
-                    </span>
-                    <?php endif; ?>
-                </div>
+            
                 <small class="arsol-addon-source"><?php 
                     $display_path = $file_reference;
                     if (strpos($display_path, 'wp-content/plugins/') !== false) {

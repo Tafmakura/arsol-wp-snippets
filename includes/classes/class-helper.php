@@ -76,4 +76,42 @@ class Helper {
 
         return $result;
     }
+
+    /**
+     * Get addon data from duplicate file information
+     *
+     * @param array $dup_data The duplicate file data containing file, name, and loading_order
+     * @return array Array containing addon data for display
+     */
+    public static function get_duplicate_addon_data($dup_data) {
+        return array(
+            'name' => $dup_data['name'],
+            'loading_order' => $dup_data['loading_order'],
+            'type' => pathinfo($dup_data['file'], PATHINFO_EXTENSION)
+        );
+    }
+
+    /**
+     * Get duplicate file ID for HTML elements
+     *
+     * @param array $dup_data The duplicate file data containing file, name, and loading_order
+     * @return string Sanitized ID for the duplicate file
+     */
+    public static function get_duplicate_file_id($dup_data) {
+        return 'duplicate-' . sanitize_title($dup_data['file']);
+    }
+
+    /**
+     * Process duplicate file data for storage
+     *
+     * @param array $addon_data The addon data containing file, name, and optional loading_order
+     * @return array Processed duplicate file data
+     */
+    public static function process_duplicate_data($addon_data) {
+        return array(
+            'file' => $addon_data['file'],
+            'name' => $addon_data['name'],
+            'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10
+        );
+    }
 } 

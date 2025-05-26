@@ -22,16 +22,16 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_data['file']);
         <span class="dashicons dashicons-warning"></span>
     </div>
     <div class="arsol-label-container">
-        <?php
-        // Set up variables for the title wrapper
-        $addon_id = \Arsol_WP_Snippets\Helper::get_duplicate_file_id($dup_data);
-        $addon_data = \Arsol_WP_Snippets\Helper::get_duplicate_addon_data($dup_data);
-        $option_type = 'error';
-        include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php';
-        ?>
         <div class="arsol-addon-info">
+            <?php
+            // Set up variables for the title wrapper
+            $addon_id = \Arsol_WP_Snippets\Helper::get_duplicate_file_id($dup_data);
+            $addon_data = \Arsol_WP_Snippets\Helper::get_duplicate_addon_data($dup_data);
+            $option_type = 'error';
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php';
+            ?>
             <small class="arsol-addon-error">
-                  <strong>Duplicate file path detected for → </strong> <?php echo '<strong>' . esc_html($path_info['source_name']) . '</strong>' . esc_html($path_info['display_path']); ?>
+                <strong>Duplicate file path detected for → </strong> <?php echo '<strong>' . esc_html($path_info['source_name']) . '</strong>' . esc_html($path_info['display_path']); ?>
             </small>
         </div>
     </div>

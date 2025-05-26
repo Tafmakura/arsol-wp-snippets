@@ -47,7 +47,7 @@ class Admin_Settings {
             'manage_options',
             $this->css_addons_slug,
             array($this, 'display_css_addons_page'),
-            'dashicons-admin-customizer',
+            'dashicons-editor-code',
             30
         );
         

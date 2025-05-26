@@ -43,7 +43,6 @@ define('ARSOL_WP_SNIPPETS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('ARSOL_WP_SNIPPETS_VERSION', '35.0.0');
 define('ARSOL_WP_SNIPPETS_ASSETS_VERSION', '35.0.0');
 
-
 // Use correct namespace
 use Arsol_WP_Snippets\Setup;
 

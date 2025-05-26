@@ -117,22 +117,26 @@ if ($file_exists) {
                 ?></small>
             </div>
             <div class="arsol-addon-footer">
-                <?php
-                // Display context for all file types
-                $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
-                echo '<span class="arsol-addon-meta"><strong>Context:</strong> ' . esc_html(ucfirst($context)) . '</span>';
-                
-                // Display position only for JS and CSS files
-                if ($option_type === 'js' || $option_type === 'css') {
-                    $position = isset($addon_data['position']) ? $addon_data['position'] : ($option_type === 'css' ? 'header' : 'footer');
-                    echo '<span class="arsol-addon-meta"><strong>Position:</strong> ' . esc_html(ucfirst($position)) . '</span>';
-                }
-                
-                // Display dependencies if available
-                if (isset($addon_data['dependencies']) && !empty($addon_data['dependencies'])) {
-                    echo '<span class="arsol-addon-meta"><strong>Dependencies:</strong> ' . esc_html(implode(', ', $addon_data['dependencies'])) . '</span>';
-                }
-                ?>
+                <span class="arsol-addon-meta">
+                    <strong>Context:</strong> <?php echo ucfirst($addon_data['context'] ?? 'global'); ?>
+                </span>
+                <?php if ($addon_data['type'] === 'js'): ?>
+                <span class="arsol-addon-meta">
+                    <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
+                </span>
+                <span class="arsol-addon-meta">
+                    <strong>Priority:</strong> <?php echo isset($addon_data['priority']) ? intval($addon_data['priority']) : '10'; ?>
+                </span>
+                <?php elseif ($addon_data['type'] === 'css'): ?>
+                <span class="arsol-addon-meta">
+                    <strong>Position:</strong> Header
+                </span>
+                <?php endif; ?>
+                <?php if (!empty($addon_data['dependencies'])): ?>
+                <span class="arsol-addon-meta">
+                    <strong>Dependencies:</strong> <?php echo esc_html(implode(', ', $addon_data['dependencies'])); ?>
+                </span>
+                <?php endif; ?>
             </div>
         </div>
     </div>

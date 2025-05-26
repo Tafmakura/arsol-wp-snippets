@@ -399,7 +399,6 @@ class Admin_Settings {
                             array(),
                             ARSOL_WP_SNIPPETS_VERSION
                         );
-                        // Note: CSS position doesn't matter much - always loads in header
                         
                         do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $addon_data['file']);
                     }
@@ -424,13 +423,19 @@ class Admin_Settings {
                         $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
                         $in_footer = ($position === 'footer');
                         
-                        wp_enqueue_script(
-                            'arsol-js-addon-' . $addon_id,
-                            $addon_data['file'],
-                            array('jquery'),
-                            ARSOL_WP_SNIPPETS_VERSION,
-                            $in_footer  // true for footer (default), false for header
-                        );
+                        // Get priority - DEFAULT TO 10
+                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                        
+                        // Hook into admin_enqueue_scripts with the specified priority
+                        add_action('admin_enqueue_scripts', function() use ($addon_data, $addon_id, $in_footer) {
+                            wp_enqueue_script(
+                                'arsol-js-addon-' . $addon_id,
+                                $addon_data['file'],
+                                array('jquery'),
+                                ARSOL_WP_SNIPPETS_VERSION,
+                                $in_footer
+                            );
+                        }, $priority);
                         
                         do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
                     }
@@ -469,7 +474,6 @@ class Admin_Settings {
                             array(),
                             ARSOL_WP_SNIPPETS_VERSION
                         );
-                        // Note: CSS always loads in header regardless of position setting
                         
                         do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $css_addon_options[$addon_id]['file']);
                     }
@@ -494,13 +498,19 @@ class Admin_Settings {
                         $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
                         $in_footer = ($position === 'footer');
                         
-                        wp_enqueue_script(
-                            'arsol-js-addon-' . $addon_id,
-                            $addon_data['file'],
-                            array('jquery'),
-                            ARSOL_WP_SNIPPETS_VERSION,
-                            $in_footer  // true for footer (default), false for header
-                        );
+                        // Get priority - DEFAULT TO 10
+                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                        
+                        // Hook into wp_enqueue_scripts with the specified priority
+                        add_action('wp_enqueue_scripts', function() use ($addon_data, $addon_id, $in_footer) {
+                            wp_enqueue_script(
+                                'arsol-js-addon-' . $addon_id,
+                                $addon_data['file'],
+                                array('jquery'),
+                                ARSOL_WP_SNIPPETS_VERSION,
+                                $in_footer
+                            );
+                        }, $priority);
                         
                         do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
                     }

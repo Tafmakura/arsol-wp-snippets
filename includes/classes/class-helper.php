@@ -110,12 +110,30 @@ class Helper {
     public static function process_duplicate_data($addon_data) {
         // Get the source name for the first file
         $path_info = self::normalize_path($addon_data['file']);
+        
+        // Get all available files through filters
+        $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
+        $css_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
+        $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
+        
+        // Combine all files
+        $all_files = array_merge($php_files, $css_files, $js_files);
+        
+        // Find the first file that used this path
+        $first_name = '';
+        foreach ($all_files as $file_data) {
+            if (isset($file_data['file']) && $file_data['file'] === $addon_data['file']) {
+                $first_name = $file_data['name'];
+                break;
+            }
+        }
+        
         return array(
             'file' => $addon_data['file'],
             'name' => $addon_data['name'],
             'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10,
             'first_source' => $path_info['source_name'],
-            'first_name' => $addon_data['name']
+            'first_name' => $first_name ?: $addon_data['name'] // Fallback to current name if first name not found
         );
     }
 } 

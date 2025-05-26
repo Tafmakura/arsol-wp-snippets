@@ -78,30 +78,6 @@ class Helper {
     }
 
     /**
-     * Get addon data from duplicate file information
-     *
-     * @param array $dup_data The duplicate file data containing file, name, and loading_order
-     * @return array Array containing addon data for display
-     */
-    public static function get_duplicate_addon_data($dup_data) {
-        return array(
-            'name' => $dup_data['name'],
-            'loading_order' => $dup_data['loading_order'],
-            'type' => pathinfo($dup_data['file'], PATHINFO_EXTENSION)
-        );
-    }
-
-    /**
-     * Get duplicate file ID for HTML elements
-     *
-     * @param array $dup_data The duplicate file data containing file, name, and loading_order
-     * @return string Sanitized ID for the duplicate file
-     */
-    public static function get_duplicate_file_id($dup_data) {
-        return 'duplicate-' . sanitize_title($dup_data['file']);
-    }
-
-    /**
      * Get default options for file types
      *
      * @param string $option_key The specific option key to get, or null for all defaults
@@ -129,55 +105,5 @@ class Helper {
      */
     public static function get_loading_order($file_data) {
         return isset($file_data['loading_order']) ? intval($file_data['loading_order']) : self::get_default_options('loading_order');
-    }
-
-    /**
-     * Process duplicate file data
-     *
-     * @param array $file_data File data to process
-     * @return array Processed duplicate data
-     */
-    public static function process_duplicate_data($file_data) {
-        if (!isset($file_data['file'])) {
-            return array();
-        }
-
-        // Normalize file path and get source name
-        $path_info = self::normalize_path($file_data['file']);
-        $file_path = $path_info['normalized_path'];
-        
-        // Get all files with same path
-        $duplicate_files = self::get_duplicate_file_data($file_path);
-        
-        if (empty($duplicate_files)) {
-            return array();
-        }
-
-        // Sort by loading order
-        usort($duplicate_files, function($a, $b) {
-            return $a['loading_order'] - $b['loading_order'];
-        });
-
-        // Get first file (lowest loading order)
-        $first_file = $duplicate_files[0];
-        
-        // Get all other files
-        $other_files = array_filter($duplicate_files, function($f) use ($first_file) {
-            return $f['name'] !== $first_file['name'];
-        });
-
-        return array(
-            'file' => $file_path,
-            'name' => $file_data['name'],
-            'loading_order' => $file_data['loading_order'],
-            'source_name' => $path_info['source_name'],
-            'first_source' => $first_file['source_name'],
-            'first_name' => $first_file['name'],
-            'first_loading_order' => $first_file['loading_order'],
-            'total_duplicates' => count($duplicate_files),
-            'duplicate_names' => array_map(function($f) {
-                return $f['name'];
-            }, $other_files)
-        );
     }
 } 

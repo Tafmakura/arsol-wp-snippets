@@ -181,7 +181,7 @@ class Admin_Settings {
         // Get all files after filters are applied
         $all_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
         
-        // Process files and handle duplicates using Snippet Loader
+        // Process files
         $result = $this->snippet_loader->process_files($all_files, 'php');
         return $result['files'];
     }
@@ -193,7 +193,7 @@ class Admin_Settings {
         // Get all files after filters are applied
         $all_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
         
-        // Process files and handle duplicates using Snippet Loader
+        // Process files
         $result = $this->snippet_loader->process_files($all_files, 'css');
         return $result['files'];
     }
@@ -205,7 +205,7 @@ class Admin_Settings {
         // Get all files after filters are applied
         $all_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
         
-        // Process files and handle duplicates using Snippet Loader
+        // Process files
         $result = $this->snippet_loader->process_files($all_files, 'js');
         return $result['files'];
     }
@@ -217,9 +217,8 @@ class Admin_Settings {
         $options = get_option('arsol_wp_snippets_options', array());
         $php_addon_options = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
         $available_php_addons = $this->get_php_addon_options();
-        $duplicates = $this->snippet_loader->get_duplicate_files('php');
         
-        if (empty($available_php_addons) && empty($duplicates)) {
+        if (empty($available_php_addons)) {
             echo '<p>' . esc_html__('No PHP snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
@@ -230,9 +229,6 @@ class Admin_Settings {
             $option_type = 'php';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
-        foreach ($duplicates as $dup_data) {
-            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
-        }
     }
     
     /**
@@ -242,9 +238,8 @@ class Admin_Settings {
         $options = get_option('arsol_wp_snippets_options', array());
         $css_addon_options = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
         $available_css_addons = $this->get_css_addon_options();
-        $duplicates = $this->snippet_loader->get_duplicate_files('css');
         
-        if (empty($available_css_addons) && empty($duplicates)) {
+        if (empty($available_css_addons)) {
             echo '<p>' . esc_html__('No CSS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
@@ -255,9 +250,6 @@ class Admin_Settings {
             $option_type = 'css';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
-        foreach ($duplicates as $dup_data) {
-            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
-        }
     }
     
     /**
@@ -267,9 +259,8 @@ class Admin_Settings {
         $options = get_option('arsol_wp_snippets_options', array());
         $js_addon_options = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
         $available_js_addons = $this->get_js_addon_options();
-        $duplicates = $this->snippet_loader->get_duplicate_files('js');
         
-        if (empty($available_js_addons) && empty($duplicates)) {
+        if (empty($available_js_addons)) {
             echo '<p>' . esc_html__('No JS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
@@ -279,9 +270,6 @@ class Admin_Settings {
             $enabled_options = $js_addon_options;
             $option_type = 'js';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
-        }
-        foreach ($duplicates as $dup_data) {
-            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
     

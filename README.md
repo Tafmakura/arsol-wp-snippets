@@ -18,6 +18,7 @@ Arsol WP Snippets allows you to easily manage and load custom PHP, CSS, and Java
 - Loading order control for all file types
 - Dependency management for CSS and JS files
 - Flexible filter system for custom integration
+- Conditional loading based on various criteria
 
 ## Safe Mode
 
@@ -108,6 +109,61 @@ add_filter('arsol_wp_snippets_js_addon_files', function($addons) {
 });
 ```
 
+### Conditional Loading
+
+The plugin supports conditional loading based on various criteria. Here are some examples:
+
+```php
+// Example of user role-based loading
+add_filter('arsol_wp_snippets_js_addon_files', function($addons) {
+    if (current_user_can('administrator')) {
+        $addons['admin-only-script'] = array(
+            'name' => 'Admin Only Script',
+            'file' => 'path/to/admin-script.js',
+            'loading_order' => 10
+        );
+    }
+    return $addons;
+});
+
+// Example of mobile device detection
+add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
+    if (wp_is_mobile()) {
+        $addons['mobile-styles'] = array(
+            'name' => 'Mobile Styles',
+            'file' => 'path/to/mobile.css',
+            'loading_order' => 5
+        );
+    }
+    return $addons;
+});
+
+// Example of time-based loading
+add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
+    $hour = (int) current_time('G');
+    if ($hour >= 9 && $hour < 17) {
+        $addons['business-hours'] = array(
+            'name' => 'Business Hours Code',
+            'file' => 'path/to/business-hours.php',
+            'loading_order' => 10
+        );
+    }
+    return $addons;
+});
+
+// Example of user login status
+add_filter('arsol_wp_snippets_js_addon_files', function($addons) {
+    if (is_user_logged_in()) {
+        $addons['logged-in-script'] = array(
+            'name' => 'Logged In User Script',
+            'file' => 'path/to/logged-in.js',
+            'loading_order' => 15
+        );
+    }
+    return $addons;
+});
+```
+
 ### Filter Hooks
 
 The plugin provides several filter hooks for custom integration:
@@ -149,18 +205,32 @@ If you encounter any issues:
 
 ## Changelog
 
-### 1.0.10
+### Version 0.0.13
+- Replaced 'priority' parameter with 'loading_order' for better clarity in CSS and JS loaders
+- Added comprehensive examples of conditional loading based on:
+  - User login status
+  - Mobile device detection
+  - User roles
+  - Time-based conditions
+- Updated documentation to reflect new parameter names and loading conditions
+- Improved code organization and readability
+- Added detailed comments explaining conditional loading logic
+
+### Version 0.0.12
 - Added loading order control for all file types
 - Added dependency management for CSS and JS files
 - Enhanced filter system for better integration
 - Improved admin interface with loading order display
 - Added timing categories (Early, Default, Late, Very Late)
 
-### 1.0.9
+### Version 0.0.11
 - Added safe mode feature
 - Improved file loading logic
 - Added admin notifications
 - Enhanced error handling
+
+### Version 0.0.1 - 0.0.10
+- Prototype experiments
 
 ## License
 

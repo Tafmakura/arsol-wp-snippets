@@ -25,10 +25,33 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_path);
         <?php
         // Set up variables for the title wrapper
         $addon_id = 'duplicate-' . sanitize_title($dup_path);
+        
+        // Try to get the addon data from filter options first
+        $file_extension = pathinfo($dup_path, PATHINFO_EXTENSION);
+        $filtered_addons = array();
+        
+        // Get addon data from appropriate filter based on file type
+        if ($file_extension === 'php') {
+            $filtered_addons = apply_filters('arsol_wp_snippets_php_addon_files', array());
+        } elseif ($file_extension === 'css') {
+            $filtered_addons = apply_filters('arsol_wp_snippets_css_addon_files', array());
+        } elseif ($file_extension === 'js') {
+            $filtered_addons = apply_filters('arsol_wp_snippets_js_addon_files', array());
+        }
+        
+        // Find the matching addon data
+        $matching_addon = null;
+        foreach ($filtered_addons as $id => $data) {
+            if (isset($data['file']) && $data['file'] === $dup_path) {
+                $matching_addon = $data;
+                break;
+            }
+        }
+        
         $addon_data = array(
-            'name' => basename($dup_path),
-            'loading_order' => 0,
-            'type' => pathinfo($dup_path, PATHINFO_EXTENSION)
+            'name' => $matching_addon ? $matching_addon['name'] : $path_info['source_name'] . basename($dup_path),
+            'loading_order' => $matching_addon ? $matching_addon['loading_order'] : 0,
+            'type' => $file_extension
         );
         $option_type = 'error';
         include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php';

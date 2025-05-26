@@ -262,7 +262,7 @@ class Admin_Settings {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
         foreach ($duplicates as $dup_path) {
-            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
     
@@ -300,7 +300,7 @@ class Admin_Settings {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
         foreach ($duplicates as $dup_path) {
-            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
     
@@ -323,7 +323,7 @@ class Admin_Settings {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
         foreach ($duplicates as $dup_path) {
-            echo '<div class="arsol-addon-container arsol-error"><div class="arsol-first-column"><span class="dashicons dashicons-warning"></span></div><div class="arsol-label-container"><div class="arsol-addon-info"><small class="arsol-addon-error"><strong>Duplicate file path detected:</strong> ' . esc_html($dup_path) . '</small></div></div></div>';
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
     

@@ -13,6 +13,19 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
+// Get priority and determine its category
+$priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+$priority_category = '';
+if ($priority <= 5) {
+    $priority_category = ' (Early)';
+} elseif ($priority <= 10) {
+    $priority_category = ' (Default)';
+} elseif ($priority <= 20) {
+    $priority_category = ' (Late)';
+} else {
+    $priority_category = ' (Very Late)';
+}
 ?>
 <div class="arsol-addon-title-wrapper">
     <div class="arsol-addon-title">
@@ -26,11 +39,14 @@ if (!defined('ABSPATH')) {
         $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
         if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
         ?>
-        <span class="arsol-loading-order" title="<?php echo esc_attr__('Loading Order', 'arsol-wp-snippets'); ?>">
-            <?php 
-            $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-            echo esc_html($priority); 
-            ?>
+        <span class="arsol-loading-order" title="<?php 
+            echo esc_attr(sprintf(
+                __('Loading Order: %d%s - Lower numbers load earlier, higher numbers load later', 'arsol-wp-snippets'),
+                $priority,
+                $priority_category
+            )); 
+        ?>">
+            <?php echo esc_html($priority); ?>
         </span>
         <?php endif; ?>
     </div>

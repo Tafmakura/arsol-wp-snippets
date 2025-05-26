@@ -170,104 +170,19 @@
 
 /* Script Filter Styles */
 .arsol-script-filter {
-    margin: 20px 0;
+    margin: 1em 0;
+    padding: 0 12px;
 }
 
-.arsol-script-filter .arsol-select2 {
-    min-width: 300px;
+.arsol-select2 {
+    width: 300px;
 }
 
 /* Loading State */
-.arsol-addon-list.loading {
+.arsol-addon-container.loading {
     opacity: 0.5;
     pointer-events: none;
-}
-
-/* Addon Container */
-.arsol-addon-container {
-    display: flex;
-    align-items: flex-start;
-    padding: 15px;
-    margin-bottom: 10px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-.arsol-addon-container.enabled {
-    border-left: 4px solid #46b450;
-}
-
-.arsol-addon-container.disabled {
-    border-left: 4px solid #dc3232;
-}
-
-.arsol-addon-container.arsol-error {
-    border-left: 4px solid #ffb900;
-}
-
-/* First Column */
-.arsol-first-column {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-right: 15px;
-}
-
-/* Label Container */
-.arsol-label-container {
-    flex: 1;
-}
-
-.arsol-addon-info {
-    margin-bottom: 10px;
-}
-
-.arsol-addon-title {
-    margin: 0 0 5px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.arsol-addon-source {
-    display: block;
-    color: #666;
-    font-size: 12px;
-}
-
-.arsol-addon-footer {
-    display: flex;
-    gap: 20px;
-    font-size: 12px;
-    color: #666;
-}
-
-.arsol-addon-meta {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-/* Error States */
-.arsol-addon-error {
-    color: #dc3232;
-}
-
-.arsol-dependency-list {
-    margin: 5px 0 0 20px;
-    padding: 0;
-    list-style: disc;
-}
-
-/* Checkbox */
-.arsol-wp-snippets-checkbox {
-    position: relative;
-    display: inline-block;
-}
-
-.arsol-wp-snippets-checkbox input[type="checkbox"] {
-    margin: 0;
+    transition: opacity 0.2s ease;
 }
 
 /* Select2 Custom Styles */

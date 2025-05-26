@@ -3,12 +3,33 @@ jQuery(document).ready(function($) {
     $('#arsol-packet-filter').select2({
         placeholder: arsolScriptFilter.i18n.selectPacket,
         allowClear: true,
-        width: '300px'
+        ajax: {
+            url: arsolScriptFilter.ajaxurl,
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term,
+                    action: 'arsol_get_script_packets',
+                    nonce: arsolScriptFilter.nonce
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data.map(function(item) {
+                        return {
+                            id: item,
+                            text: item
+                        };
+                    })
+                };
+            }
+        }
     }).on('change', function() {
         var packet = $(this).val();
         
         // Show loading state
-        $('.arsol-addon-list').addClass('loading');
+        $('.arsol-addon-container').addClass('loading');
         
         // Filter scripts
         $.ajax({
@@ -25,19 +46,19 @@ jQuery(document).ready(function($) {
                 }
             },
             complete: function() {
-                $('.arsol-addon-list').removeClass('loading');
+                $('.arsol-addon-container').removeClass('loading');
             }
         });
     });
 
     // Function to update script display
     function updateScriptDisplay(filteredScripts) {
-        // Hide all addon items first
-        $('.arsol-addon-item').hide();
+        // Hide all scripts first
+        $('.arsol-addon-container').hide();
         
-        // Show filtered addon items
+        // Show filtered scripts
         Object.keys(filteredScripts).forEach(function(scriptId) {
-            $('.arsol-addon-item[data-addon-id="' + scriptId + '"]').show();
+            $('#arsol-addon-' + scriptId).show();
         });
     }
 });

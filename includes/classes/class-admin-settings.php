@@ -187,10 +187,12 @@ class Admin_Settings {
             if ($type === 'js' && substr($data['file'], -3) !== '.js') continue;
             if ($type === 'php' && substr($data['file'], -4) !== '.php') continue;
             
-            // Ensure required keys exist
+            // Ensure required keys exist and get source name
+            $path_info = \Arsol_WP_Snippets\Helper::normalize_path($data['file']);
             $data = array_merge(array(
                 'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
-                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
+                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order'),
+                'source_name' => $path_info['source_name']
             ), $data);
             
             $path = $data['file'];
@@ -225,6 +227,7 @@ class Admin_Settings {
                         'file' => $file['file'],
                         'name' => $file['name'],
                         'loading_order' => $file['loading_order'],
+                        'source_name' => $file['source_name'],
                         'first_source' => $first_file['source_name'],
                         'first_name' => $first_file['name'],
                         'first_loading_order' => $first_file['loading_order'],

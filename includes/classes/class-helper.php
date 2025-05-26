@@ -142,8 +142,9 @@ class Helper {
             return array();
         }
 
-        // Normalize file path
-        $file_path = self::normalize_path($file_data['file']);
+        // Normalize file path and get source name
+        $path_info = self::normalize_path($file_data['file']);
+        $file_path = $path_info['normalized_path'];
         
         // Get all files with same path
         $duplicate_files = self::get_duplicate_file_data($file_path);
@@ -169,6 +170,7 @@ class Helper {
             'file' => $file_path,
             'name' => $file_data['name'],
             'loading_order' => $file_data['loading_order'],
+            'source_name' => $path_info['source_name'],
             'first_source' => $first_file['source_name'],
             'first_name' => $first_file['name'],
             'first_loading_order' => $first_file['loading_order'],

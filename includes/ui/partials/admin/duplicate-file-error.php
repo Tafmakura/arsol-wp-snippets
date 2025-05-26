@@ -24,13 +24,13 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_path);
     <div class="arsol-label-container">
         <?php
         // Set up variables for the title wrapper
-        $addon_id = 'duplicate-' . sanitize_title($dup_path);
+        $addon_id = 'duplicate-' . sanitize_title($dup_data['file']);
         
         // Get the addon data from the duplicates array
         $addon_data = array(
-            'name' => is_array($dup_path) ? $dup_path['name'] : $path_info['source_name'] . basename($dup_path),
-            'loading_order' => is_array($dup_path) ? $dup_path['loading_order'] : 10,
-            'type' => pathinfo(is_array($dup_path) ? $dup_path['file'] : $dup_path, PATHINFO_EXTENSION)
+            'name' => $dup_data['name'],
+            'loading_order' => $dup_data['loading_order'],
+            'type' => pathinfo($dup_data['file'], PATHINFO_EXTENSION)
         );
         $option_type = 'error';
         include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php';

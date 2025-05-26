@@ -166,7 +166,11 @@ class Admin_Settings {
                 $file_name = basename($file);
                 $addon_id = 'theme-' . sanitize_title($file_name);
                 if (in_array($file, $seen_paths)) {
-                    $duplicates[] = $file;
+                    $duplicates[] = array(
+                        'file' => $file,
+                        'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
+                        'loading_order' => 10
+                    );
                     continue;
                 }
                 $seen_paths[] = $file;
@@ -186,7 +190,11 @@ class Admin_Settings {
         foreach ($php_addon_options as $id => $data) {
             if (!isset($data['file'])) continue;
             if (in_array($data['file'], $seen_paths)) {
-                $duplicates[] = $data['file'];
+                $duplicates[] = array(
+                    'file' => $data['file'],
+                    'name' => $data['name'],
+                    'loading_order' => isset($data['loading_order']) ? $data['loading_order'] : 10
+                );
                 continue;
             }
             $seen_paths[] = $data['file'];
@@ -238,7 +246,11 @@ class Admin_Settings {
                 continue;
             }
             if (in_array($addon_data['file'], $seen_paths)) {
-                $duplicates[] = $addon_data['file'];
+                $duplicates[] = array(
+                    'file' => $addon_data['file'],
+                    'name' => $addon_data['name'],
+                    'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10
+                );
                 unset($filtered_options[$addon_id]);
                 continue;
             }
@@ -265,7 +277,7 @@ class Admin_Settings {
             $option_type = 'php';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
-        foreach ($duplicates as $dup_path) {
+        foreach ($duplicates as $dup_data) {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
@@ -303,7 +315,7 @@ class Admin_Settings {
             $option_type = 'css';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
-        foreach ($duplicates as $dup_path) {
+        foreach ($duplicates as $dup_data) {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
@@ -326,7 +338,7 @@ class Admin_Settings {
             $option_type = 'js';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
-        foreach ($duplicates as $dup_path) {
+        foreach ($duplicates as $dup_data) {
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }

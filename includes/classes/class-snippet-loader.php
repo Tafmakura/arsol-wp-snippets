@@ -18,6 +18,13 @@ class Snippet_Loader {
      */
     private static $loaded_files = array();
     
+    /**
+     * Track loaded file keys to prevent duplicates
+     *
+     * @var array
+     */
+    private static $loaded_keys = array();
+    
     public function __construct() {
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_snippets'));
         add_action('admin_enqueue_scripts', array($this, 'load_admin_snippets'));
@@ -35,33 +42,52 @@ class Snippet_Loader {
      * Check if a file has already been loaded
      *
      * @param string $file_path The file path to check
+     * @param string $file_key The file key to check
      * @return bool True if file is already loaded
      */
-    private function is_file_already_loaded($file_path) {
-        return in_array($file_path, self::$loaded_files);
+    private function is_file_already_loaded($file_path, $file_key) {
+        // Check if we've already loaded this exact file
+        if (in_array($file_path, self::$loaded_files)) {
+            error_log('Arsol WP Snippets: Duplicate file path detected: ' . $file_path);
+            return true;
+        }
+
+        // Check if we've already loaded a file with this key
+        if (in_array($file_key, self::$loaded_keys)) {
+            error_log('Arsol WP Snippets: Duplicate file key detected: ' . $file_key);
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * Add a file to the loaded files list
      *
      * @param string $file_path The file path to add
+     * @param string $file_key The file key to add
      */
-    private function add_loaded_file($file_path) {
+    private function add_loaded_file($file_path, $file_key) {
         self::$loaded_files[] = $file_path;
+        self::$loaded_keys[] = $file_key;
+        error_log('Arsol WP Snippets: Added to loaded files - Path: ' . $file_path . ', Key: ' . $file_key);
     }
 
     /**
      * Display an admin notice for duplicate files
      *
      * @param string $file_path The duplicate file path
+     * @param string $file_key The duplicate file key
      */
-    private function display_duplicate_file_notice($file_path) {
-        add_action('admin_notices', function() use ($file_path) {
+    private function display_duplicate_file_notice($file_path, $file_key) {
+        add_action('admin_notices', function() use ($file_path, $file_key) {
             ?>
             <div class="notice notice-error">
                 <p>
                     <strong>Arsol WP Snippets:</strong> 
                     Attached snippet already loaded → <?php echo esc_html($file_path); ?>
+                    <br>
+                    <small>File key: <?php echo esc_html($file_key); ?></small>
                 </p>
             </div>
             <?php
@@ -142,8 +168,8 @@ class Snippet_Loader {
             }
 
             // Check for duplicate files
-            if ($this->is_file_already_loaded($file_data['file'])) {
-                $this->display_duplicate_file_notice($file_data['file']);
+            if ($this->is_file_already_loaded($file_data['file'], $file_key)) {
+                $this->display_duplicate_file_notice($file_data['file'], $file_key);
                 error_log('Arsol WP Snippets: Duplicate CSS file detected - ' . $file_data['file']);
                 continue;
             }
@@ -165,7 +191,7 @@ class Snippet_Loader {
             wp_enqueue_style($handle);
 
             // Add to loaded files
-            $this->add_loaded_file($file_data['file']);
+            $this->add_loaded_file($file_data['file'], $file_key);
 
             // Trigger action when CSS file is loaded
             do_action('arsol_wp_snippets_loaded_css_addon', $file_key, $file_data);
@@ -205,8 +231,8 @@ class Snippet_Loader {
             }
 
             // Check for duplicate files
-            if ($this->is_file_already_loaded($file_data['file'])) {
-                $this->display_duplicate_file_notice($file_data['file']);
+            if ($this->is_file_already_loaded($file_data['file'], $file_key)) {
+                $this->display_duplicate_file_notice($file_data['file'], $file_key);
                 error_log('Arsol WP Snippets: Duplicate JS file detected - ' . $file_data['file']);
                 continue;
             }
@@ -230,7 +256,7 @@ class Snippet_Loader {
             wp_enqueue_script($handle);
 
             // Add to loaded files
-            $this->add_loaded_file($file_data['file']);
+            $this->add_loaded_file($file_data['file'], $file_key);
 
             // Trigger action when JS file is loaded
             do_action('arsol_wp_snippets_loaded_js_addon', $file_key, $file_data);
@@ -254,8 +280,8 @@ class Snippet_Loader {
         $file_data = $php_files[$file_key];
         
         // Check for duplicate files
-        if ($this->is_file_already_loaded($file_data['file'])) {
-            $this->display_duplicate_file_notice($file_data['file']);
+        if ($this->is_file_already_loaded($file_data['file'], $file_key)) {
+            $this->display_duplicate_file_notice($file_data['file'], $file_key);
             error_log('Arsol WP Snippets: Duplicate PHP file detected - ' . $file_data['file']);
             return;
         }
@@ -265,7 +291,7 @@ class Snippet_Loader {
             error_log('Arsol WP Snippets: Loaded PHP file - ' . $file_data['file']);
             
             // Add to loaded files
-            $this->add_loaded_file($file_data['file']);
+            $this->add_loaded_file($file_data['file'], $file_key);
             
             // Trigger action when PHP file is loaded
             do_action('arsol_wp_snippets_loaded_php_addon', $file_key, $file_data);

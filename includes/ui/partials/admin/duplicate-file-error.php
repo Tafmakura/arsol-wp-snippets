@@ -50,7 +50,7 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_path);
         
         $addon_data = array(
             'name' => $matching_addon ? $matching_addon['name'] : $path_info['source_name'] . basename($dup_path),
-            'loading_order' => $matching_addon ? $matching_addon['loading_order'] : 0,
+            'loading_order' => isset($matching_addon['loading_order']) ? intval($matching_addon['loading_order']) : 10,
             'type' => $file_extension
         );
         $option_type = 'error';

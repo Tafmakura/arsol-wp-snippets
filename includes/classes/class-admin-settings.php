@@ -167,12 +167,82 @@ class Admin_Settings {
     }
     
     /**
+     * Process files and handle duplicates
+     *
+     * @param array $files Array of files to process
+     * @param string $type Type of files (php, css, js)
+     * @return array Processed files and duplicates
+     */
+    private function process_files($files, $type) {
+        $final = array();
+        $duplicates = array();
+        
+        // Group files by path
+        $path_groups = array();
+        foreach ($files as $id => $data) {
+            if (!isset($data['file'])) continue;
+            
+            // Validate file type
+            if ($type === 'css' && substr($data['file'], -4) !== '.css') continue;
+            if ($type === 'js' && substr($data['file'], -3) !== '.js') continue;
+            if ($type === 'php' && substr($data['file'], -4) !== '.php') continue;
+            
+            $path = $data['file'];
+            if (!isset($path_groups[$path])) {
+                $path_groups[$path] = array();
+            }
+            $path_groups[$path][] = array_merge($data, array('id' => $id));
+        }
+        
+        // Process each path group
+        foreach ($path_groups as $path => $group_files) {
+            if (count($group_files) === 1) {
+                // Single file, add to final options
+                $file = $group_files[0];
+                $final[$file['id']] = array(
+                    'name' => $file['name'],
+                    'file' => $file['file'],
+                    'context' => $file['context'],
+                    'loading_order' => $file['loading_order']
+                );
+            } else {
+                // Multiple files, sort by loading order
+                usort($group_files, function($a, $b) {
+                    return $a['loading_order'] - $b['loading_order'];
+                });
+                
+                // First file goes to final options
+                $first_file = $group_files[0];
+                $final[$first_file['id']] = array(
+                    'name' => $first_file['name'],
+                    'file' => $first_file['file'],
+                    'context' => $first_file['context'],
+                    'loading_order' => $first_file['loading_order']
+                );
+                
+                // Rest go to duplicates
+                for ($i = 1; $i < count($group_files); $i++) {
+                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($group_files[$i]);
+                }
+            }
+        }
+        
+        // Sort duplicates by loading order
+        usort($duplicates, function($a, $b) {
+            return $a['loading_order'] - $b['loading_order'];
+        });
+        
+        return array(
+            'files' => $final,
+            'duplicates' => $duplicates
+        );
+    }
+    
+    /**
      * Get available PHP addon options
      */
     public function get_php_addon_options() {
         $php_addon_options = array();
-        $duplicates = array();
-        $path_to_files = array(); // Track all files for each path
         
         // Get PHP files from theme directory
         $theme_dir = get_stylesheet_directory();
@@ -182,84 +252,23 @@ class Admin_Settings {
                 $file_name = basename($file);
                 $addon_id = 'theme-' . sanitize_title($file_name);
                 
-                // Ensure default values are set
-                $file_data = array(
-                    'id' => $addon_id,
+                $php_addon_options[$addon_id] = array(
                     'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
                     'file' => $file,
                     'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
                     'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
                 );
-                
-                // Add file to path tracking
-                if (!isset($path_to_files[$file])) {
-                    $path_to_files[$file] = array();
-                }
-                $path_to_files[$file][] = $file_data;
             }
         }
         
-        // Allow filtering of PHP addon options
-        $php_addon_options = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
+        // Get all files after filters are applied
+        $all_files = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
         
-        // Process filtered options
-        foreach ($php_addon_options as $id => $data) {
-            if (!isset($data['file'])) continue;
-            
-            // Ensure default values are set for filtered options
-            $file_data = array_merge(array(
-                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
-                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
-            ), $data, array('id' => $id));
-            
-            // Add file to path tracking
-            if (!isset($path_to_files[$data['file']])) {
-                $path_to_files[$data['file']] = array();
-            }
-            $path_to_files[$data['file']][] = $file_data;
-        }
+        // Process files and handle duplicates
+        $result = $this->process_files($all_files, 'php');
         
-        // Process all paths and their files
-        $final = array();
-        foreach ($path_to_files as $path => $files) {
-            if (count($files) === 1) {
-                // Single file, add to final options
-                $file = $files[0];
-                $final[$file['id']] = array(
-                    'name' => $file['name'],
-                    'file' => $file['file'],
-                    'context' => $file['context'],
-                    'loading_order' => $file['loading_order']
-                );
-            } else {
-                // Multiple files, sort by loading order
-                usort($files, function($a, $b) {
-                    return $a['loading_order'] - $b['loading_order'];
-                });
-                
-                // First file goes to final options
-                $first_file = $files[0];
-                $final[$first_file['id']] = array(
-                    'name' => $first_file['name'],
-                    'file' => $first_file['file'],
-                    'context' => $first_file['context'],
-                    'loading_order' => $first_file['loading_order']
-                );
-                
-                // Rest go to duplicates
-                for ($i = 1; $i < count($files); $i++) {
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($files[$i]);
-                }
-            }
-        }
-        
-        // Sort duplicates by loading order
-        usort($duplicates, function($a, $b) {
-            return $a['loading_order'] - $b['loading_order'];
-        });
-        
-        $this->php_duplicates = $duplicates;
-        return $final;
+        $this->php_duplicates = $result['duplicates'];
+        return $result['files'];
     }
     
     /**
@@ -267,70 +276,15 @@ class Admin_Settings {
      */
     public function get_css_addon_options() {
         $css_addon_options = array();
-        $duplicates = array();
-        $path_to_files = array(); // Track all files for each path
         
-        $filtered_options = apply_filters('arsol_wp_snippets_css_addon_files', $css_addon_options);
-        foreach ($filtered_options as $addon_id => $addon_data) {
-            if (!isset($addon_data['file']) || substr($addon_data['file'], -4) !== '.css') {
-                unset($filtered_options[$addon_id]);
-                continue;
-            }
-            
-            // Ensure default values are set
-            $file_data = array_merge(array(
-                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
-                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
-            ), $addon_data, array('id' => $addon_id));
-            
-            // Add file to path tracking
-            if (!isset($path_to_files[$addon_data['file']])) {
-                $path_to_files[$addon_data['file']] = array();
-            }
-            $path_to_files[$addon_data['file']][] = $file_data;
-        }
+        // Get all files after filters are applied
+        $all_files = apply_filters('arsol_wp_snippets_css_addon_files', $css_addon_options);
         
-        // Process all paths and their files
-        $final = array();
-        foreach ($path_to_files as $path => $files) {
-            if (count($files) === 1) {
-                // Single file, add to final options
-                $file = $files[0];
-                $final[$file['id']] = array(
-                    'name' => $file['name'],
-                    'file' => $file['file'],
-                    'context' => $file['context'],
-                    'loading_order' => $file['loading_order']
-                );
-            } else {
-                // Multiple files, sort by loading order
-                usort($files, function($a, $b) {
-                    return $a['loading_order'] - $b['loading_order'];
-                });
-                
-                // First file goes to final options
-                $first_file = $files[0];
-                $final[$first_file['id']] = array(
-                    'name' => $first_file['name'],
-                    'file' => $first_file['file'],
-                    'context' => $first_file['context'],
-                    'loading_order' => $first_file['loading_order']
-                );
-                
-                // Rest go to duplicates
-                for ($i = 1; $i < count($files); $i++) {
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($files[$i]);
-                }
-            }
-        }
+        // Process files and handle duplicates
+        $result = $this->process_files($all_files, 'css');
         
-        // Sort duplicates by loading order
-        usort($duplicates, function($a, $b) {
-            return $a['loading_order'] - $b['loading_order'];
-        });
-        
-        $this->css_duplicates = $duplicates;
-        return $final;
+        $this->css_duplicates = $result['duplicates'];
+        return $result['files'];
     }
     
     /**
@@ -338,70 +292,15 @@ class Admin_Settings {
      */
     public function get_js_addon_options() {
         $js_addon_options = array();
-        $duplicates = array();
-        $path_to_files = array(); // Track all files for each path
         
-        $filtered_options = apply_filters('arsol_wp_snippets_js_addon_files', $js_addon_options);
-        foreach ($filtered_options as $addon_id => $addon_data) {
-            if (!isset($addon_data['file']) || substr($addon_data['file'], -3) !== '.js') {
-                unset($filtered_options[$addon_id]);
-                continue;
-            }
-            
-            // Ensure default values are set
-            $file_data = array_merge(array(
-                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
-                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order')
-            ), $addon_data, array('id' => $addon_id));
-            
-            // Add file to path tracking
-            if (!isset($path_to_files[$addon_data['file']])) {
-                $path_to_files[$addon_data['file']] = array();
-            }
-            $path_to_files[$addon_data['file']][] = $file_data;
-        }
+        // Get all files after filters are applied
+        $all_files = apply_filters('arsol_wp_snippets_js_addon_files', $js_addon_options);
         
-        // Process all paths and their files
-        $final = array();
-        foreach ($path_to_files as $path => $files) {
-            if (count($files) === 1) {
-                // Single file, add to final options
-                $file = $files[0];
-                $final[$file['id']] = array(
-                    'name' => $file['name'],
-                    'file' => $file['file'],
-                    'context' => $file['context'],
-                    'loading_order' => $file['loading_order']
-                );
-            } else {
-                // Multiple files, sort by loading order
-                usort($files, function($a, $b) {
-                    return $a['loading_order'] - $b['loading_order'];
-                });
-                
-                // First file goes to final options
-                $first_file = $files[0];
-                $final[$first_file['id']] = array(
-                    'name' => $first_file['name'],
-                    'file' => $first_file['file'],
-                    'context' => $first_file['context'],
-                    'loading_order' => $first_file['loading_order']
-                );
-                
-                // Rest go to duplicates
-                for ($i = 1; $i < count($files); $i++) {
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($files[$i]);
-                }
-            }
-        }
+        // Process files and handle duplicates
+        $result = $this->process_files($all_files, 'js');
         
-        // Sort duplicates by loading order
-        usort($duplicates, function($a, $b) {
-            return $a['loading_order'] - $b['loading_order'];
-        });
-        
-        $this->js_duplicates = $duplicates;
-        return $final;
+        $this->js_duplicates = $result['duplicates'];
+        return $result['files'];
     }
     
     /**

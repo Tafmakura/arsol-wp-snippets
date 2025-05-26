@@ -108,10 +108,13 @@ class Helper {
      * @return array Processed duplicate file data
      */
     public static function process_duplicate_data($addon_data) {
+        // Get the source name for the first file
+        $path_info = self::normalize_path($addon_data['file']);
         return array(
             'file' => $addon_data['file'],
             'name' => $addon_data['name'],
-            'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10
+            'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10,
+            'first_source' => $path_info['source_name']
         );
     }
 } 

@@ -33,7 +33,7 @@ class Script_Filter {
      */
     public function enqueue_scripts($hook) {
         // Only load on our plugin page
-        if ('toplevel_page_arsol-wp-snippets' !== $hook) {
+        if ('settings_page_arsol-wp-snippets' !== $hook) {
             return;
         }
 

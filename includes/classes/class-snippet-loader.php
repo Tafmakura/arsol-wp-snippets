@@ -24,7 +24,7 @@ class Snippet_Loader {
      * @param string $type Type of files (php, css, js)
      * @return array Processed files
      */
-    protected function process_files($files, $type) {
+    public function process_files($files, $type) {
         $final = array();
         
         foreach ($files as $id => $data) {

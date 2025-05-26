@@ -26,8 +26,9 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_path);
         // Set up variables for the title wrapper
         $addon_id = 'duplicate-' . sanitize_title($dup_path);
         $addon_data = array(
-            'name' => 'Duplicate File',
-            'loading_order' => 0
+            'name' => basename($dup_path),
+            'loading_order' => 0,
+            'type' => pathinfo($dup_path, PATHINFO_EXTENSION)
         );
         $option_type = 'error';
         include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php';

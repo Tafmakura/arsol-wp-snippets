@@ -260,6 +260,7 @@ class Admin_Settings {
             echo '<p>' . esc_html__('No PHP snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
+        $available_php_addons = $this->sort_addons_by_loading_order($available_php_addons);
         foreach ($available_php_addons as $addon_id => $addon_data) {
             $enabled_options = $php_addon_options;
             $option_type = 'php';

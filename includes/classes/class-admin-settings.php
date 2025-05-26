@@ -227,6 +227,11 @@ class Admin_Settings {
             $path_to_first_file[$data['file']] = $data;
         }
         
+        // Sort duplicates by loading order
+        usort($duplicates, function($a, $b) {
+            return $a['loading_order'] - $b['loading_order'];
+        });
+        
         $this->php_duplicates = $duplicates;
         return $final;
     }
@@ -258,6 +263,11 @@ class Admin_Settings {
             $path_to_first_file[$addon_data['file']] = $addon_data;
         }
         
+        // Sort duplicates by loading order
+        usort($duplicates, function($a, $b) {
+            return $a['loading_order'] - $b['loading_order'];
+        });
+        
         $this->css_duplicates = $duplicates;
         return $filtered_options;
     }
@@ -288,6 +298,11 @@ class Admin_Settings {
             $seen_paths[] = $addon_data['file'];
             $path_to_first_file[$addon_data['file']] = $addon_data;
         }
+        
+        // Sort duplicates by loading order
+        usort($duplicates, function($a, $b) {
+            return $a['loading_order'] - $b['loading_order'];
+        });
         
         $this->js_duplicates = $duplicates;
         return $filtered_options;

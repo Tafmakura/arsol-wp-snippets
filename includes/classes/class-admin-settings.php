@@ -472,6 +472,15 @@ class Admin_Settings {
                 }
             }
         }
+
+        // Enqueue admin script
+        wp_enqueue_script(
+            'arsol-wp-snippets-admin',
+            plugins_url('assets/js/arsol-wp-snippets-admin.js', dirname(dirname(__FILE__))),
+            array('jquery', 'select2'),
+            arsol_wp_snippets_get_version(),
+            true
+        );
     }
     
     /**
@@ -553,6 +562,15 @@ class Admin_Settings {
                 }
             }
         }
+
+        // Enqueue frontend script
+        wp_enqueue_script(
+            'arsol-wp-snippets-frontend',
+            plugins_url('assets/js/arsol-wp-snippets-frontend.js', dirname(dirname(__FILE__))),
+            array('jquery'),
+            arsol_wp_snippets_get_version(),
+            true
+        );
     }
 }
 

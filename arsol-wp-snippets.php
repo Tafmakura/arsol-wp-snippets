@@ -40,9 +40,22 @@ define('ARSOL_WP_SNIPPETS_PLUGIN_FILE', __FILE__);
 define('ARSOL_WP_SNIPPETS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ARSOL_WP_SNIPPETS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_WP_SNIPPETS_PLUGIN_BASENAME', plugin_basename(__FILE__));
-//define('ARSOL_WP_SNIPPETS_VERSION', '0.0.10');
-define('ARSOL_WP_SNIPPETS_ASSETS_VERSION', '0.0.10');
 
+/**
+ * Get the plugin version from the plugin header
+ *
+ * @return string The plugin version
+ */
+function arsol_wp_snippets_get_version() {
+    static $version = null;
+    
+    if ($version === null) {
+        $plugin_data = get_plugin_data(ARSOL_WP_SNIPPETS_PLUGIN_FILE);
+        $version = $plugin_data['Version'];
+    }
+    
+    return $version;
+}
 
 // Use correct namespace
 use Arsol_WP_Snippets\Setup;

@@ -83,51 +83,45 @@ if (!$file_exists) {
     </div>
     <?php
 } else {
-    // File exists and all dependencies are present - show normal display
-    $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
-    $state_class = $checked ? 'enabled' : 'disabled';
+    // File exists and has no errors - show normal checkbox
     ?>
-    <div class="arsol-addon-container <?php echo esc_attr($state_class); ?>">
+    <div class="arsol-addon-container <?php echo isset($enabled_options[$addon_id]) && $enabled_options[$addon_id] ? 'enabled' : ''; ?>">
         <div class="arsol-first-column">
-            <span class="arsol-wp-snippets-checkbox" >
-                <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
-                       name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
-                       value="1" <?php checked(1, $checked); ?>/>
-            </span>
-           
+            <input type="checkbox" 
+                   id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
+                   name="arsol_wp_snippets_options[<?php echo esc_attr($option_type); ?>_addon_options][<?php echo esc_attr($addon_id); ?>]" 
+                   value="1" 
+                   <?php checked(isset($enabled_options[$addon_id]) && $enabled_options[$addon_id]); ?>
+                   class="arsol-wp-snippets-checkbox">
         </div>
         <div class="arsol-label-container">
             <div class="arsol-addon-info">
                 <?php include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/arsol-addon-title-wrapper.php'; ?>
-            
-                <small class="arsol-addon-source"><?php 
-                    echo '<strong>' . esc_html($path_info['source_name']) . '</strong>' . esc_html($path_info['display_path']); 
-                ?></small>
-            </div>
-            <div class="arsol-addon-footer">
-                <span class="arsol-addon-meta">
+                <div class="arsol-addon-footer">
+                    <span class="arsol-addon-meta">
                         <strong>Context:</strong> <?php 
                             $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
                             echo ucfirst($context);
                         ?>
-                </span>
-                <?php 
-                // Define addon type for use in the template
-                $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-                if ($addon_type === 'js'): 
-                ?>
-                <span class="arsol-addon-meta">
-                    <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
-                </span>
-                <?php endif; ?>
-                <div class="arsol-addon-meta">
-                    <strong><?php echo esc_html__('Timing:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($loading_order_category); ?>
+                    </span>
+                    <?php 
+                    // Define addon type for use in the template
+                    $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
+                    if ($addon_type === 'js'): 
+                    ?>
+                    <span class="arsol-addon-meta">
+                        <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
+                    </span>
+                    <?php endif; ?>
+                    <div class="arsol-addon-meta">
+                        <strong><?php echo esc_html__('Timing:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($loading_order_category); ?>
+                    </div>
+                    <?php if (!empty($addon_data['dependencies'])): ?>
+                    <div class="arsol-addon-meta">
+                        <strong><?php echo esc_html__('Dependencies:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(implode(', ', $addon_data['dependencies'])); ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <?php if (!empty($addon_data['dependencies'])): ?>
-                <div class="arsol-addon-meta">
-                    <strong><?php echo esc_html__('Dependencies:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(implode(', ', $addon_data['dependencies'])); ?>
-                </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>

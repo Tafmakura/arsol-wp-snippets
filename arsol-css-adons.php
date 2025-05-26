@@ -1,25 +1,19 @@
 <?php
 /**
-<<<<<<< HEAD:arsol-wp-snippets.php
  * Plugin Name: Arsol WP Snippets
- * Plugin URI: https://your-site.com/arsol-wp-snippets
- * Description: A WordPress plugin to add custom code snippets and enhancements
-=======
- * Plugin Name: Arsol CSS Addons
- * Plugin URI: https://your-site.com/arsol-css-addons
- * Description: A WordPress plugin to add custom CSS functionality and enhancements
->>>>>>> parent of c855b08 (Merge branch 'production' into staging):arsol-css-adons.php
- * Version: 1.0.0
+ * Plugin URI: https://github.com/Tafmakura/arsol-wp-snippets
+ * Description: A WordPress plugin to add custom code snippets and enhancements with a safe mode feature for troubleshooting. Check out our <a href="https://github.com/Tafmakura/arsol-wp-snippets">GitHub repository</a> for documentation and our <a href="https://github.com/Tafmakura/arsol-wps-packet-example">packet template</a> for examples.
+ * Version: 0.0.13
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Taf Makura
- * Author URI: https://your-site.com
+ * Author URI: https://github.com/Tafmakura
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: arsol-css-addons
+ * Text Domain: arsol-wp-snippets
  * Domain Path: /languages
  * 
- * @package Arsol_CSS_Addons
+ * @package Arsol_WP_Snippets
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,29 +36,34 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-<<<<<<< HEAD:arsol-wp-snippets.php
 define('ARSOL_WP_SNIPPETS_PLUGIN_FILE', __FILE__);
 define('ARSOL_WP_SNIPPETS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ARSOL_WP_SNIPPETS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_WP_SNIPPETS_PLUGIN_BASENAME', plugin_basename(__FILE__));
-<<<<<<< HEAD:arsol-css-adons.php
-define('ARSOL_WP_SNIPPETS_VERSION', '1.0.0');
-define('ARSOL_WP_SNIPPETS_ASSETS_VERSION', '1.0.0');
-=======
-define('ARSOL_CSS_ADDONS_PLUGIN_FILE', __FILE__);
-define('ARSOL_CSS_ADDONS_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('ARSOL_CSS_ADDONS_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('ARSOL_CSS_ADDONS_PLUGIN_BASENAME', plugin_basename(__FILE__));
-define('ARSOL_CSS_ADDONS_VERSION', '1.0.0');
-define('ARSOL_CSS_ADDONS_ASSETS_VERSION', '1.0.0'); // Specific version for assets, helpful for cache busting
->>>>>>> parent of c855b08 (Merge branch 'production' into staging):arsol-css-adons.php
-=======
-define('ARSOL_WP_SNIPPETS_VERSION', '35.0.0');
-define('ARSOL_WP_SNIPPETS_ASSETS_VERSION', '35.0.0');
->>>>>>> parent of caed6d7 (Revert "Packet Filter"):arsol-wp-snippets.php
+
+/**
+ * Get the plugin version from the plugin header
+ *
+ * @return string The plugin version
+ */
+function arsol_wp_snippets_get_version() {
+    static $version = null;
+    
+    if ($version === null) {
+        $plugin_data = get_plugin_data(ARSOL_WP_SNIPPETS_PLUGIN_FILE);
+        $version = $plugin_data['Version'];
+    }
+    
+    return $version;
+}
 
 // Use correct namespace
-use Arsol_CSS_Addons\Setup;
+use Arsol_WP_Snippets\Setup;
 
 // Include the Setup class
-require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-setup.php';
+require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-setup.php';
+
+// Initialize the plugin
+if (class_exists('Arsol_WP_Snippets\Setup')) {
+    new Setup();
+}

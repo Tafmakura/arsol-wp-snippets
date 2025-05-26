@@ -148,9 +148,9 @@ if ($file_exists) {
             <h4 class="arsol-addon-title">
                 <?php echo esc_html($addon_data['name']); ?>
             </h4>
-            <p class="arsol-addon-error">
-                <small><strong><?php echo esc_html__('Could not be found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?></small>
-            </p>
+            <small class="arsol-addon-error">
+                <strong><?php echo esc_html__('Could not be found at →', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(isset($file_path) ? $file_path : $file_reference); ?>
+            </small>
         </div>
     </div>
     <?php

@@ -444,6 +444,12 @@ class Admin_Settings {
             foreach ($enabled_css_options as $addon_id => $enabled) {
                 if ($enabled && isset($css_addon_options[$addon_id])) {
                     $addon_data = $css_addon_options[$addon_id];
+                    $file_path = $addon_data['file'];
+                    
+                    // Check if file exists
+                    if (!file_exists($file_path)) {
+                        continue;
+                    }
                     
                     // Check context - load if global or admin
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
@@ -476,6 +482,12 @@ class Admin_Settings {
             foreach ($enabled_js_options as $addon_id => $enabled) {
                 if ($enabled && isset($js_addon_options[$addon_id])) {
                     $addon_data = $js_addon_options[$addon_id];
+                    $file_path = $addon_data['file'];
+                    
+                    // Check if file exists
+                    if (!file_exists($file_path)) {
+                        continue;
+                    }
                     
                     // Check context - load if global or admin
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
@@ -498,7 +510,7 @@ class Admin_Settings {
                             );
                         }, $loading_order);
                         
-                        do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
+                        do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $addon_data['file']);
                     }
                 }
             }
@@ -525,6 +537,12 @@ class Admin_Settings {
             foreach ($enabled_css_options as $addon_id => $enabled) {
                 if ($enabled && isset($css_addon_options[$addon_id])) {
                     $addon_data = $css_addon_options[$addon_id];
+                    $file_path = $addon_data['file'];
+                    
+                    // Check if file exists
+                    if (!file_exists($file_path)) {
+                        continue;
+                    }
                     
                     // Check context - load if global or frontend
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
@@ -542,7 +560,7 @@ class Admin_Settings {
                             );
                         }, $loading_order);
                         
-                        do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $css_addon_options[$addon_id]['file']);
+                        do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $addon_data['file']);
                     }
                 }
             }
@@ -557,6 +575,12 @@ class Admin_Settings {
             foreach ($enabled_js_options as $addon_id => $enabled) {
                 if ($enabled && isset($js_addon_options[$addon_id])) {
                     $addon_data = $js_addon_options[$addon_id];
+                    $file_path = $addon_data['file'];
+                    
+                    // Check if file exists
+                    if (!file_exists($file_path)) {
+                        continue;
+                    }
                     
                     // Check context - load if global or frontend
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
@@ -579,7 +603,7 @@ class Admin_Settings {
                             );
                         }, $loading_order);
                         
-                        do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $js_addon_options[$addon_id]['file']);
+                        do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $addon_data['file']);
                     }
                 }
             }

@@ -113,7 +113,7 @@ if ($file_exists && !empty($addon_data['dependencies'])) {
 if (!$file_exists) {
     // File doesn't exist - show error message
     ?>
-    <div class="arsol-addon-container arsol-error">
+    <div class="arsol-addon-container arsol-error" data-addon-id="<?php echo esc_attr($addon_id); ?>">
         <div class="arsol-first-column">
             <span class="dashicons dashicons-warning"></span>
         </div>
@@ -130,7 +130,7 @@ if (!$file_exists) {
 } elseif (!empty($missing_dependencies)) {
     // File exists but dependencies are missing - show dependency error
     ?>
-    <div class="arsol-addon-container arsol-error">
+    <div class="arsol-addon-container arsol-error" data-addon-id="<?php echo esc_attr($addon_id); ?>">
         <div class="arsol-first-column">
             <span class="dashicons dashicons-warning"></span>
         </div>
@@ -154,7 +154,7 @@ if (!$file_exists) {
     $checked = isset($enabled_options[$addon_id]) ? $enabled_options[$addon_id] : 0;
     $state_class = $checked ? 'enabled' : 'disabled';
     ?>
-    <div class="arsol-addon-container <?php echo esc_attr($state_class); ?>">
+    <div class="arsol-addon-container <?php echo esc_attr($state_class); ?>" data-addon-id="<?php echo esc_attr($addon_id); ?>">
         <div class="arsol-first-column">
             <span class="arsol-wp-snippets-checkbox" >
                 <input type="checkbox" id="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>" 
@@ -199,24 +199,10 @@ if (!$file_exists) {
                 if ($addon_type === 'js'): 
                 ?>
                 <span class="arsol-addon-meta">
-                    <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
+                    <strong>Position:</strong> <?php echo isset($addon_data['in_footer']) && $addon_data['in_footer'] ? 'Footer' : 'Header'; ?>
                 </span>
                 <span class="arsol-addon-meta">
-                    <strong>Priority:</strong> 
-                    <?php 
-                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
-                    $priority_group = '';
-                    if ($priority <= 5) {
-                        $priority_group = ' (Early)';
-                    } elseif ($priority <= 10) {
-                        $priority_group = ' (Default)';
-                    } elseif ($priority <= 20) {
-                        $priority_group = ' (Late)';
-                    } else {
-                        $priority_group = ' (Very Late)';
-                    }
-                    echo $priority . $priority_group;
-                    ?>
+                    <strong>Priority:</strong> <?php echo isset($addon_data['priority']) ? esc_html($addon_data['priority']) : 'Set by filter'; ?>
                 </span>
                 <?php elseif ($addon_type === 'css'): ?>
                 <span class="arsol-addon-meta">

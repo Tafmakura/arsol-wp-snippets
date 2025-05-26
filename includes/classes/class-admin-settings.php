@@ -210,7 +210,11 @@ class Admin_Settings {
                 continue;
             }
             if (in_array($addon_data['file'], $seen_paths)) {
-                $duplicates[] = $addon_data['file'];
+                $duplicates[] = array(
+                    'file' => $addon_data['file'],
+                    'name' => $addon_data['name'],
+                    'loading_order' => isset($addon_data['loading_order']) ? $addon_data['loading_order'] : 10
+                );
                 unset($filtered_options[$addon_id]);
                 continue;
             }

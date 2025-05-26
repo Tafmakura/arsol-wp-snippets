@@ -190,14 +190,31 @@ class Snippet_Loader {
      */
     private function display_duplicate_file_notice($file_path, $file_key) {
         add_action('admin_notices', function() use ($file_path, $file_key) {
+            $path_info = \Arsol_WP_Snippets\Helper::normalize_path($file_path);
             ?>
-            <div class="notice notice-error">
-                <p>
-                    <strong>Arsol WP Snippets:</strong> 
-                    Attached snippet already loaded → <?php echo esc_html($file_path); ?>
-                    <br>
-                    <small>File key: <?php echo esc_html($file_key); ?></small>
-                </p>
+            <div class="arsol-addon-container arsol-error">
+                <div class="arsol-first-column">
+                    <span class="dashicons dashicons-warning"></span>
+                </div>
+                <div class="arsol-label-container">
+                    <div class="arsol-addon-info">
+                        <div class="arsol-addon-title-wrapper">
+                            <div class="arsol-addon-title">
+                                <h4 class="arsol-addon-title">
+                                    <label for="arsol-error-addon-duplicate-<?php echo esc_attr(sanitize_title($file_path)); ?>">
+                                        <?php echo esc_html($path_info['source_name']); ?>
+                                    </label>
+                                </h4>
+                            </div>
+                        </div>
+                        <small class="arsol-addon-error">
+                            <strong>Attached snippet already loaded → </strong>
+                            <?php echo esc_html($file_path); ?>
+                            <br>
+                            <small>File key: <?php echo esc_html($file_key); ?></small>
+                        </small>
+                    </div>
+                </div>
             </div>
             <?php
         });

@@ -228,15 +228,10 @@ class Admin_Settings {
         foreach ($available_php_addons as $addon_id => $addon_data) {
             $enabled_options = $php_addon_options;
             $option_type = 'php';
-            
-            // Check if this addon has an error
-            $result = $this->snippet_loader->process_files(array($addon_id => $addon_data), 'php');
-            if (!empty($result['errors'][$addon_id])) {
-                $error = $result['errors'][$addon_id];
-                include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-error.php';
-            } else {
-                include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
-            }
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_data) {
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
     
@@ -258,15 +253,10 @@ class Admin_Settings {
         foreach ($available_css_addons as $addon_id => $addon_data) {
             $enabled_options = $css_addon_options;
             $option_type = 'css';
-            
-            // Check if this addon has an error
-            $result = $this->snippet_loader->process_files(array($addon_id => $addon_data), 'css');
-            if (!empty($result['errors'][$addon_id])) {
-                $error = $result['errors'][$addon_id];
-                include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-error.php';
-            } else {
-                include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
-            }
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_data) {
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
     
@@ -288,15 +278,10 @@ class Admin_Settings {
         foreach ($available_js_addons as $addon_id => $addon_data) {
             $enabled_options = $js_addon_options;
             $option_type = 'js';
-            
-            // Check if this addon has an error
-            $result = $this->snippet_loader->process_files(array($addon_id => $addon_data), 'js');
-            if (!empty($result['errors'][$addon_id])) {
-                $error = $result['errors'][$addon_id];
-                include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-error.php';
-            } else {
-                include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
-            }
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
+        }
+        foreach ($duplicates as $dup_data) {
+            include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/duplicate-file-error.php';
         }
     }
     

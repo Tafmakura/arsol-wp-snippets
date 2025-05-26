@@ -48,55 +48,16 @@ class Snippet_Loader {
     public function process_files($files, $type) {
         $final = array();
         $duplicates = array();
-        $errors = array();
         
         // Group files by path using a hash map
         $path_groups = array();
         foreach ($files as $id => $data) {
-            if (!isset($data['file'])) {
-                $errors[$id] = array(
-                    'type' => 'missing',
-                    'message' => 'File path not specified',
-                    'data' => $data
-                );
-                continue;
-            }
-            
-            // Check if file exists
-            if (!file_exists($data['file'])) {
-                $errors[$id] = array(
-                    'type' => 'missing',
-                    'message' => 'File does not exist',
-                    'data' => $data
-                );
-                continue;
-            }
+            if (!isset($data['file'])) continue;
             
             // Validate file type
-            if ($type === 'css' && substr($data['file'], -4) !== '.css') {
-                $errors[$id] = array(
-                    'type' => 'invalid',
-                    'message' => 'Invalid file type for CSS addon',
-                    'data' => $data
-                );
-                continue;
-            }
-            if ($type === 'js' && substr($data['file'], -3) !== '.js') {
-                $errors[$id] = array(
-                    'type' => 'invalid',
-                    'message' => 'Invalid file type for JS addon',
-                    'data' => $data
-                );
-                continue;
-            }
-            if ($type === 'php' && substr($data['file'], -4) !== '.php') {
-                $errors[$id] = array(
-                    'type' => 'invalid',
-                    'message' => 'Invalid file type for PHP addon',
-                    'data' => $data
-                );
-                continue;
-            }
+            if ($type === 'css' && substr($data['file'], -4) !== '.css') continue;
+            if ($type === 'js' && substr($data['file'], -3) !== '.js') continue;
+            if ($type === 'php' && substr($data['file'], -4) !== '.php') continue;
             
             // Ensure required keys exist and get source name
             $path_info = \Arsol_WP_Snippets\Helper::normalize_path($data['file']);
@@ -151,11 +112,6 @@ class Snippet_Loader {
                     );
                     
                     $duplicates[] = $duplicate_data;
-                    $errors[$file['id']] = array(
-                        'type' => 'duplicate',
-                        'message' => 'Duplicate file detected',
-                        'data' => $duplicate_data
-                    );
                 }
             }
         }
@@ -170,8 +126,7 @@ class Snippet_Loader {
         
         return array(
             'files' => $final,
-            'duplicates' => $duplicates,
-            'errors' => $errors
+            'duplicates' => $duplicates
         );
     }
     
@@ -300,15 +255,6 @@ class Snippet_Loader {
         if (!empty($enabled_php_files)) {
             foreach ($enabled_php_files as $file_key => $enabled) {
                 if ($enabled && !$this->is_safe_mode()) {
-                    // Get all available PHP files through filter
-                    $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
-                    
-                    // Check for errors
-                    $result = $this->process_files(array($file_key => $php_files[$file_key]), 'php');
-                    if (!empty($result['errors'][$file_key])) {
-                        continue; // Skip files with errors
-                    }
-                    
                     $this->include_php_snippet($file_key);
                 }
             }
@@ -351,10 +297,11 @@ class Snippet_Loader {
                 continue;
             }
 
-            // Check for errors
-            $result = $this->process_files(array($file_key => $file_data), 'css');
-            if (!empty($result['errors'][$file_key])) {
-                continue; // Skip files with errors
+            // Check for duplicate files
+            if ($this->is_file_already_loaded($file_data['file'], $file_key)) {
+                $this->display_duplicate_file_notice($file_data['file'], $file_key);
+                error_log('Arsol WP Snippets: Duplicate CSS file detected - ' . $file_data['file']);
+                continue;
             }
 
             // Register and enqueue the CSS file
@@ -417,10 +364,11 @@ class Snippet_Loader {
                 continue;
             }
 
-            // Check for errors
-            $result = $this->process_files(array($file_key => $file_data), 'js');
-            if (!empty($result['errors'][$file_key])) {
-                continue; // Skip files with errors
+            // Check for duplicate files
+            if ($this->is_file_already_loaded($file_data['file'], $file_key)) {
+                $this->display_duplicate_file_notice($file_data['file'], $file_key);
+                error_log('Arsol WP Snippets: Duplicate JS file detected - ' . $file_data['file']);
+                continue;
             }
 
             // Register and enqueue the JS file

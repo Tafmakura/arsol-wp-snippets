@@ -158,6 +158,8 @@ class Admin_Settings {
         $php_addon_options = array();
         $duplicates = array();
         $seen_paths = array();
+        $path_to_first_file = array(); // Track first file for each path
+        
         // Get PHP files from theme directory
         $theme_dir = get_stylesheet_directory();
         $theme_files = glob($theme_dir . '/includes/functions/*.php');
@@ -165,37 +167,82 @@ class Admin_Settings {
             foreach ($theme_files as $file) {
                 $file_name = basename($file);
                 $addon_id = 'theme-' . sanitize_title($file_name);
+                $loading_order = 10;
+                
                 if (in_array($file, $seen_paths)) {
-                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data(array(
-                        'file' => $file,
-                        'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
-                        'loading_order' => 10
-                    ));
+                    // Check if this file should be considered the first one based on loading order
+                    if (!isset($path_to_first_file[$file]) || $loading_order < $path_to_first_file[$file]['loading_order']) {
+                        // This file should be the first one
+                        if (isset($path_to_first_file[$file])) {
+                            // Move the previous first file to duplicates
+                            $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$file]);
+                        }
+                        $path_to_first_file[$file] = array(
+                            'file' => $file,
+                            'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
+                            'loading_order' => $loading_order
+                        );
+                    } else {
+                        // This file should be a duplicate
+                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data(array(
+                            'file' => $file,
+                            'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
+                            'loading_order' => $loading_order
+                        ));
+                    }
                     continue;
                 }
+                
                 $seen_paths[] = $file;
                 $php_addon_options[$addon_id] = array(
                     'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
                     'file' => $file,
                     'context' => 'global',
-                    'loading_order' => 10
+                    'loading_order' => $loading_order
+                );
+                $path_to_first_file[$file] = array(
+                    'file' => $file,
+                    'name' => ucwords(str_replace('-', ' ', sanitize_title($file_name))),
+                    'loading_order' => $loading_order
                 );
             }
         }
+        
         // Allow filtering of PHP addon options
         $php_addon_options = apply_filters('arsol_wp_snippets_php_addon_files', $php_addon_options);
+        
         // Remove duplicates from filtered options
         $final = array();
         $seen_paths = array();
+        $path_to_first_file = array(); // Reset for filtered options
+        
         foreach ($php_addon_options as $id => $data) {
             if (!isset($data['file'])) continue;
+            
             if (in_array($data['file'], $seen_paths)) {
-                $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($data);
+                $loading_order = isset($data['loading_order']) ? intval($data['loading_order']) : 10;
+                
+                // Check if this file should be considered the first one based on loading order
+                if (!isset($path_to_first_file[$data['file']]) || $loading_order < $path_to_first_file[$data['file']]['loading_order']) {
+                    // This file should be the first one
+                    if (isset($path_to_first_file[$data['file']])) {
+                        // Move the previous first file to duplicates
+                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$data['file']]);
+                    }
+                    $path_to_first_file[$data['file']] = $data;
+                    $final[$id] = $data;
+                } else {
+                    // This file should be a duplicate
+                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($data);
+                }
                 continue;
             }
+            
             $seen_paths[] = $data['file'];
             $final[$id] = $data;
+            $path_to_first_file[$data['file']] = $data;
         }
+        
         $this->php_duplicates = $duplicates;
         return $final;
     }
@@ -207,19 +254,39 @@ class Admin_Settings {
         $css_addon_options = array();
         $duplicates = array();
         $seen_paths = array();
+        $path_to_first_file = array(); // Track first file for each path
+        
         $filtered_options = apply_filters('arsol_wp_snippets_css_addon_files', $css_addon_options);
         foreach ($filtered_options as $addon_id => $addon_data) {
             if (!isset($addon_data['file']) || substr($addon_data['file'], -4) !== '.css') {
                 unset($filtered_options[$addon_id]);
                 continue;
             }
+            
             if (in_array($addon_data['file'], $seen_paths)) {
-                $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
-                unset($filtered_options[$addon_id]);
+                $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
+                
+                // Check if this file should be considered the first one based on loading order
+                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < $path_to_first_file[$addon_data['file']]['loading_order']) {
+                    // This file should be the first one
+                    if (isset($path_to_first_file[$addon_data['file']])) {
+                        // Move the previous first file to duplicates
+                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$addon_data['file']]);
+                    }
+                    $path_to_first_file[$addon_data['file']] = $addon_data;
+                    $filtered_options[$addon_id] = $addon_data;
+                } else {
+                    // This file should be a duplicate
+                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
+                    unset($filtered_options[$addon_id]);
+                }
                 continue;
             }
+            
             $seen_paths[] = $addon_data['file'];
+            $path_to_first_file[$addon_data['file']] = $addon_data;
         }
+        
         $this->css_duplicates = $duplicates;
         return $filtered_options;
     }
@@ -231,19 +298,39 @@ class Admin_Settings {
         $js_addon_options = array();
         $duplicates = array();
         $seen_paths = array();
+        $path_to_first_file = array(); // Track first file for each path
+        
         $filtered_options = apply_filters('arsol_wp_snippets_js_addon_files', $js_addon_options);
         foreach ($filtered_options as $addon_id => $addon_data) {
             if (!isset($addon_data['file']) || substr($addon_data['file'], -3) !== '.js') {
                 unset($filtered_options[$addon_id]);
                 continue;
             }
+            
             if (in_array($addon_data['file'], $seen_paths)) {
-                $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
-                unset($filtered_options[$addon_id]);
+                $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
+                
+                // Check if this file should be considered the first one based on loading order
+                if (!isset($path_to_first_file[$addon_data['file']]) || $loading_order < $path_to_first_file[$addon_data['file']]['loading_order']) {
+                    // This file should be the first one
+                    if (isset($path_to_first_file[$addon_data['file']])) {
+                        // Move the previous first file to duplicates
+                        $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($path_to_first_file[$addon_data['file']]);
+                    }
+                    $path_to_first_file[$addon_data['file']] = $addon_data;
+                    $filtered_options[$addon_id] = $addon_data;
+                } else {
+                    // This file should be a duplicate
+                    $duplicates[] = \Arsol_WP_Snippets\Helper::process_duplicate_data($addon_data);
+                    unset($filtered_options[$addon_id]);
+                }
                 continue;
             }
+            
             $seen_paths[] = $addon_data['file'];
+            $path_to_first_file[$addon_data['file']] = $addon_data;
         }
+        
         $this->js_duplicates = $duplicates;
         return $filtered_options;
     }

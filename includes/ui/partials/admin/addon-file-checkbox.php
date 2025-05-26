@@ -156,6 +156,23 @@ if ($file_exists) {
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> Header
                 </span>
+                <span class="arsol-addon-meta">
+                    <strong>Priority:</strong> 
+                    <?php 
+                    $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                    $priority_group = '';
+                    if ($priority <= 5) {
+                        $priority_group = ' (Early)';
+                    } elseif ($priority <= 10) {
+                        $priority_group = ' (Default)';
+                    } elseif ($priority <= 20) {
+                        $priority_group = ' (Late)';
+                    } else {
+                        $priority_group = ' (Very Late)';
+                    }
+                    echo $priority . $priority_group;
+                    ?>
+                </span>
                 <?php endif; ?>
                 <?php if (!empty($addon_data['dependencies'])): ?>
                 <span class="arsol-addon-meta">

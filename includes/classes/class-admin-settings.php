@@ -417,12 +417,18 @@ class Admin_Settings {
                     // Check context - load if global or admin
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
                     if ($context === 'global' || $context === 'admin') {
-                        wp_enqueue_style(
-                            'arsol-css-addon-' . $addon_id,
-                            $addon_data['file'],
-                            array(),
-                            ARSOL_WP_SNIPPETS_VERSION
-                        );
+                        // Get priority - DEFAULT TO 10
+                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                        
+                        // Hook into admin_enqueue_scripts with the specified priority
+                        add_action('admin_enqueue_scripts', function() use ($addon_data, $addon_id) {
+                            wp_enqueue_style(
+                                'arsol-css-addon-' . $addon_id,
+                                $addon_data['file'],
+                                array(),
+                                ARSOL_WP_SNIPPETS_VERSION
+                            );
+                        }, $priority);
                         
                         do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $addon_data['file']);
                     }
@@ -492,12 +498,18 @@ class Admin_Settings {
                     // Check context - load if global or frontend
                     $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
                     if ($context === 'global' || $context === 'frontend') {
-                        wp_enqueue_style(
-                            'arsol-css-addon-' . $addon_id,
-                            $addon_data['file'],
-                            array(),
-                            ARSOL_WP_SNIPPETS_VERSION
-                        );
+                        // Get priority - DEFAULT TO 10
+                        $priority = isset($addon_data['priority']) ? intval($addon_data['priority']) : 10;
+                        
+                        // Hook into wp_enqueue_scripts with the specified priority
+                        add_action('wp_enqueue_scripts', function() use ($addon_data, $addon_id) {
+                            wp_enqueue_style(
+                                'arsol-css-addon-' . $addon_id,
+                                $addon_data['file'],
+                                array(),
+                                ARSOL_WP_SNIPPETS_VERSION
+                            );
+                        }, $priority);
                         
                         do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $css_addon_options[$addon_id]['file']);
                     }

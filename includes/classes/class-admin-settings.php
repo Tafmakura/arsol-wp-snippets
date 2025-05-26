@@ -29,11 +29,6 @@ class Admin_Settings {
         
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
-        
-        // Enqueue snippets based on settings
-        add_action('admin_enqueue_scripts', array($this, 'load_admin_addon_files'));
-        add_action('wp_enqueue_scripts', array($this, 'load_frontend_addon_files'));
-        add_action('init', array($this, 'load_php_addon_files'));
     }
 
     /**
@@ -375,248 +370,24 @@ class Admin_Settings {
     }
     
     /**
-     * Load PHP snippets based on settings
+     * Load PHP snippets
      */
     public function load_php_addon_files() {
-        $options = get_option('arsol_wp_snippets_options', array());
-        
-        // If no PHP addon options are set, return
-        if (!isset($options['php_addon_options']) || empty($options['php_addon_options'])) {
-            return;
-        }
-        
-        // Get PHP addon definitions
-        $php_addon_options = $this->get_php_addon_options();
-        
-        // Get enabled PHP snippets
-        $enabled_options = $options['php_addon_options'];
-        
-        // Loop through enabled files and include them
-        foreach ($enabled_options as $addon_id => $enabled) {
-            if ($enabled && isset($php_addon_options[$addon_id])) {
-                $addon_data = $php_addon_options[$addon_id];
-                $file_path = $addon_data['file'];
-                
-                // Check context - load if global or matches current context
-                $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
-                $should_load = false;
-                
-                if ($context === 'global') {
-                    $should_load = true;
-                } elseif ($context === 'admin' && is_admin()) {
-                    $should_load = true;
-                } elseif ($context === 'frontend' && !is_admin()) {
-                    $should_load = true;
-                }
-                
-                if ($should_load && file_exists($file_path)) {
-                    // Get loading order - DEFAULT TO 10
-                    $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
-                    
-                    // Hook into appropriate action based on context
-                    $hook = is_admin() ? 'admin_init' : 'wp';
-                    add_action($hook, function() use ($file_path, $addon_id) {
-                        include_once $file_path;
-                        do_action('arsol_wp_snippets_loaded_php_addon', $addon_id, $file_path);
-                    }, $loading_order);
-                }
-            }
-        }
+        // This method is now handled by Snippet_Loader
     }
     
     /**
      * Load admin snippets based on settings
      */
     public function load_admin_addon_files() {
-        // Only run in admin
-        if (!is_admin()) {
-            return;
-        }
-        
-        $options = get_option('arsol_wp_snippets_options', array());
-        
-        // Load CSS snippets
-        if (isset($options['css_addon_options']) && !empty($options['css_addon_options'])) {
-            $css_addon_options = $this->get_css_addon_options();
-            $enabled_css_options = $options['css_addon_options'];
-            
-            // Loop through enabled CSS files and enqueue them
-            foreach ($enabled_css_options as $addon_id => $enabled) {
-                if ($enabled && isset($css_addon_options[$addon_id])) {
-                    $addon_data = $css_addon_options[$addon_id];
-                    $file_path = $addon_data['file'];
-                    
-                    // Check if file exists
-                    if (!file_exists($file_path)) {
-                        continue;
-                    }
-                    
-                    // Check context - load if global or admin
-                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
-                    if ($context === 'global' || $context === 'admin') {
-                        // Get loading order - DEFAULT TO 10
-                        $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
-                        
-                        // Hook into admin_enqueue_scripts with the specified loading order
-                        add_action('admin_enqueue_scripts', function() use ($addon_data, $addon_id) {
-                            wp_enqueue_style(
-                                'arsol-css-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array(),
-                                arsol_wp_snippets_get_version()
-                            );
-                        }, $loading_order);
-                        
-                        do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $addon_data['file']);
-                    }
-                }
-            }
-        }
-        
-        // Load JS snippets
-        if (isset($options['js_addon_options']) && !empty($options['js_addon_options'])) {
-            $js_addon_options = $this->get_js_addon_options();
-            $enabled_js_options = $options['js_addon_options'];
-            
-            // Loop through enabled JS files and enqueue them
-            foreach ($enabled_js_options as $addon_id => $enabled) {
-                if ($enabled && isset($js_addon_options[$addon_id])) {
-                    $addon_data = $js_addon_options[$addon_id];
-                    $file_path = $addon_data['file'];
-                    
-                    // Check if file exists
-                    if (!file_exists($file_path)) {
-                        continue;
-                    }
-                    
-                    // Check context - load if global or admin
-                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
-                    if ($context === 'global' || $context === 'admin') {
-                        // Get position - DEFAULT TO FOOTER for JS
-                        $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
-                        $in_footer = ($position === 'footer');
-                        
-                        // Get loading order - DEFAULT TO 10
-                        $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
-                        
-                        // Hook into admin_enqueue_scripts with the specified loading order
-                        add_action('admin_enqueue_scripts', function() use ($addon_data, $addon_id, $in_footer) {
-                            wp_enqueue_script(
-                                'arsol-js-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array('jquery'),
-                                arsol_wp_snippets_get_version(),
-                                $in_footer
-                            );
-                        }, $loading_order);
-                        
-                        do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $addon_data['file']);
-                    }
-                }
-            }
-        }
+        // This method is now handled by Snippet_Loader
     }
     
     /**
      * Load frontend snippets based on settings
      */
     public function load_frontend_addon_files() {
-        // Don't run in admin
-        if (is_admin()) {
-            return;
-        }
-        
-        $options = get_option('arsol_wp_snippets_options', array());
-        
-        // Load CSS snippets
-        if (isset($options['css_addon_options']) && !empty($options['css_addon_options'])) {
-            $css_addon_options = $this->get_css_addon_options();
-            $enabled_css_options = $options['css_addon_options'];
-            
-            // Loop through enabled CSS files and enqueue them
-            foreach ($enabled_css_options as $addon_id => $enabled) {
-                if ($enabled && isset($css_addon_options[$addon_id])) {
-                    $addon_data = $css_addon_options[$addon_id];
-                    $file_path = $addon_data['file'];
-                    
-                    // Check if file exists
-                    if (!file_exists($file_path)) {
-                        continue;
-                    }
-                    
-                    // Check context - load if global or frontend
-                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
-                    if ($context === 'global' || $context === 'frontend') {
-                        // Get loading order - DEFAULT TO 10
-                        $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
-                        
-                        // Hook into wp_enqueue_scripts with the specified loading order
-                        add_action('wp_enqueue_scripts', function() use ($addon_data, $addon_id) {
-                            wp_enqueue_style(
-                                'arsol-css-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array(),
-                                arsol_wp_snippets_get_version()
-                            );
-                        }, $loading_order);
-                        
-                        do_action('arsol_wp_snippets_loaded_css_addon', $addon_id, $addon_data['file']);
-                    }
-                }
-            }
-        }
-        
-        // Load JS snippets
-        if (isset($options['js_addon_options']) && !empty($options['js_addon_options'])) {
-            $js_addon_options = $this->get_js_addon_options();
-            $enabled_js_options = $options['js_addon_options'];
-            
-            // Loop through enabled JS files and enqueue them
-            foreach ($enabled_js_options as $addon_id => $enabled) {
-                if ($enabled && isset($js_addon_options[$addon_id])) {
-                    $addon_data = $js_addon_options[$addon_id];
-                    $file_path = $addon_data['file'];
-                    
-                    // Check if file exists
-                    if (!file_exists($file_path)) {
-                        continue;
-                    }
-                    
-                    // Check context - load if global or frontend
-                    $context = isset($addon_data['context']) ? $addon_data['context'] : 'global';
-                    if ($context === 'global' || $context === 'frontend') {
-                        // Get position - DEFAULT TO FOOTER for JS
-                        $position = isset($addon_data['position']) ? $addon_data['position'] : 'footer';
-                        $in_footer = ($position === 'footer');
-                        
-                        // Get loading order - DEFAULT TO 10
-                        $loading_order = isset($addon_data['loading_order']) ? intval($addon_data['loading_order']) : 10;
-                        
-                        // Hook into wp_enqueue_scripts with the specified loading order
-                        add_action('wp_enqueue_scripts', function() use ($addon_data, $addon_id, $in_footer) {
-                            wp_enqueue_script(
-                                'arsol-js-addon-' . $addon_id,
-                                $addon_data['file'],
-                                array('jquery'),
-                                arsol_wp_snippets_get_version(),
-                                $in_footer
-                            );
-                        }, $loading_order);
-                        
-                        do_action('arsol_wp_snippets_loaded_js_addon', $addon_id, $addon_data['file']);
-                    }
-                }
-            }
-        }
-
-        // Enqueue frontend script
-        wp_enqueue_script(
-            'arsol-wp-snippets-frontend',
-            plugins_url('assets/js/arsol-wp-snippets-frontend.js', dirname(dirname(__FILE__))),
-            array('jquery'),
-            arsol_wp_snippets_get_version(),
-            true
-        );
+        // This method is now handled by Snippet_Loader
     }
 }
 

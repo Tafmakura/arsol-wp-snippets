@@ -29,6 +29,7 @@ class Snippet_Loader {
      */
     public function load_frontend_snippets() {
         if ($this->is_safe_mode()) {
+            error_log('Arsol WP Snippets: Safe mode is enabled, skipping frontend snippets');
             return;
         }
         $this->load_css_snippets('frontend');
@@ -40,6 +41,7 @@ class Snippet_Loader {
      */
     public function load_admin_snippets() {
         if ($this->is_safe_mode()) {
+            error_log('Arsol WP Snippets: Safe mode is enabled, skipping admin snippets');
             return;
         }
         $this->load_css_snippets('admin');
@@ -55,8 +57,8 @@ class Snippet_Loader {
         $enabled_php_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
         
         if (!empty($enabled_php_files)) {
-            foreach ($enabled_php_files as $file_key) {
-                if (!$this->is_safe_mode()) {
+            foreach ($enabled_php_files as $file_key => $enabled) {
+                if ($enabled && !$this->is_safe_mode()) {
                     $this->include_php_snippet($file_key);
                 }
             }
@@ -74,14 +76,16 @@ class Snippet_Loader {
         $enabled_css_files = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
         
         if (empty($enabled_css_files)) {
+            error_log('Arsol WP Snippets: No CSS files enabled for ' . $context);
             return;
         }
 
         // Get all available CSS files through filter
         $css_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
+        error_log('Arsol WP Snippets: Available CSS files: ' . print_r($css_files, true));
 
-        foreach ($enabled_css_files as $file_key) {
-            if (!isset($css_files[$file_key])) {
+        foreach ($enabled_css_files as $file_key => $enabled) {
+            if (!$enabled || !isset($css_files[$file_key])) {
                 continue;
             }
 
@@ -89,6 +93,7 @@ class Snippet_Loader {
 
             // Skip if context doesn't match
             if (isset($file_data['context']) && $file_data['context'] !== $context) {
+                error_log('Arsol WP Snippets: Skipping CSS file ' . $file_key . ' - context mismatch');
                 continue;
             }
 
@@ -96,6 +101,8 @@ class Snippet_Loader {
             $handle = 'arsol-wp-snippets-css-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
             $version = isset($file_data['version']) ? $file_data['version'] : arsol_wp_snippets_get_version();
+
+            error_log('Arsol WP Snippets: Registering CSS file - ' . $file_data['file'] . ' with handle ' . $handle);
 
             wp_register_style(
                 $handle,
@@ -105,9 +112,6 @@ class Snippet_Loader {
             );
 
             wp_enqueue_style($handle);
-
-            // Debug log
-            error_log('Arsol WP Snippets: Loading CSS file - ' . $file_data['file']);
 
             // Trigger action when CSS file is loaded
             do_action('arsol_wp_snippets_loaded_css_addon', $file_key, $file_data);
@@ -125,14 +129,16 @@ class Snippet_Loader {
         $enabled_js_files = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
         
         if (empty($enabled_js_files)) {
+            error_log('Arsol WP Snippets: No JS files enabled for ' . $context);
             return;
         }
 
         // Get all available JS files through filter
         $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
+        error_log('Arsol WP Snippets: Available JS files: ' . print_r($js_files, true));
 
-        foreach ($enabled_js_files as $file_key) {
-            if (!isset($js_files[$file_key])) {
+        foreach ($enabled_js_files as $file_key => $enabled) {
+            if (!$enabled || !isset($js_files[$file_key])) {
                 continue;
             }
 
@@ -140,6 +146,7 @@ class Snippet_Loader {
 
             // Skip if context doesn't match
             if (isset($file_data['context']) && $file_data['context'] !== $context) {
+                error_log('Arsol WP Snippets: Skipping JS file ' . $file_key . ' - context mismatch');
                 continue;
             }
 
@@ -148,6 +155,8 @@ class Snippet_Loader {
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
             $version = isset($file_data['version']) ? $file_data['version'] : arsol_wp_snippets_get_version();
             $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
+
+            error_log('Arsol WP Snippets: Registering JS file - ' . $file_data['file'] . ' with handle ' . $handle);
 
             wp_register_script(
                 $handle,
@@ -158,9 +167,6 @@ class Snippet_Loader {
             );
 
             wp_enqueue_script($handle);
-
-            // Debug log
-            error_log('Arsol WP Snippets: Loading JS file - ' . $file_data['file']);
 
             // Trigger action when JS file is loaded
             do_action('arsol_wp_snippets_loaded_js_addon', $file_key, $file_data);
@@ -177,6 +183,7 @@ class Snippet_Loader {
         $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
 
         if (!isset($php_files[$file_key])) {
+            error_log('Arsol WP Snippets: PHP file not found - ' . $file_key);
             return;
         }
 
@@ -184,12 +191,12 @@ class Snippet_Loader {
         
         if (file_exists($file_data['file'])) {
             include_once $file_data['file'];
-            
-            // Debug log
-            error_log('Arsol WP Snippets: Loading PHP file - ' . $file_data['file']);
+            error_log('Arsol WP Snippets: Loaded PHP file - ' . $file_data['file']);
             
             // Trigger action when PHP file is loaded
             do_action('arsol_wp_snippets_loaded_php_addon', $file_key, $file_data);
+        } else {
+            error_log('Arsol WP Snippets: PHP file does not exist - ' . $file_data['file']);
         }
     }
 }

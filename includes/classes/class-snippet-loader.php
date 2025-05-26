@@ -25,12 +25,121 @@ class Snippet_Loader {
      */
     private static $loaded_keys = array();
     
+    /**
+     * Track duplicate files for display
+     *
+     * @var array
+     */
+    private static $duplicate_files = array();
+    
     public function __construct() {
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_snippets'));
         add_action('admin_enqueue_scripts', array($this, 'load_admin_snippets'));
         add_action('init', array($this, 'load_php_snippets'));
     }
 
+    /**
+     * Process files and handle duplicates
+     *
+     * @param array $files Array of files to process
+     * @param string $type Type of files (php, css, js)
+     * @return array Processed files and duplicates
+     */
+    public function process_files($files, $type) {
+        $final = array();
+        $duplicates = array();
+        
+        // Group files by path using a hash map
+        $path_groups = array();
+        foreach ($files as $id => $data) {
+            if (!isset($data['file'])) continue;
+            
+            // Validate file type
+            if ($type === 'css' && substr($data['file'], -4) !== '.css') continue;
+            if ($type === 'js' && substr($data['file'], -3) !== '.js') continue;
+            if ($type === 'php' && substr($data['file'], -4) !== '.php') continue;
+            
+            // Ensure required keys exist and get source name
+            $path_info = \Arsol_WP_Snippets\Helper::normalize_path($data['file']);
+            $data = array_merge(array(
+                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
+                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order'),
+                'source_name' => $path_info['source_name']
+            ), $data);
+            
+            $path = $data['file'];
+            if (!isset($path_groups[$path])) {
+                $path_groups[$path] = array();
+            }
+            $path_groups[$path][] = array_merge($data, array('id' => $id));
+        }
+        
+        // Process each path group
+        foreach ($path_groups as $path => $group_files) {
+            if (count($group_files) === 1) {
+                // Single file - add to final options
+                $file = $group_files[0];
+                $final[$file['id']] = $file;
+            } else {
+                // Multiple files - sort by loading order
+                usort($group_files, function($a, $b) {
+                    return $a['loading_order'] - $b['loading_order'];
+                });
+                
+                // First file goes to final options
+                $first_file = $group_files[0];
+                $final[$first_file['id']] = $first_file;
+                
+                // Process all duplicates
+                foreach ($group_files as $index => $file) {
+                    if ($index === 0) continue; // Skip first file
+                    
+                    // Get all files with same path for this duplicate
+                    $duplicate_data = array(
+                        'file' => $file['file'],
+                        'name' => $file['name'],
+                        'loading_order' => $file['loading_order'],
+                        'source_name' => $file['source_name'],
+                        'first_source' => $first_file['source_name'],
+                        'first_name' => $first_file['name'],
+                        'first_loading_order' => $first_file['loading_order'],
+                        'total_duplicates' => count($group_files),
+                        'duplicate_names' => array_map(function($f) use ($first_file) {
+                            return $f['name'];
+                        }, array_filter($group_files, function($f) use ($first_file) {
+                            return $f['name'] !== $first_file['name'];
+                        }))
+                    );
+                    
+                    $duplicates[] = $duplicate_data;
+                }
+            }
+        }
+        
+        // Sort duplicates by loading order
+        usort($duplicates, function($a, $b) {
+            return $a['loading_order'] - $b['loading_order'];
+        });
+        
+        // Store duplicates for this type
+        self::$duplicate_files[$type] = $duplicates;
+        
+        return array(
+            'files' => $final,
+            'duplicates' => $duplicates
+        );
+    }
+    
+    /**
+     * Get duplicate files for a specific type
+     *
+     * @param string $type Type of files (php, css, js)
+     * @return array Array of duplicate files
+     */
+    public function get_duplicate_files($type) {
+        return isset(self::$duplicate_files[$type]) ? self::$duplicate_files[$type] : array();
+    }
+    
     /**
      * Check if safe mode is enabled
      */
@@ -154,6 +263,10 @@ class Snippet_Loader {
         $css_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
         error_log('Arsol WP Snippets: Available CSS files: ' . print_r($css_files, true));
 
+        // Process files and handle duplicates
+        $result = $this->process_files($css_files, 'css');
+        $css_files = $result['files'];
+
         foreach ($enabled_css_files as $file_key => $enabled) {
             if (!$enabled || !isset($css_files[$file_key])) {
                 continue;
@@ -217,6 +330,10 @@ class Snippet_Loader {
         $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
         error_log('Arsol WP Snippets: Available JS files: ' . print_r($js_files, true));
 
+        // Process files and handle duplicates
+        $result = $this->process_files($js_files, 'js');
+        $js_files = $result['files'];
+
         foreach ($enabled_js_files as $file_key => $enabled) {
             if (!$enabled || !isset($js_files[$file_key])) {
                 continue;
@@ -271,6 +388,10 @@ class Snippet_Loader {
     private function include_php_snippet($file_key) {
         // Get all available PHP files through filter
         $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
+
+        // Process files and handle duplicates
+        $result = $this->process_files($php_files, 'php');
+        $php_files = $result['files'];
 
         if (!isset($php_files[$file_key])) {
             error_log('Arsol WP Snippets: PHP file not found - ' . $file_key);

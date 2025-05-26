@@ -19,7 +19,14 @@ class Admin_Settings {
      * @var string
      */
     private $css_addons_slug = 'arsol-wp-snippets';
-
+    
+    /**
+     * Snippet Loader instance
+     *
+     * @var Snippet_Loader
+     */
+    private $snippet_loader;
+    
     /**
      * Constructor
      */
@@ -29,6 +36,9 @@ class Admin_Settings {
         
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
+        
+        // Initialize Snippet Loader
+        $this->snippet_loader = new \Arsol_WP_Snippets\Snippet_Loader();
     }
 
     /**
@@ -147,8 +157,6 @@ class Admin_Settings {
             },
             $this->css_addons_slug
         );
-        
-        // Don't add any add_settings_field() calls - that's what creates the table structure
     }
     
     /**
@@ -167,105 +175,14 @@ class Admin_Settings {
     }
     
     /**
-     * Process files and handle duplicates
-     *
-     * @param array $files Array of files to process
-     * @param string $type Type of files (php, css, js)
-     * @return array Processed files and duplicates
-     */
-    private function process_files($files, $type) {
-        $final = array();
-        $duplicates = array();
-        
-        // Group files by path using a hash map
-        $path_groups = array();
-        foreach ($files as $id => $data) {
-            if (!isset($data['file'])) continue;
-            
-            // Validate file type
-            if ($type === 'css' && substr($data['file'], -4) !== '.css') continue;
-            if ($type === 'js' && substr($data['file'], -3) !== '.js') continue;
-            if ($type === 'php' && substr($data['file'], -4) !== '.php') continue;
-            
-            // Ensure required keys exist and get source name
-            $path_info = \Arsol_WP_Snippets\Helper::normalize_path($data['file']);
-            $data = array_merge(array(
-                'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
-                'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order'),
-                'source_name' => $path_info['source_name']
-            ), $data);
-            
-            $path = $data['file'];
-            if (!isset($path_groups[$path])) {
-                $path_groups[$path] = array();
-            }
-            $path_groups[$path][] = array_merge($data, array('id' => $id));
-        }
-        
-        // Process each path group
-        foreach ($path_groups as $path => $group_files) {
-            if (count($group_files) === 1) {
-                // Single file - add to final options
-                $file = $group_files[0];
-                $final[$file['id']] = $file;
-            } else {
-                // Multiple files - sort by loading order
-                usort($group_files, function($a, $b) {
-                    return $a['loading_order'] - $b['loading_order'];
-                });
-                
-                // First file goes to final options
-                $first_file = $group_files[0];
-                $final[$first_file['id']] = $first_file;
-                
-                // Process all duplicates
-                foreach ($group_files as $index => $file) {
-                    if ($index === 0) continue; // Skip first file
-                    
-                    // Get all files with same path for this duplicate
-                    $duplicate_data = array(
-                        'file' => $file['file'],
-                        'name' => $file['name'],
-                        'loading_order' => $file['loading_order'],
-                        'source_name' => $file['source_name'],
-                        'first_source' => $first_file['source_name'],
-                        'first_name' => $first_file['name'],
-                        'first_loading_order' => $first_file['loading_order'],
-                        'total_duplicates' => count($group_files),
-                        'duplicate_names' => array_map(function($f) use ($first_file) {
-                            return $f['name'];
-                        }, array_filter($group_files, function($f) use ($first_file) {
-                            return $f['name'] !== $first_file['name'];
-                        }))
-                    );
-                    
-                    $duplicates[] = $duplicate_data;
-                }
-            }
-        }
-        
-        // Sort duplicates by loading order
-        usort($duplicates, function($a, $b) {
-            return $a['loading_order'] - $b['loading_order'];
-        });
-        
-        return array(
-            'files' => $final,
-            'duplicates' => $duplicates
-        );
-    }
-    
-    /**
      * Get available PHP addon options
      */
     public function get_php_addon_options() {
         // Get all files after filters are applied
         $all_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
         
-        // Process files and handle duplicates
-        $result = $this->process_files($all_files, 'php');
-        
-        $this->php_duplicates = $result['duplicates'];
+        // Process files and handle duplicates using Snippet Loader
+        $result = $this->snippet_loader->process_files($all_files, 'php');
         return $result['files'];
     }
     
@@ -276,10 +193,8 @@ class Admin_Settings {
         // Get all files after filters are applied
         $all_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
         
-        // Process files and handle duplicates
-        $result = $this->process_files($all_files, 'css');
-        
-        $this->css_duplicates = $result['duplicates'];
+        // Process files and handle duplicates using Snippet Loader
+        $result = $this->snippet_loader->process_files($all_files, 'css');
         return $result['files'];
     }
     
@@ -290,10 +205,8 @@ class Admin_Settings {
         // Get all files after filters are applied
         $all_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
         
-        // Process files and handle duplicates
-        $result = $this->process_files($all_files, 'js');
-        
-        $this->js_duplicates = $result['duplicates'];
+        // Process files and handle duplicates using Snippet Loader
+        $result = $this->snippet_loader->process_files($all_files, 'js');
         return $result['files'];
     }
     
@@ -304,11 +217,13 @@ class Admin_Settings {
         $options = get_option('arsol_wp_snippets_options', array());
         $php_addon_options = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
         $available_php_addons = $this->get_php_addon_options();
-        $duplicates = isset($this->php_duplicates) ? $this->php_duplicates : array();
+        $duplicates = $this->snippet_loader->get_duplicate_files('php');
+        
         if (empty($available_php_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No PHP snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
+        
         $available_php_addons = $this->sort_addons_by_loading_order($available_php_addons);
         foreach ($available_php_addons as $addon_id => $addon_data) {
             $enabled_options = $php_addon_options;
@@ -327,11 +242,13 @@ class Admin_Settings {
         $options = get_option('arsol_wp_snippets_options', array());
         $css_addon_options = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
         $available_css_addons = $this->get_css_addon_options();
-        $duplicates = isset($this->css_duplicates) ? $this->css_duplicates : array();
+        $duplicates = $this->snippet_loader->get_duplicate_files('css');
+        
         if (empty($available_css_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No CSS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
+        
         $available_css_addons = $this->sort_addons_by_loading_order($available_css_addons);
         foreach ($available_css_addons as $addon_id => $addon_data) {
             $enabled_options = $css_addon_options;
@@ -350,11 +267,13 @@ class Admin_Settings {
         $options = get_option('arsol_wp_snippets_options', array());
         $js_addon_options = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
         $available_js_addons = $this->get_js_addon_options();
-        $duplicates = isset($this->js_duplicates) ? $this->js_duplicates : array();
+        $duplicates = $this->snippet_loader->get_duplicate_files('js');
+        
         if (empty($available_js_addons) && empty($duplicates)) {
             echo '<p>' . esc_html__('No JS snippets available.', 'arsol-wp-snippets') . '</p>';
             return;
         }
+        
         $available_js_addons = $this->sort_addons_by_loading_order($available_js_addons);
         foreach ($available_js_addons as $addon_id => $addon_data) {
             $enabled_options = $js_addon_options;

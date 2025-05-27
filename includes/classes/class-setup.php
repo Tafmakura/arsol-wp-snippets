@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_CSS_Addons;
+namespace Arsol_WP_Snippets;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -11,15 +11,93 @@ class Setup {
         $this->require_files();
         $this->instantiate_classes();
         add_action('plugins_loaded', array($this, 'init'));
+        
+        // Add activation and deactivation hooks
+        register_activation_hook(ARSOL_WP_SNIPPETS_PLUGIN_FILE, array($this, 'activate'));
+        register_deactivation_hook(ARSOL_WP_SNIPPETS_PLUGIN_FILE, array($this, 'deactivate'));
     }
 
     public function init() {
         // Load plugin text domain
-<<<<<<< HEAD
         // load_plugin_textdomain('arsol-wp-snippets', false, dirname(ARSOL_WP_SNIPPETS_PLUGIN_BASENAME) . '/languages');
-=======
-        // load_plugin_textdomain('arsol-css-addons', false, dirname(ARSOL_CSS_ADDONS_PLUGIN_BASENAME) . '/languages');
->>>>>>> parent of c855b08 (Merge branch 'production' into staging)
+    }
+
+    /**
+     * Plugin activation hook callback
+     */
+    public function activate() {
+        $this->add_config_constants();
+    }
+
+    /**
+     * Plugin deactivation hook callback
+     */
+    public function deactivate() {
+        $this->remove_config_constants();
+    }
+
+    /**
+     * Add constants to wp-config.php
+     */
+    private function add_config_constants() {
+        $config_file = ABSPATH . 'wp-config.php';
+        
+        // Check if wp-config.php exists and is writable
+        if (!file_exists($config_file) || !is_writable($config_file)) {
+            return;
+        }
+        
+        // Read the config file
+        $config_content = file_get_contents($config_file);
+        
+        // Check if our constant is already defined
+        if (strpos($config_content, 'ARSOL_WP_SNIPPETS_SAFE_MODE') !== false) {
+            return;
+        }
+        
+        // Prepare the constant definition with a single space after it
+        $constant_definition = "\n// Arsol WP Snippets Safe Mode\nif (!defined('ARSOL_WP_SNIPPETS_SAFE_MODE')) {\n    define('ARSOL_WP_SNIPPETS_SAFE_MODE', false);\n}\n\n";
+        
+        // Try to find the WordPress setup comment first
+        $insert_position = strpos($config_content, "/** Sets up WordPress vars and included files. */");
+        
+        // If not found, fall back to require_once
+        if ($insert_position === false) {
+            $insert_position = strpos($config_content, "require_once");
+        }
+        
+        if ($insert_position !== false) {
+            $new_content = substr_replace($config_content, $constant_definition, $insert_position, 0);
+            
+            // Write the modified content back to wp-config.php
+            file_put_contents($config_file, $new_content);
+        }
+    }
+
+    /**
+     * Remove constants from wp-config.php
+     */
+    private function remove_config_constants() {
+        $config_file = ABSPATH . 'wp-config.php';
+        
+        // Check if wp-config.php exists and is writable
+        if (!file_exists($config_file) || !is_writable($config_file)) {
+            return;
+        }
+        
+        // Read the config file
+        $config_content = file_get_contents($config_file);
+        
+        // Pattern to match our constant block
+        $pattern = "/\n\/\/ Arsol WP Snippets Safe Mode\nif \(!defined\('ARSOL_WP_SNIPPETS_SAFE_MODE'\)\) {\n    define\('ARSOL_WP_SNIPPETS_SAFE_MODE', false\);\n}\n/";
+        
+        // Remove the constant block if it exists
+        $new_content = preg_replace($pattern, '', $config_content);
+        
+        // Write the modified content back to wp-config.php
+        if ($new_content !== $config_content) {
+            file_put_contents($config_file, $new_content);
+        }
     }
 
     /**
@@ -27,53 +105,25 @@ class Setup {
      */
     private function require_files() {
         // Core Classes
-<<<<<<< HEAD
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-admin-settings.php';
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
-<<<<<<< HEAD
-=======
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-theme-support.php';
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-snippet-loader.php';
-        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-script-filter.php';
->>>>>>> parent of caed6d7 (Revert "Packet Filter")
+        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-helper.php';
 
         // Core Functions 
         require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-admin.php';
-        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-css.php';
-        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-js.php';
-        require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/functions/functions-addon-php.php';
-=======
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-assets.php';
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-admin-settings.php';
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
-
-        // Core Functions 
-        require_once ARSOL_CSS_ADDONS_PLUGIN_DIR . 'includes/functions/functions-admin.php';
->>>>>>> parent of c855b08 (Merge branch 'production' into staging)
     }
 
     /**
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
-<<<<<<< HEAD
         new \Arsol_WP_Snippets\Assets();
         new \Arsol_WP_Snippets\Admin_Settings();
         new \Arsol_WP_Snippets\Shortcodes();
-<<<<<<< HEAD
-=======
-        new \Arsol_CSS_Addons\Assets();
-        new \Arsol_CSS_Addons\Admin_Settings();
-        new \Arsol_CSS_Addons\Shortcodes();
->>>>>>> parent of c855b08 (Merge branch 'production' into staging)
-=======
         new \Arsol_WP_Snippets\Theme_Support();
         new \Arsol_WP_Snippets\Snippet_Loader();
-        new \Arsol_WP_Snippets\Script_Filter();
->>>>>>> parent of caed6d7 (Revert "Packet Filter")
     }
 }
-
-// Initialize the setup class
-new Setup();

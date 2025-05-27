@@ -205,6 +205,29 @@ If you encounter any issues:
 
 ## Changelog
 
+### Version 0.0.14
+- Fixed CSS and JS file loading issues
+  - Corrected option structure handling for enabled files
+  - Removed duplicate loading methods to prevent conflicts
+  - Added comprehensive debug logging for troubleshooting
+- Improved file loading reliability
+  - Added proper file existence checks
+  - Enhanced context-aware loading (frontend/admin)
+  - Better handling of dependencies and loading order
+- Added missing file flag functionality
+  - Files that don't exist are now properly skipped
+  - Added error logging for missing files
+  - Improved error handling for invalid file paths
+- Enhanced safe mode functionality
+  - Added debug logging for safe mode status
+  - Improved safe mode checks across all file types
+  - Better handling of safe mode transitions
+- Added duplicate file detection
+  - Prevents loading the same file multiple times
+  - Shows admin notice for duplicate files
+  - Logs duplicate file attempts
+  - Works across all file types (PHP, CSS, JS)
+
 ### Version 0.0.13
 - Updated plugin header with GitHub repository links
 - Added welcome message to admin settings page
@@ -230,6 +253,7 @@ If you encounter any issues:
 - Basic snippet management functionality
 - Admin interface implementation
 - File loading system setup
+
 
 ## License
 

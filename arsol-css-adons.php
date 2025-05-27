@@ -3,7 +3,7 @@
  * Plugin Name: Arsol WP Snippets
  * Plugin URI: https://github.com/Tafmakura/arsol-wp-snippets
  * Description: A WordPress plugin to add custom code snippets and enhancements with a safe mode feature for troubleshooting. Check out our <a href="https://github.com/Tafmakura/arsol-wp-snippets">GitHub repository</a> for documentation and our <a href="https://github.com/Tafmakura/arsol-wps-packet-example">packet template</a> for examples.
- * Version: 0.0.13
+ * Version: 0.0.14
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: Taf Makura
@@ -57,13 +57,12 @@ function arsol_wp_snippets_get_version() {
     return $version;
 }
 
-// Use correct namespace
-use Arsol_WP_Snippets\Setup;
-
-// Include the Setup class
+// Setup Class
 require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
 // Initialize the plugin
-if (class_exists('Arsol_WP_Snippets\Setup')) {
-    new Setup();
+function arsol_wp_snippets_init() {
+    // Initialize setup class which handles autoloading and other initialization
+    new \Arsol_WP_Snippets\Setup();
 }
+add_action('plugins_loaded', 'arsol_wp_snippets_init');

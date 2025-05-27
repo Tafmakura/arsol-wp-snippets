@@ -190,7 +190,7 @@ add_action('arsol_wp_snippets_loaded_js_addon', 'your_callback_function', 10, 2)
 
 ### Asset Versioning
 
-The plugin's own assets (CSS and JavaScript files) are versioned using the plugin version number. For third-party files that are modified through the plugin's filter system, versioning is optional. Note that versioning only applies to CSS and JavaScript files - PHP files are always loaded fresh as they are executed server-side.
+For third-party files that are modified through the plugin's filter system, versioning is optional. Note that versioning only applies to CSS and JavaScript files - PHP files are always loaded fresh as they are executed server-side.
 
 When no version is specified for a CSS or JavaScript file, the plugin will automatically use the file's last modification time (`filemtime()`) as the version number. This means:
 - Files will be cached until they are modified
@@ -233,8 +233,6 @@ add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
     return $addons;
 });
 ```
-
-Note: The plugin's own assets (located in the `assets` directory) will always use the plugin's version number for caching. This behavior cannot be modified.
 
 ### Theme Support
 

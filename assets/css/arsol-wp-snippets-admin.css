@@ -29,8 +29,7 @@
     flex-shrink: 0;
 }
 
-.arsol-loading-order,
-.arsol-priority {
+.dummy-field {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -51,7 +50,6 @@
     flex-direction: column;
     gap: 4px;
     column-gap: 10px;
-
 }
 
 .arsol-addon-info {
@@ -168,17 +166,3 @@
 }
 
 /* Addon container hover state */
-
-.dummy-field {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    height: 24px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #50575e;
-    padding: 0 8px;
-}

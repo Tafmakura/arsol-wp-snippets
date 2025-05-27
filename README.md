@@ -190,10 +190,10 @@ add_action('arsol_wp_snippets_loaded_js_addon', 'your_callback_function', 10, 2)
 
 ### Asset Versioning
 
-The plugin's own assets (CSS and JavaScript files) are versioned using the plugin version number. For third-party files that are modified through the plugin's filter system, versioning is optional:
+The plugin's own assets (CSS and JavaScript files) are versioned using the plugin version number. For third-party files that are modified through the plugin's filter system, versioning is optional. Note that versioning only applies to CSS and JavaScript files - PHP files are always loaded fresh as they are executed server-side.
 
 ```php
-// Example of a file that will be cached (with version)
+// Example of a CSS file that will be cached (with version)
 add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
     $addons['my-cached-style'] = array(
         'name' => 'My Cached Style',
@@ -204,13 +204,24 @@ add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
     return $addons;
 });
 
-// Example of a file that will always be fresh (no version)
+// Example of a CSS file that will always be fresh (no version)
 add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
     $addons['my-fresh-style'] = array(
         'name' => 'My Fresh Style',
         'file' => 'path/to/style.css',
         'context' => 'frontend'
         // No version specified, so it won't be cached
+    );
+    return $addons;
+});
+
+// Example of a PHP file (versioning not applicable)
+add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
+    $addons['my-php-snippet'] = array(
+        'name' => 'My PHP Snippet',
+        'file' => 'path/to/snippet.php',
+        'context' => 'frontend'
+        // Version parameter is ignored for PHP files
     );
     return $addons;
 });

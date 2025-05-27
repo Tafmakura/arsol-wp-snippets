@@ -39,8 +39,8 @@ One of the biggest advantages of our system is the ability to easily reuse code 
 
 ### Theme Integration Made Simple
 Don't want to create standalone snippet packets? No problem! Our system offers seamless theme integration:
-- Create a `arsol-wp-snippets` folder in your theme
-- Drop any PHP, CSS, or JS files into the appropriate  `/css`,`js` or `php` subfolders and you're good to go. Your snippets are automatically detected and available in the dashboard
+- Create a `/arsol-wp-snippets` folder in your theme
+- Drop any PHP, CSS, or JS files into the appropriate  `/css`,`/js` or `/php` subfolders and you're good to go. Your snippets are automatically detected and available in the dashboard
 - Enable/disable added snippets in your dashboard
 - Perfect for theme-specific customizations
 - No need to modify your theme's functions.php or erite custome code

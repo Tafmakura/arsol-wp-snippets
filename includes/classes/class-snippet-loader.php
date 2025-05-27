@@ -21,6 +21,46 @@ class Snippet_Loader {
     }
 
     /**
+     * Sort files by priority, loading order, and maintain original order
+     * 
+     * @param array $files Array of files to sort
+     * @return array Sorted files
+     */
+    private function sort_files($files) {
+        // Convert to array for sorting while preserving original order
+        $files_array = array();
+        $index = 0;
+        foreach ($files as $key => $file) {
+            $files_array[] = array(
+                'key' => $key,
+                'file' => $file,
+                'priority' => isset($file['priority']) ? intval($file['priority']) : 10,
+                'loading_order' => isset($file['loading_order']) ? intval($file['loading_order']) : 10,
+                'original_index' => $index++
+            );
+        }
+
+        // Sort by priority, then loading_order, then original order
+        usort($files_array, function($a, $b) {
+            if ($a['priority'] !== $b['priority']) {
+                return $a['priority'] - $b['priority'];
+            }
+            if ($a['loading_order'] !== $b['loading_order']) {
+                return $a['loading_order'] - $b['loading_order'];
+            }
+            return $a['original_index'] - $b['original_index'];
+        });
+
+        // Convert back to associative array
+        $sorted_files = array();
+        foreach ($files_array as $item) {
+            $sorted_files[$item['key']] = $item['file'];
+        }
+
+        return $sorted_files;
+    }
+
+    /**
      * Register all snippets with their priorities
      */
     private function register_snippets() {
@@ -43,15 +83,19 @@ class Snippet_Loader {
             $result = $this->process_files($files, 'php');
             $files = $result['files'];
             
-            foreach ($enabled_files as $file_key => $enabled) {
-                if ($enabled && isset($files[$file_key])) {
-                    $file_data = $files[$file_key];
-                    $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
-                    
-                    add_action('init', function() use ($file_key) {
-                        $this->include_php_snippet($file_key);
-                    }, $priority);
+            // Sort files by priority and loading order
+            $sorted_files = $this->sort_files($files);
+            
+            foreach ($sorted_files as $file_key => $file_data) {
+                if (!isset($enabled_files[$file_key]) || !$enabled_files[$file_key]) {
+                    continue;
                 }
+                
+                $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+                
+                add_action('init', function() use ($file_key) {
+                    $this->include_php_snippet($file_key);
+                }, $priority);
             }
         }
     }
@@ -75,12 +119,14 @@ class Snippet_Loader {
         $result = $this->process_files($files, $type);
         $files = $result['files'];
 
-        foreach ($enabled_files as $file_key => $enabled) {
-            if (!$enabled || !isset($files[$file_key])) {
+        // Sort files by priority and loading order
+        $sorted_files = $this->sort_files($files);
+
+        foreach ($sorted_files as $file_key => $file_data) {
+            if (!isset($enabled_files[$file_key]) || !$enabled_files[$file_key]) {
                 continue;
             }
 
-            $file_data = $files[$file_key];
             if (isset($file_data['context']) && $file_data['context'] !== $context) {
                 continue;
             }

@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 class Snippet_Loader {
     
     public function __construct() {
+        add_action('init', array($this, 'load_php_snippets'));
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_snippets'));
         add_action('admin_enqueue_scripts', array($this, 'load_admin_snippets'));
-        add_action('init', array($this, 'load_php_snippets'));
     }
 
     /**
@@ -96,15 +96,16 @@ class Snippet_Loader {
             $result = $this->process_files($php_files, 'php');
             $php_files = $result['files'];
             
+            // Sort files by priority
+            uasort($php_files, function($a, $b) {
+                $priority_a = isset($a['priority']) ? intval($a['priority']) : 10;
+                $priority_b = isset($b['priority']) ? intval($b['priority']) : 10;
+                return $priority_a - $priority_b;
+            });
+            
             foreach ($enabled_php_files as $file_key => $enabled) {
                 if ($enabled && isset($php_files[$file_key])) {
-                    $file_data = $php_files[$file_key];
-                    $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
-                    
-                    // Add the file to be loaded at its specified priority
-                    add_action('init', function() use ($file_key) {
-                        $this->include_php_snippet($file_key);
-                    }, $priority);
+                    $this->include_php_snippet($file_key);
                 }
             }
         }
@@ -179,6 +180,13 @@ class Snippet_Loader {
         $result = $this->process_files($css_files, 'css');
         $css_files = $result['files'];
 
+        // Sort files by priority
+        uasort($css_files, function($a, $b) {
+            $priority_a = isset($a['priority']) ? intval($a['priority']) : 10;
+            $priority_b = isset($b['priority']) ? intval($b['priority']) : 10;
+            return $priority_a - $priority_b;
+        });
+
         foreach ($enabled_css_files as $file_key => $enabled) {
             if (!$enabled || !isset($css_files[$file_key])) {
                 continue;
@@ -191,19 +199,14 @@ class Snippet_Loader {
                 continue;
             }
 
-            $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
-            
-            // Add the file to be loaded at its specified priority
-            add_action('wp_enqueue_scripts', function() use ($file_data, $file_key) {
-                $handle = 'arsol-wp-snippets-css-' . $file_key;
-                $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
-                $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
+            $handle = 'arsol-wp-snippets-css-' . $file_key;
+            $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
+            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
 
-                wp_register_style($handle, $file_data['file'], $dependencies, $version);
-                wp_enqueue_style($handle);
-                
-                do_action('arsol_wp_snippets_loaded_css_addon', $file_key, $file_data);
-            }, $priority);
+            wp_register_style($handle, $file_data['file'], $dependencies, $version);
+            wp_enqueue_style($handle);
+            
+            do_action('arsol_wp_snippets_loaded_css_addon', $file_key, $file_data);
         }
     }
 
@@ -228,6 +231,13 @@ class Snippet_Loader {
         $result = $this->process_files($js_files, 'js');
         $js_files = $result['files'];
 
+        // Sort files by priority
+        uasort($js_files, function($a, $b) {
+            $priority_a = isset($a['priority']) ? intval($a['priority']) : 10;
+            $priority_b = isset($b['priority']) ? intval($b['priority']) : 10;
+            return $priority_a - $priority_b;
+        });
+
         foreach ($enabled_js_files as $file_key => $enabled) {
             if (!$enabled || !isset($js_files[$file_key])) {
                 continue;
@@ -240,20 +250,15 @@ class Snippet_Loader {
                 continue;
             }
 
-            $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
-            
-            // Add the file to be loaded at its specified priority
-            add_action('wp_enqueue_scripts', function() use ($file_data, $file_key) {
-                $handle = 'arsol-wp-snippets-js-' . $file_key;
-                $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
-                $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
-                $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
+            $handle = 'arsol-wp-snippets-js-' . $file_key;
+            $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
+            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
+            $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
 
-                wp_register_script($handle, $file_data['file'], $dependencies, $version, $in_footer);
-                wp_enqueue_script($handle);
-                
-                do_action('arsol_wp_snippets_loaded_js_addon', $file_key, $file_data);
-            }, $priority);
+            wp_register_script($handle, $file_data['file'], $dependencies, $version, $in_footer);
+            wp_enqueue_script($handle);
+            
+            do_action('arsol_wp_snippets_loaded_js_addon', $file_key, $file_data);
         }
     }
 

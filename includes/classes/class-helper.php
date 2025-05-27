@@ -87,7 +87,8 @@ class Helper {
         $defaults = array(
             'loading_order' => 10,
             'context' => 'global',
-            'enabled' => false
+            'enabled' => false,
+            'priority' => 10
         );
         
         if ($option_key !== null) {

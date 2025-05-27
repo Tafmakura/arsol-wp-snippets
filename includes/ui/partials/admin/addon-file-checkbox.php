@@ -121,10 +121,10 @@ if (!$file_exists) {
                 </span>
                 <?php endif; ?>
                 <div class="arsol-addon-meta">
-                    <strong><?php echo esc_html__('Timing:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($loading_order_category); ?>
+                    <strong><?php echo esc_html__('Order:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($loading_order_category); ?>
                 </div>
                 <div class="arsol-addon-meta">
-                    <strong><?php echo esc_html__('Hook:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($priority_category); ?>
+                    <strong><?php echo esc_html__('Priority:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html($priority_category); ?>
                 </div>
                 <?php if (!empty($addon_data['dependencies'])): ?>
                 <div class="arsol-addon-meta">

@@ -153,32 +153,32 @@
 
 /* Loading Order group styles */
 .arsol-addon-meta strong:contains("Loading Order") + *,
-.arsol-addon-meta strong:contains("Timing") + *,
-.arsol-addon-meta strong:contains("Hook") + * {
+.arsol-addon-meta strong:contains("Order") + *,
+.arsol-addon-meta strong:contains("Priority") + * {
     font-weight: 500;
 }
 
 .arsol-addon-meta strong:contains("Loading Order") + *:contains("(Early)"),
-.arsol-addon-meta strong:contains("Timing") + *:contains("(Early)"),
-.arsol-addon-meta strong:contains("Hook") + *:contains("(Early)") {
+.arsol-addon-meta strong:contains("Order") + *:contains("(Early)"),
+.arsol-addon-meta strong:contains("Priority") + *:contains("(Early)") {
     color: #2271b1;
 }
 
 .arsol-addon-meta strong:contains("Loading Order") + *:contains("(Default)"),
-.arsol-addon-meta strong:contains("Timing") + *:contains("(Default)"),
-.arsol-addon-meta strong:contains("Hook") + *:contains("(Default)") {
+.arsol-addon-meta strong:contains("Order") + *:contains("(Default)"),
+.arsol-addon-meta strong:contains("Priority") + *:contains("(Default)") {
     color: #50575e;
 }
 
 .arsol-addon-meta strong:contains("Loading Order") + *:contains("(Late)"),
-.arsol-addon-meta strong:contains("Timing") + *:contains("(Late)"),
-.arsol-addon-meta strong:contains("Hook") + *:contains("(Late)") {
+.arsol-addon-meta strong:contains("Order") + *:contains("(Late)"),
+.arsol-addon-meta strong:contains("Priority") + *:contains("(Late)") {
     color: #996300;
 }
 
 .arsol-addon-meta strong:contains("Loading Order") + *:contains("(Very Late)"),
-.arsol-addon-meta strong:contains("Timing") + *:contains("(Very Late)"),
-.arsol-addon-meta strong:contains("Hook") + *:contains("(Very Late)") {
+.arsol-addon-meta strong:contains("Order") + *:contains("(Very Late)"),
+.arsol-addon-meta strong:contains("Priority") + *:contains("(Very Late)") {
     color: #d63638;
 }
 

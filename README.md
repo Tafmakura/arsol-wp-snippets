@@ -192,6 +192,11 @@ add_action('arsol_wp_snippets_loaded_js_addon', 'your_callback_function', 10, 2)
 
 The plugin's own assets (CSS and JavaScript files) are versioned using the plugin version number. For third-party files that are modified through the plugin's filter system, versioning is optional. Note that versioning only applies to CSS and JavaScript files - PHP files are always loaded fresh as they are executed server-side.
 
+When no version is specified for a CSS or JavaScript file, the plugin will automatically use the file's last modification time (`filemtime()`) as the version number. This means:
+- Files will be cached until they are modified
+- When a file is modified, the timestamp changes, forcing a cache refresh
+- No manual version management is needed for files that should update on modification
+
 ```php
 // Example of a CSS file that will be cached (with version)
 add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
@@ -204,13 +209,13 @@ add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
     return $addons;
 });
 
-// Example of a CSS file that will always be fresh (no version)
+// Example of a CSS file that will update when modified
 add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
     $addons['my-fresh-style'] = array(
         'name' => 'My Fresh Style',
         'file' => 'path/to/style.css',
         'context' => 'frontend'
-        // No version specified, so it won't be cached
+        // No version specified, will use filemtime() as version
     );
     return $addons;
 });

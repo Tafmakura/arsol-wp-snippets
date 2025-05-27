@@ -40,6 +40,18 @@ class Snippet_Loader {
             );
         }
 
+        // Log pre-sort state
+        error_log('Arsol WP Snippets: Pre-sort files:');
+        foreach ($files_array as $item) {
+            error_log(sprintf(
+                'File: %s, Priority: %d, Loading Order: %d, Original Index: %d',
+                $item['key'],
+                $item['priority'],
+                $item['loading_order'],
+                $item['original_index']
+            ));
+        }
+
         // Sort by priority, then loading_order, then original order
         usort($files_array, function($a, $b) {
             if ($a['priority'] !== $b['priority']) {
@@ -50,6 +62,18 @@ class Snippet_Loader {
             }
             return $a['original_index'] - $b['original_index'];
         });
+
+        // Log post-sort state
+        error_log('Arsol WP Snippets: Post-sort files:');
+        foreach ($files_array as $item) {
+            error_log(sprintf(
+                'File: %s, Priority: %d, Loading Order: %d, Original Index: %d',
+                $item['key'],
+                $item['priority'],
+                $item['loading_order'],
+                $item['original_index']
+            ));
+        }
 
         // Convert back to associative array
         $sorted_files = array();
@@ -79,6 +103,7 @@ class Snippet_Loader {
         $enabled_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
         
         if (!empty($enabled_files)) {
+            error_log('Arsol WP Snippets: Registering PHP snippets');
             $files = apply_filters('arsol_wp_snippets_php_addon_files', array());
             $result = $this->process_files($files, 'php');
             $files = $result['files'];
@@ -92,6 +117,11 @@ class Snippet_Loader {
                 }
                 
                 $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+                error_log(sprintf(
+                    'Arsol WP Snippets: Registering PHP file %s with priority %d',
+                    $file_key,
+                    $priority
+                ));
                 
                 add_action('init', function() use ($file_key) {
                     $this->include_php_snippet($file_key);
@@ -115,6 +145,7 @@ class Snippet_Loader {
             return;
         }
 
+        error_log(sprintf('Arsol WP Snippets: Registering %s snippets for %s context', strtoupper($type), $context));
         $files = apply_filters("arsol_wp_snippets_{$type}_addon_files", array());
         $result = $this->process_files($files, $type);
         $files = $result['files'];
@@ -132,6 +163,12 @@ class Snippet_Loader {
             }
 
             $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+            error_log(sprintf(
+                'Arsol WP Snippets: Registering %s file %s with priority %d',
+                strtoupper($type),
+                $file_key,
+                $priority
+            ));
             
             add_action($hook, function() use ($file_data, $file_key, $type) {
                 $handle = "arsol-wp-snippets-{$type}-{$file_key}";

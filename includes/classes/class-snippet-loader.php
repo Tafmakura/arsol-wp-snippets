@@ -12,10 +12,40 @@ if (!defined('ABSPATH')) {
 class Snippet_Loader {
     
     public function __construct() {
-        // Simple direct hooks with default priority
-        add_action('init', array($this, 'load_php_snippets'));
+        // Register PHP snippets during initialization
+        $this->register_php_snippets();
+        
+        // Keep the CSS/JS hooks as they are
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_snippets'));
         add_action('admin_enqueue_scripts', array($this, 'load_admin_snippets'));
+    }
+
+    /**
+     * Register PHP snippets during initialization
+     */
+    private function register_php_snippets() {
+        $options = get_option('arsol_wp_snippets_options', array());
+        $enabled_php_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
+        
+        if (!empty($enabled_php_files)) {
+            $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
+            $result = $this->process_files($php_files, 'php');
+            $php_files = $result['files'];
+            
+            foreach ($enabled_php_files as $file_key => $enabled) {
+                if ($enabled && isset($php_files[$file_key])) {
+                    $file_data = $php_files[$file_key];
+                    $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+                    
+                    error_log('Arsol WP Snippets: Registering PHP file ' . $file_key . ' with priority ' . $priority);
+                    
+                    // Register the file to be loaded at its specified priority
+                    add_action('init', function() use ($file_key) {
+                        $this->include_php_snippet($file_key);
+                    }, $priority);
+                }
+            }
+        }
     }
 
     /**
@@ -79,80 +109,6 @@ class Snippet_Loader {
         }
         $this->load_css_snippets('admin');
         $this->load_js_snippets('admin');
-    }
-
-    /**
-     * Load PHP snippets
-     */
-    public function load_php_snippets() {
-        $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_php_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
-        
-        if (!empty($enabled_php_files)) {
-            $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
-            $result = $this->process_files($php_files, 'php');
-            $php_files = $result['files'];
-            
-            foreach ($enabled_php_files as $file_key => $enabled) {
-                if ($enabled && isset($php_files[$file_key])) {
-                    $file_data = $php_files[$file_key];
-                    $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
-                    
-                    // Add the file to be loaded at its specified priority
-                    add_action('init', function() use ($file_key) {
-                        $this->include_php_snippet($file_key);
-                    }, $priority);
-                }
-            }
-        }
-    }
-
-    /**
-     * Convert URL to local file path
-     * 
-     * @param string $url The URL to convert
-     * @return string|false The local file path or false if conversion fails
-     */
-    private function url_to_local_path($url) {
-        // Remove protocol and domain
-        $path = str_replace(array('http://', 'https://'), '', $url);
-        $path = preg_replace('/^[^\/]+\//', '', $path);
-        
-        // Convert to absolute server path
-        $local_path = ABSPATH . $path;
-        
-        // Check if file exists
-        if (file_exists($local_path)) {
-            return $local_path;
-        }
-        
-        return false;
-    }
-
-    /**
-     * Get file version
-     * 
-     * @param string $file_path The file path or URL
-     * @param string|null $explicit_version Explicit version if set
-     * @param array $file_data Additional file data
-     * @return string The version number
-     */
-    private function get_file_version($file_path, $explicit_version = null, $file_data = array()) {
-        // If explicit version is set, use it
-        if ($explicit_version !== null) {
-            return $explicit_version;
-        }
-        
-        // Try to get local path from file_data first
-        $local_path = isset($file_data['local_path']) ? $file_data['local_path'] : $this->url_to_local_path($file_path);
-        
-        // If we have a local path and can get filemtime, use it
-        if ($local_path && ($mtime = filemtime($local_path)) !== false) {
-            return $mtime;
-        }
-        
-        // Fallback to current timestamp if we can't get filemtime
-        return time();
     }
 
     /**
@@ -267,5 +223,53 @@ class Snippet_Loader {
         } else {
             error_log('Arsol WP Snippets: PHP file does not exist - ' . $file_data['file']);
         }
+    }
+
+    /**
+     * Convert URL to local file path
+     * 
+     * @param string $url The URL to convert
+     * @return string|false The local file path or false if conversion fails
+     */
+    private function url_to_local_path($url) {
+        // Remove protocol and domain
+        $path = str_replace(array('http://', 'https://'), '', $url);
+        $path = preg_replace('/^[^\/]+\//', '', $path);
+        
+        // Convert to absolute server path
+        $local_path = ABSPATH . $path;
+        
+        // Check if file exists
+        if (file_exists($local_path)) {
+            return $local_path;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get file version
+     * 
+     * @param string $file_path The file path or URL
+     * @param string|null $explicit_version Explicit version if set
+     * @param array $file_data Additional file data
+     * @return string The version number
+     */
+    private function get_file_version($file_path, $explicit_version = null, $file_data = array()) {
+        // If explicit version is set, use it
+        if ($explicit_version !== null) {
+            return $explicit_version;
+        }
+        
+        // Try to get local path from file_data first
+        $local_path = isset($file_data['local_path']) ? $file_data['local_path'] : $this->url_to_local_path($file_path);
+        
+        // If we have a local path and can get filemtime, use it
+        if ($local_path && ($mtime = filemtime($local_path)) !== false) {
+            return $mtime;
+        }
+        
+        // Fallback to current timestamp if we can't get filemtime
+        return time();
     }
 }

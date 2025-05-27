@@ -373,50 +373,7 @@ Taf Makura
 
 ## Creating Custom Snippet Packets
 
-You can create your own snippet packets by following these steps:
-
-### Plugin Structure
-Create a new plugin with the following structure:
-## Supported Snippet Types
-
-### 1. CSS Snippets
-- **Location**: `snippets/css/`
-- **File format**: `.css` files
-- **Filter**: `arsol_wp_snippets_css_addon_files`
-- **Loading**: Automatically enqueued in the frontend when enabled
-- **Options**: 
-  - `name`: Display name for the snippet
-  - `file`: URL path to the CSS file
-  - `context`: 'frontend', 'admin', or 'both'
-  - `position`: 'header' or 'footer' (defaults to 'header')
-  - `version`: Optional version number for caching
-  - `loading_order`: Numeric value to control loading order
-  - `dependencies`: Array of other CSS files this file depends on
-
-### 2. JavaScript Snippets  
-- **Location**: `snippets/js/`
-- **File format**: `.js` files
-- **Filter**: `arsol_wp_snippets_js_addon_files`
-- **Loading**: Automatically enqueued in the frontend when enabled
-- **Options**:
-  - `name`: Display name for the snippet
-  - `file`: URL path to the JS file
-  - `context`: 'frontend', 'admin', or 'both'
-  - `position`: 'header' or 'footer' (defaults to 'footer')
-  - `version`: Optional version number for caching
-  - `loading_order`: Numeric value to control loading order
-  - `dependencies`: Array of other JS files this file depends on
-
-### 3. PHP Snippets
-- **Location**: `snippets/php/`
-- **File format**: `.php` files
-- **Filter**: `arsol_wp_snippets_php_addon_files`
-- **Loading**: Automatically included when enabled
-- **Options**:
-  - `name`: Display name for the snippet
-  - `file`: File system path to the PHP file
-  - `loading_order`: Numeric value to control loading order
-- **Note**: PHP files are always loaded directly from the filesystem and don't support versioning
+You can create your own snippet packets by downloading and using this template repository: https://github.com/Tafmakura/arsol-wps-packet-example
 
 ## Development and Debugging
 

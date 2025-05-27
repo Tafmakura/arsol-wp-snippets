@@ -55,7 +55,7 @@ if ($priority <= 5) {
         <span>
             Order: 
         </span>
-        <span class="arsol-loading-order">
+        <span class="arsol-loading-order dummy-field">
             <?php echo esc_html($loading_order); ?>
         </span>
         <?php endif; ?>
@@ -68,7 +68,7 @@ if ($priority <= 5) {
         <span>
             Priority: 
         </span>
-        <span class="arsol-priority">
+        <span class="arsol-priority dummy-field">
             <?php echo esc_html($priority); ?>
         </span>
         <?php endif; ?>

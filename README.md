@@ -273,16 +273,6 @@ The plugin checks both child theme and parent theme directories, with child them
 - Files with an explicit version use that version
 - PHP files are always loaded fresh
 
-## Troubleshooting
-
-If you encounter any issues:
-
-1. Enable safe mode by adding `define('ARSOL_WP_SNIPPETS_SAFE_MODE', true);` to wp-config.php
-2. Visit the Arsol WP Snippets admin page to see which files are selected
-3. Uncheck problematic files
-4. Disable safe mode by setting the constant to false
-5. Save your changes
-
 ## Requirements
 
 - WordPress 5.8 or higher
@@ -308,8 +298,13 @@ define('WP_DEBUG', true);
 define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', false);
 ```
-
 2. Check the debug.log file for detailed error messages and file paths
+3. Enable safe mode
+4. Visit the Arsol WP Snippets admin page to see which files are selected
+5. Uncheck problematic files
+6. Disable safe mode by setting the constant to false
+7. Save your changes
+
 
 ### File Placement
 - Place your snippets in the appropriate directories before registering them

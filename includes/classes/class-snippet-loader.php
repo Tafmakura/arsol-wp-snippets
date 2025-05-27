@@ -98,6 +98,53 @@ class Snippet_Loader {
     }
 
     /**
+     * Convert URL to local file path
+     * 
+     * @param string $url The URL to convert
+     * @return string|false The local file path or false if conversion fails
+     */
+    private function url_to_local_path($url) {
+        // Remove protocol and domain
+        $path = str_replace(array('http://', 'https://'), '', $url);
+        $path = preg_replace('/^[^\/]+\//', '', $path);
+        
+        // Convert to absolute server path
+        $local_path = ABSPATH . $path;
+        
+        // Check if file exists
+        if (file_exists($local_path)) {
+            return $local_path;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get file version
+     * 
+     * @param string $file_path The file path or URL
+     * @param string|null $explicit_version Explicit version if set
+     * @return string The version number
+     */
+    private function get_file_version($file_path, $explicit_version = null) {
+        // If explicit version is set, use it
+        if ($explicit_version !== null) {
+            return $explicit_version;
+        }
+        
+        // Try to get local path
+        $local_path = $this->url_to_local_path($file_path);
+        
+        // If we have a local path and can get filemtime, use it
+        if ($local_path && ($mtime = filemtime($local_path)) !== false) {
+            return $mtime;
+        }
+        
+        // Fallback to current timestamp if we can't get filemtime
+        return time();
+    }
+
+    /**
      * Load CSS snippets for specific context
      * 
      * @param string $context The context to load snippets for ('frontend' or 'admin')
@@ -136,8 +183,8 @@ class Snippet_Loader {
             // Register and enqueue the CSS file
             $handle = 'arsol-wp-snippets-css-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
-            // Use filemtime() as fallback when no version is set
-            $version = isset($file_data['version']) ? $file_data['version'] : filemtime($file_data['file']);
+            // Get version using helper method
+            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null);
 
             error_log('Arsol WP Snippets: Registering CSS file - ' . $file_data['file'] . ' with handle ' . $handle);
 
@@ -194,8 +241,8 @@ class Snippet_Loader {
             // Register and enqueue the JS file
             $handle = 'arsol-wp-snippets-js-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
-            // Use filemtime() as fallback when no version is set
-            $version = isset($file_data['version']) ? $file_data['version'] : filemtime($file_data['file']);
+            // Get version using helper method
+            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null);
             $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
 
             error_log('Arsol WP Snippets: Registering JS file - ' . $file_data['file'] . ' with handle ' . $handle);

@@ -12,35 +12,42 @@ if (!defined('ABSPATH')) {
 class Snippet_Loader {
     
     public function __construct() {
-        // Register PHP snippets during initialization
-        $this->register_php_snippets();
-        $this->register_js_snippets();
+        // Register all snippets during initialization
+        $this->register_snippets();
         
-        // Keep the CSS/JS hooks as they are
+        // Main hooks for loading
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_snippets'));
         add_action('admin_enqueue_scripts', array($this, 'load_admin_snippets'));
     }
 
     /**
-     * Register PHP snippets during initialization
+     * Register all snippets with their priorities
+     */
+    private function register_snippets() {
+        $this->register_php_snippets();
+        $this->register_asset_snippets('js', 'wp_enqueue_scripts', 'frontend');
+        $this->register_asset_snippets('js', 'admin_enqueue_scripts', 'admin');
+        $this->register_asset_snippets('css', 'wp_enqueue_scripts', 'frontend');
+        $this->register_asset_snippets('css', 'admin_enqueue_scripts', 'admin');
+    }
+
+    /**
+     * Register PHP snippets
      */
     private function register_php_snippets() {
         $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_php_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
+        $enabled_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
         
-        if (!empty($enabled_php_files)) {
-            $php_files = apply_filters('arsol_wp_snippets_php_addon_files', array());
-            $result = $this->process_files($php_files, 'php');
-            $php_files = $result['files'];
+        if (!empty($enabled_files)) {
+            $files = apply_filters('arsol_wp_snippets_php_addon_files', array());
+            $result = $this->process_files($files, 'php');
+            $files = $result['files'];
             
-            foreach ($enabled_php_files as $file_key => $enabled) {
-                if ($enabled && isset($php_files[$file_key])) {
-                    $file_data = $php_files[$file_key];
+            foreach ($enabled_files as $file_key => $enabled) {
+                if ($enabled && isset($files[$file_key])) {
+                    $file_data = $files[$file_key];
                     $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
                     
-                    error_log('Arsol WP Snippets: Registering PHP file ' . $file_key . ' with priority ' . $priority);
-                    
-                    // Register the file to be loaded at its specified priority
                     add_action('init', function() use ($file_key) {
                         $this->include_php_snippet($file_key);
                     }, $priority);
@@ -50,34 +57,50 @@ class Snippet_Loader {
     }
 
     /**
-     * Register JS snippets during initialization
+     * Register asset snippets (CSS/JS) for a specific context
+     * 
+     * @param string $type The type of asset ('css' or 'js')
+     * @param string $hook The hook to register on ('wp_enqueue_scripts' or 'admin_enqueue_scripts')
+     * @param string $context The context ('frontend' or 'admin')
      */
-    private function register_js_snippets() {
+    private function register_asset_snippets($type, $hook, $context) {
         $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_js_files = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
+        $enabled_files = isset($options["{$type}_addon_options"]) ? $options["{$type}_addon_options"] : array();
+        
+        if (empty($enabled_files)) {
+            return;
+        }
 
-        if (!empty($enabled_js_files)) {
-            $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
-            $result = $this->process_files($js_files, 'js');
-            $js_files = $result['files'];
+        $files = apply_filters("arsol_wp_snippets_{$type}_addon_files", array());
+        $result = $this->process_files($files, $type);
+        $files = $result['files'];
 
-            foreach ($enabled_js_files as $file_key => $enabled) {
-                if ($enabled && isset($js_files[$file_key])) {
-                    $file_data = $js_files[$file_key];
-                    $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
-                    $context = isset($file_data['context']) ? $file_data['context'] : 'frontend';
-
-                    // Register the enqueue at the correct priority
-                    add_action('wp_enqueue_scripts', function() use ($file_data, $file_key) {
-                        $handle = 'arsol-wp-snippets-js-' . $file_key;
-                        $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
-                        $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
-                        $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
-                        wp_register_script($handle, $file_data['file'], $dependencies, $version, $in_footer);
-                        wp_enqueue_script($handle);
-                    }, $priority);
-                }
+        foreach ($enabled_files as $file_key => $enabled) {
+            if (!$enabled || !isset($files[$file_key])) {
+                continue;
             }
+
+            $file_data = $files[$file_key];
+            if (isset($file_data['context']) && $file_data['context'] !== $context) {
+                continue;
+            }
+
+            $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+            
+            add_action($hook, function() use ($file_data, $file_key, $type) {
+                $handle = "arsol-wp-snippets-{$type}-{$file_key}";
+                $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
+                $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
+                
+                if ($type === 'css') {
+                    wp_register_style($handle, $file_data['file'], $dependencies, $version);
+                    wp_enqueue_style($handle);
+                } else {
+                    $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
+                    wp_register_script($handle, $file_data['file'], $dependencies, $version, $in_footer);
+                    wp_enqueue_script($handle);
+                }
+            }, $priority);
         }
     }
 

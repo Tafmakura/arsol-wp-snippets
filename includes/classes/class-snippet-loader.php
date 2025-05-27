@@ -124,16 +124,17 @@ class Snippet_Loader {
      * 
      * @param string $file_path The file path or URL
      * @param string|null $explicit_version Explicit version if set
+     * @param array $file_data Additional file data
      * @return string The version number
      */
-    private function get_file_version($file_path, $explicit_version = null) {
+    private function get_file_version($file_path, $explicit_version = null, $file_data = array()) {
         // If explicit version is set, use it
         if ($explicit_version !== null) {
             return $explicit_version;
         }
         
-        // Try to get local path
-        $local_path = $this->url_to_local_path($file_path);
+        // Try to get local path from file_data first
+        $local_path = isset($file_data['local_path']) ? $file_data['local_path'] : $this->url_to_local_path($file_path);
         
         // If we have a local path and can get filemtime, use it
         if ($local_path && ($mtime = filemtime($local_path)) !== false) {
@@ -184,7 +185,7 @@ class Snippet_Loader {
             $handle = 'arsol-wp-snippets-css-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
             // Get version using helper method
-            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null);
+            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
 
             error_log('Arsol WP Snippets: Registering CSS file - ' . $file_data['file'] . ' with handle ' . $handle);
 
@@ -242,7 +243,7 @@ class Snippet_Loader {
             $handle = 'arsol-wp-snippets-js-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
             // Get version using helper method
-            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null);
+            $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
             $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
 
             error_log('Arsol WP Snippets: Registering JS file - ' . $file_data['file'] . ' with handle ' . $handle);

@@ -125,6 +125,8 @@ class Theme_Support {
                     $addon_data['file'] = $config['uri'] . basename($file_path);
                     $addon_data['context'] = 'frontend';
                     $addon_data['position'] = $config['position'];
+                    // Add the local file path for versioning
+                    $addon_data['local_path'] = $file_path;
                 }
                 
                 $options[$file_key] = $addon_data;

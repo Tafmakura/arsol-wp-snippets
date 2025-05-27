@@ -338,3 +338,104 @@ You can create your own snippet packets by following these steps:
 
 ### Plugin Structure
 Create a new plugin with the following structure:
+## Supported Snippet Types
+
+### 1. CSS Snippets
+- **Location**: `snippets/css/`
+- **File format**: `.css` files
+- **Filter**: `arsol_wp_snippets_css_addon_files`
+- **Loading**: Automatically enqueued in the frontend when enabled
+- **Options**: 
+  - `name`: Display name for the snippet
+  - `file`: URL path to the CSS file
+  - `context`: 'frontend', 'admin', or 'both'
+  - `position`: 'header' or 'footer' (defaults to 'header')
+  - `version`: Optional version number for caching
+  - `loading_order`: Numeric value to control loading order
+  - `dependencies`: Array of other CSS files this file depends on
+
+### 2. JavaScript Snippets  
+- **Location**: `snippets/js/`
+- **File format**: `.js` files
+- **Filter**: `arsol_wp_snippets_js_addon_files`
+- **Loading**: Automatically enqueued in the frontend when enabled
+- **Options**:
+  - `name`: Display name for the snippet
+  - `file`: URL path to the JS file
+  - `context`: 'frontend', 'admin', or 'both'
+  - `position`: 'header' or 'footer' (defaults to 'footer')
+  - `version`: Optional version number for caching
+  - `loading_order`: Numeric value to control loading order
+  - `dependencies`: Array of other JS files this file depends on
+
+### 3. PHP Snippets
+- **Location**: `snippets/php/`
+- **File format**: `.php` files
+- **Filter**: `arsol_wp_snippets_php_addon_files`
+- **Loading**: Automatically included when enabled
+- **Options**:
+  - `name`: Display name for the snippet
+  - `file`: File system path to the PHP file
+  - `loading_order`: Numeric value to control loading order
+- **Note**: PHP files are always loaded directly from the filesystem and don't support versioning
+
+## Development and Debugging
+
+### Debug Mode
+For development and troubleshooting:
+1. Enable WordPress debug mode in wp-config.php:
+```php
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
+```
+
+2. Check the debug.log file for detailed error messages and file paths
+
+### File Placement
+- Place your snippets in the appropriate directories before registering them
+- Use absolute paths for PHP files
+- Use URL paths for CSS and JavaScript files
+- Ensure all dependencies are available before loading
+
+### Common Issues
+1. **File Not Found**:
+   - Check file paths in your filter functions
+   - Verify file permissions
+   - Ensure files are in the correct directories
+
+2. **Loading Order Issues**:
+   - Adjust loading_order values
+   - Check dependencies are properly declared
+   - Verify context settings
+
+3. **Version Conflicts**:
+   - Clear browser cache
+   - Check version numbers in filter functions
+   - Verify file modification times
+
+## Best Practices
+
+### File Organization
+- Keep related snippets together
+- Use descriptive file names
+- Follow WordPress coding standards
+- Document your code
+
+### Performance
+- Use appropriate loading contexts
+- Set proper loading orders
+- Declare dependencies correctly
+- Version files appropriately
+
+### Security
+- Validate all inputs
+- Sanitize outputs
+- Use WordPress security functions
+- Follow WordPress coding standards
+
+### Maintenance
+- Keep snippets up to date
+- Remove unused code
+- Document changes
+- Test thoroughly

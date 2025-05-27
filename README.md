@@ -9,16 +9,17 @@ Arsol WP Snippets allows you to easily manage and load custom PHP, CSS, and Java
 ## Features
 
 - Load custom PHP snippets
+- Automatic or manual version control (cache busting)
 - Add custom CSS styles
 - Include JavaScript files
 - Safe mode for troubleshooting
 - Easy-to-use admin interface
 - Context-aware loading (admin/frontend)
-- Position control for JavaScript files
+- Position control for JavaScript files (header/footer)
 - Loading order control for all file types
-- Dependency management for CSS and JS files
-- Flexible filter system for custom integration
-- Conditional loading based on various criteria
+- Dependency management
+- Theme support (add files to theme or child theme for automatic detection)
+- PHP based conditional loading based on various criteria
 
 ## Safe Mode
 

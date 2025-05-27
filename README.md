@@ -197,6 +197,8 @@ When no version is specified for a CSS or JavaScript file, the plugin will autom
 - When a file is modified, the timestamp changes, forcing a cache refresh
 - No manual version management is needed for files that should update on modification
 
+This versioning system applies to both plugin and theme assets. Theme assets are automatically detected and versioned using their file modification time.
+
 ```php
 // Example of a CSS file that will be cached (with version)
 add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
@@ -233,6 +235,43 @@ add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
 ```
 
 Note: The plugin's own assets (located in the `assets` directory) will always use the plugin's version number for caching. This behavior cannot be modified.
+
+### Theme Support
+
+The plugin includes built-in support for theme assets. To use this feature:
+
+1. Create an `arsol-wp-snippets` directory in your theme
+2. Add subdirectories for different file types:
+   - `css/` for CSS files
+   - `js/` for JavaScript files
+   - `php/` for PHP snippets
+
+Example theme structure:
+```
+your-theme/
+├── arsol-wp-snippets/
+│   ├── css/
+│   │   ├── custom-styles.css
+│   │   └── mobile-styles.css
+│   ├── js/
+│   │   ├── custom-scripts.js
+│   │   └── mobile-scripts.js
+│   └── php/
+│       ├── custom-functions.php
+│       └── theme-hooks.php
+```
+
+Theme assets are automatically:
+- Detected and registered
+- Versioned using file modification time
+- Loaded in the correct context (frontend/admin)
+- Positioned correctly (header/footer for JS)
+- Available in the plugin's admin interface
+
+The plugin checks both child theme and parent theme directories, with child theme files taking precedence. All theme assets use the same versioning system as plugin assets:
+- Files without an explicit version use their modification time
+- Files with an explicit version use that version
+- PHP files are always loaded fresh
 
 ## Troubleshooting
 

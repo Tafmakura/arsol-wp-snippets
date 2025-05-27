@@ -331,3 +331,10 @@ This plugin is licensed under the GPL v2 or later.
 ## Author
 
 Taf Makura
+
+## Creating Custom Snippet Packets
+
+You can create your own snippet packets by following these steps:
+
+### Plugin Structure
+Create a new plugin with the following structure:

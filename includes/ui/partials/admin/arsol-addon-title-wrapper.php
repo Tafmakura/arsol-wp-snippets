@@ -39,6 +39,9 @@ if ($loading_order <= 5) {
         $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
         if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
         ?>
+        <span>
+            Loading: 
+        </span>
         <span class="arsol-loading-order">
             <?php echo esc_html($loading_order); ?>
         </span>

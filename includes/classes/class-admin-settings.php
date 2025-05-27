@@ -160,18 +160,43 @@ class Admin_Settings {
     }
     
     /**
-     * Sort addons by loading order
+     * Sort addons by priority, loading order, and maintain original order
      *
      * @param array $addons Array of addon data
      * @return array Sorted addons
      */
     private function sort_addons_by_loading_order($addons) {
-        uasort($addons, function($a, $b) {
-            $loading_order_a = \Arsol_WP_Snippets\Helper::get_loading_order($a);
-            $loading_order_b = \Arsol_WP_Snippets\Helper::get_loading_order($b);
-            return $loading_order_a - $loading_order_b;
+        // Convert to array for sorting while preserving original order
+        $addons_array = array();
+        $index = 0;
+        foreach ($addons as $key => $addon) {
+            $addons_array[] = array(
+                'key' => $key,
+                'addon' => $addon,
+                'priority' => \Arsol_WP_Snippets\Helper::get_priority($addon),
+                'loading_order' => \Arsol_WP_Snippets\Helper::get_loading_order($addon),
+                'original_index' => $index++
+            );
+        }
+
+        // Sort by priority, then loading_order, then original order
+        usort($addons_array, function($a, $b) {
+            if ($a['priority'] !== $b['priority']) {
+                return $a['priority'] - $b['priority'];
+            }
+            if ($a['loading_order'] !== $b['loading_order']) {
+                return $a['loading_order'] - $b['loading_order'];
+            }
+            return $a['original_index'] - $b['original_index'];
         });
-        return $addons;
+
+        // Convert back to original format
+        $sorted_addons = array();
+        foreach ($addons_array as $item) {
+            $sorted_addons[$item['key']] = $item['addon'];
+        }
+
+        return $sorted_addons;
     }
     
     /**

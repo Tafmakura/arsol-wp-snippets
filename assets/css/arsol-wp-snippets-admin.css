@@ -29,6 +29,13 @@
     flex-shrink: 0;
 }
 
+.arsol-addon-sorting {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    gap: 10px;
+}
+
 .dummy-field {
     display: inline-flex;
     align-items: center;

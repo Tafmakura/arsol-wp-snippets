@@ -46,31 +46,33 @@ if ($priority <= 5) {
             <label for="arsol-<?php echo esc_attr($option_type); ?>-addon-<?php echo esc_attr($addon_id); ?>"><?php echo esc_html($addon_data['name']); ?></label>
         </h4>
     </div>
-    <div class="arsol-addon-loading-order">
-        <?php 
-        // Display loading order number
-        $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-        if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
-        ?>
-        <span>
-            Order: 
-        </span>
-        <span class="arsol-loading-order dummy-field">
-            <?php echo esc_html($loading_order); ?>
-        </span>
-        <?php endif; ?>
-    </div>
-    <div class="arsol-addon-priority">
-        <?php 
-        // Display priority number
-        if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
-        ?>
-        <span>
-            Priority: 
-        </span>
-        <span class="arsol-priority dummy-field">
-            <?php echo esc_html($priority); ?>
-        </span>
-        <?php endif; ?>
+    <div class="arsol-addon-sorting">
+        <div class="arsol-addon-loading-order">
+            <?php 
+            // Display loading order number
+            $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
+            if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
+            ?>
+            <span>
+                Order: 
+            </span>
+            <span class="arsol-loading-order dummy-field">
+                <?php echo esc_html($loading_order); ?>
+            </span>
+            <?php endif; ?>
+        </div>
+        <div class="arsol-addon-priority">
+            <?php 
+            // Display priority number
+            if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
+            ?>
+            <span>
+                Priority: 
+            </span>
+            <span class="arsol-priority dummy-field">
+                <?php echo esc_html($priority); ?>
+            </span>
+            <?php endif; ?>
+        </div>
     </div>
 </div> 

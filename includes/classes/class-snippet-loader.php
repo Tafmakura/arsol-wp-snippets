@@ -34,7 +34,7 @@ class Snippet_Loader {
             $files_array[] = array(
                 'key' => $key,
                 'file' => $file,
-                'priority' => isset($file['priority']) ? intval($file['priority']) : 10,
+                'priority' => \Arsol_WP_Snippets\Helper::get_priority($file),
                 'loading_order' => isset($file['loading_order']) ? intval($file['loading_order']) : 10,
                 'original_index' => $index++
             );
@@ -75,7 +75,7 @@ class Snippet_Loader {
             ));
         }
 
-        // Convert back to associative array
+        // Convert back to original format
         $sorted_files = array();
         foreach ($files_array as $item) {
             $sorted_files[$item['key']] = $item['file'];
@@ -102,31 +102,34 @@ class Snippet_Loader {
         $options = get_option('arsol_wp_snippets_options', array());
         $enabled_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
         
-        if (!empty($enabled_files)) {
-            error_log('Arsol WP Snippets: Registering PHP snippets');
-            $files = apply_filters('arsol_wp_snippets_php_addon_files', array());
-            $result = $this->process_files($files, 'php');
-            $files = $result['files'];
-            
-            // Sort files by priority and loading order
-            $sorted_files = $this->sort_files($files);
-            
-            foreach ($sorted_files as $file_key => $file_data) {
-                if (!isset($enabled_files[$file_key]) || !$enabled_files[$file_key]) {
-                    continue;
-                }
-                
-                $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
-                error_log(sprintf(
-                    'Arsol WP Snippets: Registering PHP file %s with priority %d',
-                    $file_key,
-                    $priority
-                ));
-                
-                add_action('init', function() use ($file_key) {
-                    $this->include_php_snippet($file_key);
-                }, $priority);
+        if (empty($enabled_files)) {
+            return;
+        }
+
+        error_log('Arsol WP Snippets: Registering PHP snippets');
+        
+        $files = apply_filters('arsol_wp_snippets_php_addon_files', array());
+        $result = $this->process_files($files, 'php');
+        $files = $result['files'];
+
+        // Sort files by priority and loading order
+        $sorted_files = $this->sort_files($files);
+
+        foreach ($sorted_files as $file_key => $file_data) {
+            if (!isset($enabled_files[$file_key]) || !$enabled_files[$file_key]) {
+                continue;
             }
+
+            $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
+            error_log(sprintf(
+                'Arsol WP Snippets: Registering PHP file %s with priority %d',
+                $file_key,
+                $priority
+            ));
+            
+            add_action('init', function() use ($file_key) {
+                $this->include_php_snippet($file_key);
+            }, $priority);
         }
     }
 
@@ -162,7 +165,7 @@ class Snippet_Loader {
                 continue;
             }
 
-            $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+            $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             error_log(sprintf(
                 'Arsol WP Snippets: Registering CSS file %s with priority %d',
                 $file_key,
@@ -212,7 +215,7 @@ class Snippet_Loader {
                 continue;
             }
 
-            $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+            $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             error_log(sprintf(
                 'Arsol WP Snippets: Registering JS file %s with priority %d',
                 $file_key,
@@ -321,7 +324,7 @@ class Snippet_Loader {
                 continue;
             }
 
-            $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+            $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             
             // Add the file to be loaded at its specified priority
             $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';
@@ -363,7 +366,7 @@ class Snippet_Loader {
                 continue;
             }
 
-            $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+            $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             
             // Add the file to be loaded at its specified priority
             $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';

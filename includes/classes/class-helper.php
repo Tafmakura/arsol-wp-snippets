@@ -107,4 +107,14 @@ class Helper {
     public static function get_loading_order($file_data) {
         return isset($file_data['loading_order']) ? intval($file_data['loading_order']) : self::get_default_options('loading_order');
     }
+
+    /**
+     * Get priority for a file
+     *
+     * @param array $file_data The file data array
+     * @return int The priority value
+     */
+    public static function get_priority($file_data) {
+        return isset($file_data['priority']) ? intval($file_data['priority']) : self::get_default_options('priority');
+    }
 } 

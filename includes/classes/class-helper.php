@@ -117,4 +117,52 @@ class Helper {
     public static function get_priority($file_data) {
         return isset($file_data['priority']) ? intval($file_data['priority']) : self::get_default_options('priority');
     }
+
+    /**
+     * Sort files by position, priority, loading order, and maintain original order
+     *
+     * @param array $files Array of file data
+     * @return array Sorted files
+     */
+    public static function sort_files_by_loading_order($files) {
+        // Convert to array for sorting while preserving original order
+        $files_array = array();
+        $index = 0;
+        foreach ($files as $key => $file) {
+            $files_array[] = array(
+                'key' => $key,
+                'file' => $file,
+                'position' => isset($file['position']) ? $file['position'] : 'footer',
+                'priority' => self::get_priority($file),
+                'loading_order' => self::get_loading_order($file),
+                'original_index' => $index++
+            );
+        }
+
+        // Sort by position (header first), then priority, then loading_order, then original order
+        usort($files_array, function($a, $b) {
+            // First sort by position (header before footer)
+            if ($a['position'] !== $b['position']) {
+                return $a['position'] === 'header' ? -1 : 1;
+            }
+            // Then by priority
+            if ($a['priority'] !== $b['priority']) {
+                return $a['priority'] - $b['priority'];
+            }
+            // Then by loading order
+            if ($a['loading_order'] !== $b['loading_order']) {
+                return $a['loading_order'] - $b['loading_order'];
+            }
+            // Finally by original order
+            return $a['original_index'] - $b['original_index'];
+        });
+
+        // Convert back to original format
+        $sorted_files = array();
+        foreach ($files_array as $item) {
+            $sorted_files[$item['key']] = $item['file'];
+        }
+
+        return $sorted_files;
+    }
 } 

@@ -21,67 +21,13 @@ class Snippet_Loader {
     }
 
     /**
-     * Sort files by priority, loading order, and maintain original order
-     * 
-     * @param array $files Array of files to sort
+     * Sort files by position, priority, loading order, and maintain original order
+     *
+     * @param array $files Array of file data
      * @return array Sorted files
      */
     private function sort_files($files) {
-        // Convert to array for sorting while preserving original order
-        $files_array = array();
-        $index = 0;
-        foreach ($files as $key => $file) {
-            $files_array[] = array(
-                'key' => $key,
-                'file' => $file,
-                'priority' => \Arsol_WP_Snippets\Helper::get_priority($file),
-                'loading_order' => isset($file['loading_order']) ? intval($file['loading_order']) : 10,
-                'original_index' => $index++
-            );
-        }
-
-        // Log pre-sort state
-        error_log('Arsol WP Snippets: Pre-sort files:');
-        foreach ($files_array as $item) {
-            error_log(sprintf(
-                'File: %s, Priority: %d, Loading Order: %d, Original Index: %d',
-                $item['key'],
-                $item['priority'],
-                $item['loading_order'],
-                $item['original_index']
-            ));
-        }
-
-        // Sort by priority, then loading_order, then original order
-        usort($files_array, function($a, $b) {
-            if ($a['priority'] !== $b['priority']) {
-                return $a['priority'] - $b['priority'];
-            }
-            if ($a['loading_order'] !== $b['loading_order']) {
-                return $a['loading_order'] - $b['loading_order'];
-            }
-            return $a['original_index'] - $b['original_index'];
-        });
-
-        // Log post-sort state
-        error_log('Arsol WP Snippets: Post-sort files:');
-        foreach ($files_array as $item) {
-            error_log(sprintf(
-                'File: %s, Priority: %d, Loading Order: %d, Original Index: %d',
-                $item['key'],
-                $item['priority'],
-                $item['loading_order'],
-                $item['original_index']
-            ));
-        }
-
-        // Convert back to original format
-        $sorted_files = array();
-        foreach ($files_array as $item) {
-            $sorted_files[$item['key']] = $item['file'];
-        }
-
-        return $sorted_files;
+        return \Arsol_WP_Snippets\Helper::sort_files_by_loading_order($files);
     }
 
     /**

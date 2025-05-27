@@ -102,35 +102,56 @@ class Snippet_Loader {
      * 
      * @param string $context The context to load snippets for ('frontend' or 'admin')
      */
-    public function load_css_snippets($context = 'frontend') {
+    private function load_css_snippets($context) {
+        // Get options
+        $options = get_option('arsol_wp_snippets_options', array());
+        $enabled_css_files = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
+        
+        if (empty($enabled_css_files)) {
+            error_log('Arsol WP Snippets: No CSS files enabled for ' . $context);
+            return;
+        }
+
+        // Get all available CSS files through filter
         $css_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
-        $enabled_files = get_option('arsol_wp_snippets_enabled_css_files', array());
+        error_log('Arsol WP Snippets: Available CSS files: ' . print_r($css_files, true));
 
-        foreach ($css_files as $handle => $file_data) {
-            if (!isset($enabled_files[$handle]) || !$enabled_files[$handle]) {
+        // Process files
+        $result = $this->process_files($css_files, 'css');
+        $css_files = $result['files'];
+
+        foreach ($enabled_css_files as $file_key => $enabled) {
+            if (!$enabled || !isset($css_files[$file_key])) {
                 continue;
             }
 
-            if (!isset($file_data['file']) || !file_exists($file_data['file'])) {
+            $file_data = $css_files[$file_key];
+
+            // Skip if context doesn't match
+            if (isset($file_data['context']) && $file_data['context'] !== $context) {
+                error_log('Arsol WP Snippets: Skipping CSS file ' . $file_key . ' - context mismatch');
                 continue;
             }
 
-            // Get version - use specified version, fallback to filemtime, or null
-            $version = isset($file_data['version']) ? $file_data['version'] : 
-                      (file_exists($file_data['file']) ? filemtime($file_data['file']) : null);
+            // Register and enqueue the CSS file
+            $handle = 'arsol-wp-snippets-css-' . $file_key;
+            $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
+            // Only use version if explicitly set in the file data
+            $version = isset($file_data['version']) ? $file_data['version'] : null;
+
+            error_log('Arsol WP Snippets: Registering CSS file - ' . $file_data['file'] . ' with handle ' . $handle);
 
             wp_register_style(
                 $handle,
                 $file_data['file'],
-                isset($file_data['dependencies']) ? $file_data['dependencies'] : array(),
+                $dependencies,
                 $version
             );
 
-            if ($context === 'frontend' && (!isset($file_data['context']) || $file_data['context'] === 'frontend')) {
-                wp_enqueue_style($handle);
-            } elseif ($context === 'admin' && isset($file_data['context']) && $file_data['context'] === 'admin') {
-                wp_enqueue_style($handle);
-            }
+            wp_enqueue_style($handle);
+
+            // Trigger action when CSS file is loaded
+            do_action('arsol_wp_snippets_loaded_css_addon', $file_key, $file_data);
         }
     }
 
@@ -139,36 +160,58 @@ class Snippet_Loader {
      * 
      * @param string $context The context to load snippets for ('frontend' or 'admin')
      */
-    public function load_js_snippets($context = 'frontend') {
+    private function load_js_snippets($context) {
+        // Get options
+        $options = get_option('arsol_wp_snippets_options', array());
+        $enabled_js_files = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
+        
+        if (empty($enabled_js_files)) {
+            error_log('Arsol WP Snippets: No JS files enabled for ' . $context);
+            return;
+        }
+
+        // Get all available JS files through filter
         $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
-        $enabled_files = get_option('arsol_wp_snippets_enabled_js_files', array());
+        error_log('Arsol WP Snippets: Available JS files: ' . print_r($js_files, true));
 
-        foreach ($js_files as $handle => $file_data) {
-            if (!isset($enabled_files[$handle]) || !$enabled_files[$handle]) {
+        // Process files
+        $result = $this->process_files($js_files, 'js');
+        $js_files = $result['files'];
+
+        foreach ($enabled_js_files as $file_key => $enabled) {
+            if (!$enabled || !isset($js_files[$file_key])) {
                 continue;
             }
 
-            if (!isset($file_data['file']) || !file_exists($file_data['file'])) {
+            $file_data = $js_files[$file_key];
+
+            // Skip if context doesn't match
+            if (isset($file_data['context']) && $file_data['context'] !== $context) {
+                error_log('Arsol WP Snippets: Skipping JS file ' . $file_key . ' - context mismatch');
                 continue;
             }
 
-            // Get version - use specified version, fallback to filemtime, or null
-            $version = isset($file_data['version']) ? $file_data['version'] : 
-                      (file_exists($file_data['file']) ? filemtime($file_data['file']) : null);
+            // Register and enqueue the JS file
+            $handle = 'arsol-wp-snippets-js-' . $file_key;
+            $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
+            // Only use version if explicitly set in the file data
+            $version = isset($file_data['version']) ? $file_data['version'] : null;
+            $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
+
+            error_log('Arsol WP Snippets: Registering JS file - ' . $file_data['file'] . ' with handle ' . $handle);
 
             wp_register_script(
                 $handle,
                 $file_data['file'],
-                isset($file_data['dependencies']) ? $file_data['dependencies'] : array(),
+                $dependencies,
                 $version,
-                isset($file_data['in_footer']) ? $file_data['in_footer'] : true
+                $in_footer
             );
 
-            if ($context === 'frontend' && (!isset($file_data['context']) || $file_data['context'] === 'frontend')) {
-                wp_enqueue_script($handle);
-            } elseif ($context === 'admin' && isset($file_data['context']) && $file_data['context'] === 'admin') {
-                wp_enqueue_script($handle);
-            }
+            wp_enqueue_script($handle);
+
+            // Trigger action when JS file is loaded
+            do_action('arsol_wp_snippets_loaded_js_addon', $file_key, $file_data);
         }
     }
 

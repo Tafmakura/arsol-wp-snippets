@@ -14,6 +14,7 @@ class Snippet_Loader {
     public function __construct() {
         // Register PHP snippets during initialization
         $this->register_php_snippets();
+        $this->register_js_snippets();
         
         // Keep the CSS/JS hooks as they are
         add_action('wp_enqueue_scripts', array($this, 'load_frontend_snippets'));
@@ -42,6 +43,38 @@ class Snippet_Loader {
                     // Register the file to be loaded at its specified priority
                     add_action('init', function() use ($file_key) {
                         $this->include_php_snippet($file_key);
+                    }, $priority);
+                }
+            }
+        }
+    }
+
+    /**
+     * Register JS snippets during initialization
+     */
+    private function register_js_snippets() {
+        $options = get_option('arsol_wp_snippets_options', array());
+        $enabled_js_files = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
+
+        if (!empty($enabled_js_files)) {
+            $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
+            $result = $this->process_files($js_files, 'js');
+            $js_files = $result['files'];
+
+            foreach ($enabled_js_files as $file_key => $enabled) {
+                if ($enabled && isset($js_files[$file_key])) {
+                    $file_data = $js_files[$file_key];
+                    $priority = isset($file_data['priority']) ? intval($file_data['priority']) : 10;
+                    $context = isset($file_data['context']) ? $file_data['context'] : 'frontend';
+
+                    // Register the enqueue at the correct priority
+                    add_action('wp_enqueue_scripts', function() use ($file_data, $file_key) {
+                        $handle = 'arsol-wp-snippets-js-' . $file_key;
+                        $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
+                        $version = $this->get_file_version($file_data['file'], isset($file_data['version']) ? $file_data['version'] : null, $file_data);
+                        $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
+                        wp_register_script($handle, $file_data['file'], $dependencies, $version, $in_footer);
+                        wp_enqueue_script($handle);
                     }, $priority);
                 }
             }

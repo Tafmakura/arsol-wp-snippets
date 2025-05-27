@@ -372,8 +372,8 @@ class Snippet_Loader {
 
         // Filter files by context
         $enabled = array();
-        foreach ($enabled_files as $file_key => $enabled) {
-            if (!$enabled || !isset($files[$file_key])) {
+        foreach ($enabled_files as $file_key => $is_enabled) {
+            if (!$is_enabled || !isset($files[$file_key])) {
                 continue;
             }
 

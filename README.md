@@ -16,6 +16,7 @@ Arsol WP Snippets allows you to easily manage and load custom PHP, CSS, and Java
 - Easy-to-use admin interface
 - Context-aware loading (admin/frontend)
 - Position control for JavaScript files (header/footer)
+- Priority control for all file types
 - Loading order control for all file types
 - Dependency management
 - Theme support (add files to theme or child theme for automatic detection)
@@ -75,22 +76,93 @@ define('ARSOL_WP_SNIPPETS_SAFE_MODE', false);
 
 ## Advanced Configuration
 
-### Loading Order
+### Priority and Loading Order
 
-The loading order determines when your snippets are loaded relative to other scripts and styles. Lower numbers load earlier, higher numbers load later.
+The plugin provides two ways to control the execution order of your snippets:
+
+1. **Priority**: Controls when your snippet's hook is executed relative to other WordPress hooks
+   - PHP snippets hook into `init`
+   - CSS files hook into `wp_enqueue_scripts` (frontend) or `admin_enqueue_scripts` (admin)
+     - This is WordPress's standard way of enqueuing both styles and scripts
+     - CSS files use `wp_enqueue_style()` within these hooks
+     - JS files use `wp_enqueue_script()` within these hooks
+   - Lower priority numbers execute earlier in the WordPress hook
+   - Default priority is 10 (standard WordPress default)
+
+2. **Loading Order**: Controls the order of snippets with the same priority
+   - Only applies when multiple snippets have the same priority
+   - Lower numbers load earlier within the same priority level
+   - Default loading order is 10
 
 ```php
-// Example of setting loading order in a filter
+// Example of setting priority and loading order in a filter
+add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
+    $addons['my-custom-snippet'] = array(
+        'name' => 'My Custom Snippet',
+        'file' => 'path/to/snippet.php',
+        'priority' => 20,    // Will run at priority 20 of the init hook
+        'loading_order' => 5 // Will load before other snippets with priority 20
+    );
+    return $addons;
+});
+```
+
+#### How Priority Works
+- Lower priority numbers execute earlier in the WordPress hook
+- Default priority is 10 (standard WordPress default)
+- Files with the same priority are sorted by loading order
+- Files with the same priority and loading order maintain their original order
+
+#### WordPress Hook Integration
+The plugin integrates with WordPress hooks in the following way:
+
+1. **PHP Snippets**:
+   - Hook: `init`
+   - Priority: Set by the snippet's priority value
+   - Context: Global (runs in both admin and frontend)
+
+2. **CSS Files**:
+   - Frontend Hook: `wp_enqueue_scripts`
+     - Uses `wp_enqueue_style()` to register and enqueue styles
+     - This is WordPress's standard way of adding styles
+   - Admin Hook: `admin_enqueue_scripts`
+     - Uses `wp_enqueue_style()` to register and enqueue styles
+   - Priority: Set by the file's priority value
+   - Context: Frontend or Admin (based on context setting)
+
+3. **JavaScript Files**:
+   - Frontend Hook: `wp_enqueue_scripts`
+     - Uses `wp_enqueue_script()` to register and enqueue scripts
+     - This is WordPress's standard way of adding scripts
+   - Admin Hook: `admin_enqueue_scripts`
+     - Uses `wp_enqueue_script()` to register and enqueue scripts
+   - Priority: Set by the file's priority value
+   - Context: Frontend or Admin (based on context setting)
+   - Position: Header or Footer (based on position setting)
+
+Example of hook timing:
+```php
+// This PHP snippet will run at priority 5 of the init hook
+add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
+    $addons['early-init'] = array(
+        'file' => 'path/to/early.php',
+        'priority' => 5  // Runs early in init
+    );
+    return $addons;
+});
+
+// This CSS file will load at priority 20 of wp_enqueue_scripts
 add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
-    $addons['my-custom-style'] = array(
-        'name' => 'My Custom Style',
+    $addons['late-style'] = array(
         'file' => 'path/to/style.css',
-        'loading_order' => 5, // Loads earlier than default (10)
+        'priority' => 20,  // Loads late in wp_enqueue_scripts
         'context' => 'frontend'
     );
     return $addons;
 });
 ```
+
+Note: While there are separate functions for enqueuing styles (`wp_enqueue_style()`) and scripts (`wp_enqueue_script()`), WordPress uses the same hooks (`wp_enqueue_scripts` and `admin_enqueue_scripts`) for both. This is by design and follows WordPress best practices for asset management.
 
 ### Dependencies
 
@@ -356,73 +428,34 @@ define('WP_DEBUG_DISPLAY', false);
 
 ## Changelog
 
-### Version 0.0.14
-- Improved asset versioning system
-  - Removed automatic versioning of assets
-  - Added opt-in versioning for individual files
-  - Files can now specify their own version number
-  - Default behavior is to not cache files
-  - Better handling of third-party file modifications
-- Fixed CSS and JS file loading issues
-  - Corrected option structure handling for enabled files
-  - Removed duplicate loading methods to prevent conflicts
-  - Added comprehensive debug logging for troubleshooting
-- Improved file loading reliability
-  - Added proper file existence checks
-  - Enhanced context-aware loading (frontend/admin)
-  - Better handling of dependencies and loading order
-- Added missing file flag functionality
-  - Files that don't exist are now properly skipped
-  - Added error logging for missing files
-  - Improved error handling for invalid file paths
-- Enhanced safe mode functionality
-  - Added debug logging for safe mode status
-  - Improved safe mode checks across all file types
-  - Better handling of safe mode transitions
-- Added duplicate file detection
-  - Prevents loading the same file multiple times
-  - Shows admin notice for duplicate files
-  - Logs duplicate file attempts
-  - Works across all file types (PHP, CSS, JS)
-- Fixed CSS and JS file loading issues
-  - Corrected option structure handling for enabled files
-  - Removed duplicate loading methods to prevent conflicts
-  - Added comprehensive debug logging for troubleshooting
-- Improved file loading reliability
-  - Added proper file existence checks
-  - Enhanced context-aware loading (frontend/admin)
-  - Better handling of dependencies and loading order
-- Added missing file flag functionality
-  - Files that don't exist are now properly skipped
-  - Added error logging for missing files
-  - Improved error handling for invalid file paths
-- Enhanced safe mode functionality
-  - Added debug logging for safe mode status
-  - Improved safe mode checks across all file types
-  - Better handling of safe mode transitions
+### 0.0.14
+- Added priority control for all file types (PHP, CSS, JS)
+- Improved sorting mechanism to handle priority and loading order
+- Added debug logging for file registration and sorting
+- Fixed issue with file loading order in admin context
+- Enhanced documentation for priority and loading order features
 
-
-### Version 0.0.13
+### 0.0.13
 - Updated plugin header with GitHub repository links
 - Added welcome message to admin settings page
 - Made plugin URL clickable in WordPress plugin listing
 - Added links to GitHub repository and packet template
 - Improved documentation with better examples
 
-### Version 0.0.12
+### 0.0.12
 - Added loading order control for all file types
 - Added dependency management for CSS and JS files
 - Enhanced filter system for better integration
 - Improved admin interface with loading order display
 - Added timing categories (Early, Default, Late, Very Late)
 
-### Version 0.0.11
+### 0.0.11
 - Added safe mode feature
 - Improved file loading logic
 - Added admin notifications
 - Enhanced error handling
 
-### Version 0.0.1 - 0.0.10
+### 0.0.1 - 0.0.10
 - Initial plugin development
 - Basic snippet management functionality
 - Admin interface implementation

@@ -165,4 +165,22 @@ class Helper {
 
         return $sorted_files;
     }
+
+    /**
+     * Get category for a numeric value (priority or loading order)
+     *
+     * @param int $value The numeric value to categorize
+     * @return string The category name ('Early', 'Default', 'Late', or 'Very Late')
+     */
+    public static function get_category_for_value($value) {
+        if ($value <= 5) {
+            return 'Early';
+        } elseif ($value <= 10) {
+            return 'Default';
+        } elseif ($value <= 20) {
+            return 'Late';
+        } else {
+            return 'Very Late';
+        }
+    }
 } 

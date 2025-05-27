@@ -16,29 +16,11 @@ if (!defined('ABSPATH')) {
 
 // Get loading order and determine its category
 $loading_order = \Arsol_WP_Snippets\Helper::get_loading_order($addon_data);
-$loading_order_category = '';
-if ($loading_order <= 5) {
-    $loading_order_category = 'Early';
-} elseif ($loading_order <= 10) {
-    $loading_order_category = 'Default';
-} elseif ($loading_order <= 20) {
-    $loading_order_category = 'Late';
-} else {
-    $loading_order_category = 'Very Late';
-}
+$loading_order_category = \Arsol_WP_Snippets\Helper::get_category_for_value($loading_order);
 
 // Get priority and determine its category
 $priority = \Arsol_WP_Snippets\Helper::get_priority($addon_data);
-$priority_category = '';
-if ($priority <= 5) {
-    $priority_category = 'Early';
-} elseif ($priority <= 10) {
-    $priority_category = 'Default';
-} elseif ($priority <= 20) {
-    $priority_category = 'Late';
-} else {
-    $priority_category = 'Very Late';
-}
+$priority_category = \Arsol_WP_Snippets\Helper::get_category_for_value($priority);
 ?>
 <div class="arsol-addon-title-wrapper">
     <div class="arsol-addon-title">

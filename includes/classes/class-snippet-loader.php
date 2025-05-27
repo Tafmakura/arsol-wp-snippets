@@ -45,27 +45,19 @@ class Snippet_Loader {
      * Register PHP snippets
      */
     private function register_php_snippets() {
-        $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_files = isset($options['php_addon_options']) ? $options['php_addon_options'] : array();
+        $result = $this->get_enabled_files('php', 'global');
+        $enabled = $result['enabled'];
         
-        if (empty($enabled_files)) {
+        if (empty($enabled)) {
             return;
         }
 
         error_log('Arsol WP Snippets: Registering PHP snippets');
         
-        $files = apply_filters('arsol_wp_snippets_php_addon_files', array());
-        $result = $this->process_files($files, 'php');
-        $files = $result['files'];
-
         // Sort files by priority and loading order
-        $sorted_files = $this->sort_files($files);
+        $sorted_files = $this->sort_files($enabled);
 
         foreach ($sorted_files as $file_key => $file_data) {
-            if (!isset($enabled_files[$file_key]) || !$enabled_files[$file_key]) {
-                continue;
-            }
-
             $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             error_log(sprintf(
                 'Arsol WP Snippets: Registering PHP file %s with priority %d',
@@ -85,32 +77,20 @@ class Snippet_Loader {
      * @param string $context The context ('frontend' or 'admin')
      */
     private function register_css_snippets($context) {
-        $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_files = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
+        $result = $this->get_enabled_files('css', $context);
+        $enabled = $result['enabled'];
         
-        if (empty($enabled_files)) {
+        if (empty($enabled)) {
             return;
         }
 
         $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';
         error_log(sprintf('Arsol WP Snippets: Registering CSS snippets for %s context', $context));
         
-        $files = apply_filters('arsol_wp_snippets_css_addon_files', array());
-        $result = $this->process_files($files, 'css');
-        $files = $result['files'];
-
         // Sort files by priority and loading order
-        $sorted_files = $this->sort_files($files);
+        $sorted_files = $this->sort_files($enabled);
 
         foreach ($sorted_files as $file_key => $file_data) {
-            if (!isset($enabled_files[$file_key]) || !$enabled_files[$file_key]) {
-                continue;
-            }
-
-            if (isset($file_data['context']) && $file_data['context'] !== $context) {
-                continue;
-            }
-
             $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             error_log(sprintf(
                 'Arsol WP Snippets: Registering CSS file %s with priority %d',
@@ -135,32 +115,20 @@ class Snippet_Loader {
      * @param string $context The context ('frontend' or 'admin')
      */
     private function register_js_snippets($context) {
-        $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_files = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
+        $result = $this->get_enabled_files('js', $context);
+        $enabled = $result['enabled'];
         
-        if (empty($enabled_files)) {
+        if (empty($enabled)) {
             return;
         }
 
         $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';
         error_log(sprintf('Arsol WP Snippets: Registering JS snippets for %s context', $context));
         
-        $files = apply_filters('arsol_wp_snippets_js_addon_files', array());
-        $result = $this->process_files($files, 'js');
-        $files = $result['files'];
-
         // Sort files by priority and loading order
-        $sorted_files = $this->sort_files($files);
+        $sorted_files = $this->sort_files($enabled);
 
         foreach ($sorted_files as $file_key => $file_data) {
-            if (!isset($enabled_files[$file_key]) || !$enabled_files[$file_key]) {
-                continue;
-            }
-
-            if (isset($file_data['context']) && $file_data['context'] !== $context) {
-                continue;
-            }
-
             $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             error_log(sprintf(
                 'Arsol WP Snippets: Registering JS file %s with priority %d',
@@ -249,31 +217,19 @@ class Snippet_Loader {
      * @param string $context The context to load snippets for ('frontend' or 'admin')
      */
     private function load_css_snippets($context) {
-        $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_css_files = isset($options['css_addon_options']) ? $options['css_addon_options'] : array();
+        $result = $this->get_enabled_files('css', $context);
+        $enabled = $result['enabled'];
         
-        if (empty($enabled_css_files)) {
+        if (empty($enabled)) {
             return;
         }
 
-        $css_files = apply_filters('arsol_wp_snippets_css_addon_files', array());
-        $result = $this->process_files($css_files, 'css');
-        $css_files = $result['files'];
-
-        foreach ($enabled_css_files as $file_key => $enabled) {
-            if (!$enabled || !isset($css_files[$file_key])) {
-                continue;
-            }
-
-            $file_data = $css_files[$file_key];
-            if (isset($file_data['context']) && $file_data['context'] !== $context) {
-                continue;
-            }
-
+        $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';
+        
+        foreach ($enabled as $file_key => $file_data) {
             $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             
             // Add the file to be loaded at its specified priority
-            $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';
             add_action($hook, function() use ($file_data, $file_key) {
                 $handle = 'arsol-wp-snippets-css-' . $file_key;
                 $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
@@ -291,31 +247,19 @@ class Snippet_Loader {
      * @param string $context The context to load snippets for ('frontend' or 'admin')
      */
     private function load_js_snippets($context) {
-        $options = get_option('arsol_wp_snippets_options', array());
-        $enabled_js_files = isset($options['js_addon_options']) ? $options['js_addon_options'] : array();
+        $result = $this->get_enabled_files('js', $context);
+        $enabled = $result['enabled'];
         
-        if (empty($enabled_js_files)) {
+        if (empty($enabled)) {
             return;
         }
 
-        $js_files = apply_filters('arsol_wp_snippets_js_addon_files', array());
-        $result = $this->process_files($js_files, 'js');
-        $js_files = $result['files'];
-
-        foreach ($enabled_js_files as $file_key => $enabled) {
-            if (!$enabled || !isset($js_files[$file_key])) {
-                continue;
-            }
-
-            $file_data = $js_files[$file_key];
-            if (isset($file_data['context']) && $file_data['context'] !== $context) {
-                continue;
-            }
-
+        $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';
+        
+        foreach ($enabled as $file_key => $file_data) {
             $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
             
             // Add the file to be loaded at its specified priority
-            $hook = $context === 'frontend' ? 'wp_enqueue_scripts' : 'admin_enqueue_scripts';
             add_action($hook, function() use ($file_data, $file_key) {
                 $handle = 'arsol-wp-snippets-js-' . $file_key;
                 $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
@@ -405,5 +349,45 @@ class Snippet_Loader {
         
         // Fallback to current timestamp if we can't get filemtime
         return time();
+    }
+
+    /**
+     * Process and get enabled files for a specific type and context
+     *
+     * @param string $type The file type ('php', 'css', or 'js')
+     * @param string $context The context ('frontend' or 'admin')
+     * @return array Array containing enabled files and their data
+     */
+    private function get_enabled_files($type, $context) {
+        $options = get_option('arsol_wp_snippets_options', array());
+        $enabled_files = isset($options["{$type}_addon_options"]) ? $options["{$type}_addon_options"] : array();
+        
+        if (empty($enabled_files)) {
+            return array('files' => array(), 'enabled' => array());
+        }
+
+        $files = apply_filters("arsol_wp_snippets_{$type}_addon_files", array());
+        $result = $this->process_files($files, $type);
+        $files = $result['files'];
+
+        // Filter files by context
+        $enabled = array();
+        foreach ($enabled_files as $file_key => $enabled) {
+            if (!$enabled || !isset($files[$file_key])) {
+                continue;
+            }
+
+            $file_data = $files[$file_key];
+            if (isset($file_data['context']) && $file_data['context'] !== $context) {
+                continue;
+            }
+
+            $enabled[$file_key] = $file_data;
+        }
+
+        return array(
+            'files' => $files,
+            'enabled' => $enabled
+        );
     }
 }

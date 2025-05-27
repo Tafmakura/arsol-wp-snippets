@@ -26,6 +26,19 @@ if ($loading_order <= 5) {
 } else {
     $loading_order_category = 'Very Late';
 }
+
+// Get priority and determine its category
+$priority = \Arsol_WP_Snippets\Helper::get_priority($addon_data);
+$priority_category = '';
+if ($priority <= 5) {
+    $priority_category = 'Early';
+} elseif ($priority <= 10) {
+    $priority_category = 'Default';
+} elseif ($priority <= 20) {
+    $priority_category = 'Late';
+} else {
+    $priority_category = 'Very Late';
+}
 ?>
 <div class="arsol-addon-title-wrapper">
     <div class="arsol-addon-title">
@@ -40,10 +53,23 @@ if ($loading_order <= 5) {
         if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
         ?>
         <span>
-            Loading: 
+            Order: 
         </span>
         <span class="arsol-loading-order">
             <?php echo esc_html($loading_order); ?>
+        </span>
+        <?php endif; ?>
+    </div>
+    <div class="arsol-addon-priority">
+        <?php 
+        // Display priority number
+        if ($addon_type === 'js' || $addon_type === 'css' || $addon_type === 'php'): 
+        ?>
+        <span>
+            Priority: 
+        </span>
+        <span class="arsol-priority">
+            <?php echo esc_html($priority); ?>
         </span>
         <?php endif; ?>
     </div>

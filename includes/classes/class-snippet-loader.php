@@ -136,7 +136,8 @@ class Snippet_Loader {
             // Register and enqueue the CSS file
             $handle = 'arsol-wp-snippets-css-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
-            $version = isset($file_data['version']) ? $file_data['version'] : arsol_wp_snippets_get_version();
+            // Only use version if explicitly set in the file data
+            $version = isset($file_data['version']) ? $file_data['version'] : null;
 
             error_log('Arsol WP Snippets: Registering CSS file - ' . $file_data['file'] . ' with handle ' . $handle);
 
@@ -193,7 +194,8 @@ class Snippet_Loader {
             // Register and enqueue the JS file
             $handle = 'arsol-wp-snippets-js-' . $file_key;
             $dependencies = isset($file_data['dependencies']) ? $file_data['dependencies'] : array();
-            $version = isset($file_data['version']) ? $file_data['version'] : arsol_wp_snippets_get_version();
+            // Only use version if explicitly set in the file data
+            $version = isset($file_data['version']) ? $file_data['version'] : null;
             $in_footer = isset($file_data['position']) && $file_data['position'] === 'footer';
 
             error_log('Arsol WP Snippets: Registering JS file - ' . $file_data['file'] . ' with handle ' . $handle);

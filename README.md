@@ -188,6 +188,36 @@ add_action('arsol_wp_snippets_loaded_css_addon', 'your_callback_function', 10, 2
 add_action('arsol_wp_snippets_loaded_js_addon', 'your_callback_function', 10, 2);
 ```
 
+### Asset Versioning
+
+The plugin's own assets (CSS and JavaScript files) are versioned using the plugin version number. For third-party files that are modified through the plugin's filter system, versioning is optional:
+
+```php
+// Example of a file that will be cached (with version)
+add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
+    $addons['my-cached-style'] = array(
+        'name' => 'My Cached Style',
+        'file' => 'path/to/style.css',
+        'version' => '1.0.0', // This file will be cached with this version
+        'context' => 'frontend'
+    );
+    return $addons;
+});
+
+// Example of a file that will always be fresh (no version)
+add_filter('arsol_wp_snippets_css_addon_files', function($addons) {
+    $addons['my-fresh-style'] = array(
+        'name' => 'My Fresh Style',
+        'file' => 'path/to/style.css',
+        'context' => 'frontend'
+        // No version specified, so it won't be cached
+    );
+    return $addons;
+});
+```
+
+Note: The plugin's own assets (located in the `assets` directory) will always use the plugin's version number for caching. This behavior cannot be modified.
+
 ## Troubleshooting
 
 If you encounter any issues:
@@ -206,6 +236,12 @@ If you encounter any issues:
 ## Changelog
 
 ### Version 0.0.14
+- Improved asset versioning system
+  - Removed automatic versioning of assets
+  - Added opt-in versioning for individual files
+  - Files can now specify their own version number
+  - Default behavior is to not cache files
+  - Better handling of third-party file modifications
 - Fixed CSS and JS file loading issues
   - Corrected option structure handling for enabled files
   - Removed duplicate loading methods to prevent conflicts
@@ -227,6 +263,23 @@ If you encounter any issues:
   - Shows admin notice for duplicate files
   - Logs duplicate file attempts
   - Works across all file types (PHP, CSS, JS)
+- Fixed CSS and JS file loading issues
+  - Corrected option structure handling for enabled files
+  - Removed duplicate loading methods to prevent conflicts
+  - Added comprehensive debug logging for troubleshooting
+- Improved file loading reliability
+  - Added proper file existence checks
+  - Enhanced context-aware loading (frontend/admin)
+  - Better handling of dependencies and loading order
+- Added missing file flag functionality
+  - Files that don't exist are now properly skipped
+  - Added error logging for missing files
+  - Improved error handling for invalid file paths
+- Enhanced safe mode functionality
+  - Added debug logging for safe mode status
+  - Improved safe mode checks across all file types
+  - Better handling of safe mode transitions
+
 
 ### Version 0.0.13
 - Updated plugin header with GitHub repository links

@@ -429,11 +429,36 @@ define('WP_DEBUG_DISPLAY', false);
 ## Changelog
 
 ### 0.0.14
+- Improved asset versioning system
+  - Removed automatic versioning of assets
+  - Added opt-in versioning for individual files
+  - Files can now specify their own version number
+  - Default behavior is to not cache files
+  - Better handling of third-party file modifications
+- Fixed CSS and JS file loading issues
+  - Corrected option structure handling for enabled files
+  - Removed duplicate loading methods to prevent conflicts
+  - Added comprehensive debug logging for troubleshooting
+  - Enhanced context-aware loading (frontend/admin)
+  - Better handling of dependencies and loading order
+- Added missing file flag functionality
+  - Files that don't exist are now properly skipped
+  - Added error logging for missing files
+  - Improved error handling for invalid file paths
+- Enhanced safe mode functionality
+  - Added debug logging for safe mode status
+  - Improved safe mode checks across all file types
+  - Better handling of safe mode transitions
+- Added duplicate file detection
+  - Prevents loading the same file multiple times
+  - Shows admin notice for duplicate files
+  - Logs duplicate file attempts
+  - Works across all file types (PHP, CSS, JS)
 - Added priority control for all file types (PHP, CSS, JS)
-- Improved sorting mechanism to handle priority and loading order
-- Added debug logging for file registration and sorting
-- Fixed issue with file loading order in admin context
-- Enhanced documentation for priority and loading order features
+  - Improved sorting mechanism to handle priority and loading order
+  - Added debug logging for file registration and sorting
+  - Fixed issue with file loading order in admin context
+  - Enhanced documentation for priority and loading order features
 
 ### 0.0.13
 - Updated plugin header with GitHub repository links

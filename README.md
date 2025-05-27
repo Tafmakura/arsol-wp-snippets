@@ -288,6 +288,78 @@ If you encounter any issues:
 - WordPress 5.8 or higher
 - PHP 7.4 or higher
 
+
+## License
+
+This plugin is licensed under the GPL v2 or later.
+
+
+## Creating Custom Snippet Packets
+
+You can create your own snippet packets by downloading and using this template repository: https://github.com/Tafmakura/arsol-wps-packet-example
+
+## Development and Debugging
+
+### Debug Mode
+For development and troubleshooting:
+1. Enable WordPress debug mode in wp-config.php:
+```php
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
+```
+
+2. Check the debug.log file for detailed error messages and file paths
+
+### File Placement
+- Place your snippets in the appropriate directories before registering them
+- Use absolute paths for PHP files
+- Use URL paths for CSS and JavaScript files
+- Ensure all dependencies are available before loading
+
+### Common Issues
+1. **File Not Found**:
+   - Check file paths in your filter functions
+   - Verify file permissions
+   - Ensure files are in the correct directories
+
+2. **Loading Order Issues**:
+   - Adjust loading_order values
+   - Check dependencies are properly declared
+   - Verify context settings
+
+3. **Version Conflicts**:
+   - Clear browser cache
+   - Check version numbers in filter functions
+   - Verify file modification times
+
+## Best Practices
+
+### File Organization
+- Keep related snippets together
+- Use descriptive file names
+- Follow WordPress coding standards
+- Document your code
+
+### Performance
+- Use appropriate loading contexts
+- Set proper loading orders
+- Declare dependencies correctly
+- Version files appropriately
+
+### Security
+- Validate all inputs
+- Sanitize outputs
+- Use WordPress security functions
+- Follow WordPress coding standards
+
+### Maintenance
+- Keep snippets up to date
+- Remove unused code
+- Document changes
+- Test thoroughly
+
+
 ## Changelog
 
 ### Version 0.0.14
@@ -362,76 +434,3 @@ If you encounter any issues:
 - Admin interface implementation
 - File loading system setup
 
-
-## License
-
-This plugin is licensed under the GPL v2 or later.
-
-## Author
-
-Taf Makura
-
-## Creating Custom Snippet Packets
-
-You can create your own snippet packets by downloading and using this template repository: https://github.com/Tafmakura/arsol-wps-packet-example
-
-## Development and Debugging
-
-### Debug Mode
-For development and troubleshooting:
-1. Enable WordPress debug mode in wp-config.php:
-```php
-define('WP_DEBUG', true);
-define('WP_DEBUG_LOG', true);
-define('WP_DEBUG_DISPLAY', false);
-```
-
-2. Check the debug.log file for detailed error messages and file paths
-
-### File Placement
-- Place your snippets in the appropriate directories before registering them
-- Use absolute paths for PHP files
-- Use URL paths for CSS and JavaScript files
-- Ensure all dependencies are available before loading
-
-### Common Issues
-1. **File Not Found**:
-   - Check file paths in your filter functions
-   - Verify file permissions
-   - Ensure files are in the correct directories
-
-2. **Loading Order Issues**:
-   - Adjust loading_order values
-   - Check dependencies are properly declared
-   - Verify context settings
-
-3. **Version Conflicts**:
-   - Clear browser cache
-   - Check version numbers in filter functions
-   - Verify file modification times
-
-## Best Practices
-
-### File Organization
-- Keep related snippets together
-- Use descriptive file names
-- Follow WordPress coding standards
-- Document your code
-
-### Performance
-- Use appropriate loading contexts
-- Set proper loading orders
-- Declare dependencies correctly
-- Version files appropriately
-
-### Security
-- Validate all inputs
-- Sanitize outputs
-- Use WordPress security functions
-- Follow WordPress coding standards
-
-### Maintenance
-- Keep snippets up to date
-- Remove unused code
-- Document changes
-- Test thoroughly

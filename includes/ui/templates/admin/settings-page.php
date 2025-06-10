@@ -28,3 +28,5 @@ $options = get_option('arsol_wp_snippets_options', array());
         ?>
     </form>
 </div>
+
+<?

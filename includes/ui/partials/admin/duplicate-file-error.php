@@ -48,5 +48,3 @@ $path_info = \Arsol_WP_Snippets\Helper::normalize_path($dup_data['file']);
         </div>
     </div>
 </div> 
-
-<?

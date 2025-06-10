@@ -57,6 +57,4 @@ $priority_category = \Arsol_WP_Snippets\Helper::get_category_for_value($priority
             <?php endif; ?>
         </div>
     </div>
-</div>
-
-<?
+</div> 

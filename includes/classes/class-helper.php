@@ -88,7 +88,8 @@ class Helper {
             'loading_order' => 10,
             'context' => 'global',
             'enabled' => false,
-            'priority' => 10
+            'priority' => 10,
+            'hook' => 'init'  // Default hook for PHP snippets
         );
         
         if ($option_key !== null) {
@@ -116,6 +117,53 @@ class Helper {
      */
     public static function get_priority($file_data) {
         return isset($file_data['priority']) ? intval($file_data['priority']) : self::get_default_options('priority');
+    }
+
+    /**
+     * Get hook for a PHP file
+     *
+     * @param array $file_data The file data array
+     * @return string The hook name
+     */
+    public static function get_hook($file_data) {
+        return isset($file_data['hook']) ? sanitize_text_field($file_data['hook']) : self::get_default_options('hook');
+    }
+
+    /**
+     * Get available WordPress hooks for PHP snippets
+     *
+     * @return array Array of hook => description pairs
+     */
+    public static function get_available_hooks() {
+        return array(
+            'plugins_loaded' => 'Plugins Loaded (Early - before init)',
+            'init' => 'Init (Default - recommended for most snippets)',
+            'wp_loaded' => 'WordPress Loaded (After init)',
+            'template_redirect' => 'Template Redirect (Frontend only, before content)',
+            'wp_head' => 'Head Section (Frontend only, in HTML head)',
+            'wp_footer' => 'Footer Section (Frontend only, before closing body)',
+            'admin_init' => 'Admin Init (Admin only)',
+            'admin_menu' => 'Admin Menu (Admin only, when building admin menu)',
+            'wp_enqueue_scripts' => 'Enqueue Scripts (Frontend only, for script/style registration)',
+            'admin_enqueue_scripts' => 'Admin Enqueue Scripts (Admin only, for script/style registration)',
+            'wp_ajax_' => 'AJAX Requests (For AJAX handlers - add action name after underscore)',
+            'rest_api_init' => 'REST API Init (When REST API is initialized)',
+            'widgets_init' => 'Widgets Init (When widgets are initialized)',
+            'after_setup_theme' => 'After Setup Theme (Early theme setup)',
+            'wp_print_styles' => 'Print Styles (When styles are printed)',
+            'wp_print_scripts' => 'Print Scripts (When scripts are printed)'
+        );
+    }
+
+    /**
+     * Get hook description for display
+     *
+     * @param string $hook_name The hook name
+     * @return string The hook description
+     */
+    public static function get_hook_description($hook_name) {
+        $hooks = self::get_available_hooks();
+        return isset($hooks[$hook_name]) ? $hooks[$hook_name] : $hook_name;
     }
 
     /**

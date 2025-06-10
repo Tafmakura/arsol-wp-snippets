@@ -114,8 +114,18 @@ if (!$file_exists) {
                 <?php 
                 // Define addon type for use in the template
                 $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
-                if ($addon_type === 'js'): 
+                
+                // Show hook information for PHP files
+                if ($addon_type === 'php'): 
+                    $hook = \Arsol_WP_Snippets\Helper::get_hook($addon_data);
+                    $hook_description = \Arsol_WP_Snippets\Helper::get_hook_description($hook);
                 ?>
+                <span class="arsol-addon-meta">
+                    <strong>Hook:</strong> <?php echo esc_html($hook); ?>
+                </span>
+                <?php endif; ?>
+                
+                <?php if ($addon_type === 'js'): ?>
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
                 </span>

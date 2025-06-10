@@ -59,13 +59,16 @@ class Snippet_Loader {
 
         foreach ($sorted_files as $file_key => $file_data) {
             $priority = \Arsol_WP_Snippets\Helper::get_priority($file_data);
+            $hook = \Arsol_WP_Snippets\Helper::get_hook($file_data);
+            
             error_log(sprintf(
-                'Arsol WP Snippets: Registering PHP file %s with priority %d',
+                'Arsol WP Snippets: Registering PHP file %s with hook %s and priority %d',
                 $file_key,
+                $hook,
                 $priority
             ));
             
-            add_action('init', function() use ($file_key) {
+            add_action($hook, function() use ($file_key) {
                 $this->include_php_snippet($file_key);
             }, $priority);
         }
@@ -171,6 +174,7 @@ class Snippet_Loader {
             $data = array_merge(array(
                 'context' => \Arsol_WP_Snippets\Helper::get_default_options('context'),
                 'loading_order' => \Arsol_WP_Snippets\Helper::get_default_options('loading_order'),
+                'hook' => \Arsol_WP_Snippets\Helper::get_default_options('hook'),
                 'source_name' => $path_info['source_name']
             ), $data);
             

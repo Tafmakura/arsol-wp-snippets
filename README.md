@@ -331,6 +331,67 @@ add_action('arsol_wp_snippets_loaded_css_addon', 'your_callback_function', 10, 2
 add_action('arsol_wp_snippets_loaded_js_addon', 'your_callback_function', 10, 2);
 ```
 
+### Custom Hook Override for PHP Snippets
+
+**NEW FEATURE**: You can now specify custom WordPress hooks for PHP snippets instead of the default `init` hook:
+
+```php
+// Example: Custom hook usage
+add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
+    $addons['early-setup'] = array(
+        'name' => 'Early Setup Code',
+        'file' => 'path/to/early-setup.php',
+        'hook' => 'plugins_loaded',  // Run earlier than default
+        'priority' => 5
+    );
+    
+    $addons['late-cleanup'] = array(
+        'name' => 'Late Cleanup Code', 
+        'file' => 'path/to/cleanup.php',
+        'hook' => 'wp_loaded',      // Run after init
+        'priority' => 20
+    );
+    
+    return $addons;
+});
+
+// Example: Context-specific hooks
+add_filter('arsol_wp_snippets_php_addon_files', function($addons) {
+    $addons['admin-only'] = array(
+        'name' => 'Admin Only Code',
+        'file' => 'path/to/admin.php',
+        'hook' => 'admin_init',     // Only runs in admin
+        'context' => 'admin'
+    );
+    
+    $addons['frontend-head'] = array(
+        'name' => 'Frontend Head Code',
+        'file' => 'path/to/head.php',
+        'hook' => 'wp_head',        // Runs in HTML head
+        'context' => 'frontend'
+    );
+    
+    return $addons;
+});
+```
+
+#### Available Hooks for PHP Snippets:
+
+- `plugins_loaded` - Early execution, before init
+- `init` - **Default** - Recommended for most snippets
+- `wp_loaded` - After WordPress is fully loaded
+- `template_redirect` - Frontend only, before content
+- `wp_head` - Frontend only, in HTML head section
+- `wp_footer` - Frontend only, before closing body tag
+- `admin_init` - Admin only
+- `admin_menu` - Admin only, when building menus
+- `wp_enqueue_scripts` - Frontend only, for script/style registration
+- `admin_enqueue_scripts` - Admin only, for script/style registration
+- `rest_api_init` - When REST API is initialized
+- `widgets_init` - When widgets are initialized
+- `after_setup_theme` - Early theme setup
+- And many more WordPress hooks...
+
 ### Asset Versioning
 
 For third-party files that are modified through the plugin's filter system, versioning is optional. Note that versioning only applies to CSS and JavaScript files - PHP files are always loaded fresh as they are executed server-side.

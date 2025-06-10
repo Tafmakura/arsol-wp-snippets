@@ -115,17 +115,7 @@ if (!$file_exists) {
                 // Define addon type for use in the template
                 $addon_type = isset($addon_data['type']) ? $addon_data['type'] : $option_type;
                 
-                // Show hook information for PHP files
-                if ($addon_type === 'php'): 
-                    $hook = \Arsol_WP_Snippets\Helper::get_hook($addon_data);
-                    $hook_description = \Arsol_WP_Snippets\Helper::get_hook_description($hook);
-                ?>
-                <span class="arsol-addon-meta">
-                    <strong>Hook:</strong> <?php echo esc_html($hook); ?>
-                </span>
-                <?php endif; ?>
-                
-                <?php if ($addon_type === 'js'): ?>
+                if ($addon_type === 'js'): ?>
                 <span class="arsol-addon-meta">
                     <strong>Position:</strong> <?php echo ucfirst($addon_data['position'] ?? 'footer'); ?>
                 </span>
@@ -139,6 +129,16 @@ if (!$file_exists) {
                 <?php if (!empty($addon_data['dependencies'])): ?>
                 <div class="arsol-addon-meta">
                     <strong><?php echo esc_html__('Dependencies:', 'arsol-wp-snippets'); ?></strong> <?php echo esc_html(implode(', ', $addon_data['dependencies'])); ?>
+                </div>
+                <?php endif; ?>
+                
+                <?php 
+                // Show hook information for PHP files - displayed last
+                if ($addon_type === 'php'): 
+                    $hook = \Arsol_WP_Snippets\Helper::get_hook($addon_data);
+                ?>
+                <div class="arsol-addon-meta">
+                    <strong>Hook:</strong> <?php echo esc_html($hook); ?>
                 </div>
                 <?php endif; ?>
             </div>

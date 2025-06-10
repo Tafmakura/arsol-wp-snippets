@@ -120,7 +120,13 @@ class Admin_Settings {
         add_settings_section(
             'arsol_wp_snippets_php',
             __('PHP Addons', 'arsol-wp-snippets'),
-            array($this, 'render_php_section'),
+            function() {
+                echo '<h4>' . esc_html__('Select PHP snippets to include.', 'arsol-wp-snippets') . '</h4>';
+                echo '<div class="arsol-addon-list">';
+                // Render PHP addons directly here instead of using add_settings_field
+                $this->render_php_addon_options();
+                echo '</div>';
+            },
             $this->css_addons_slug
         );
         
@@ -128,7 +134,13 @@ class Admin_Settings {
         add_settings_section(
             'arsol_wp_snippets_css',
             __('CSS Addons', 'arsol-wp-snippets'),
-            array($this, 'render_css_section'),
+            function() {
+                echo '<h4>' . esc_html__('Select CSS snippets to include.', 'arsol-wp-snippets') . '</h4>';
+                echo '<div class="arsol-addon-list">';
+                // Render CSS addons directly here instead of using add_settings_field
+                $this->render_css_addon_options();
+                echo '</div>';
+            },
             $this->css_addons_slug
         );
         
@@ -136,7 +148,13 @@ class Admin_Settings {
         add_settings_section(
             'arsol_wp_snippets_js',
             __('JS Addons', 'arsol-wp-snippets'),
-            array($this, 'render_js_section'),
+            function() {
+                echo '<h4>' . esc_html__('Select JavaScript snippets to include.', 'arsol-wp-snippets') . '</h4>';
+                echo '<div class="arsol-addon-list">';
+                // Render JS addons directly here instead of using add_settings_field
+                $this->render_js_addon_options();
+                echo '</div>';
+            },
             $this->css_addons_slug
         );
     }
@@ -248,36 +266,6 @@ class Admin_Settings {
             $option_type = 'js';
             include ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/ui/partials/admin/addon-file-checkbox.php';
         }
-    }
-    
-    /**
-     * Render PHP section header
-     */
-    public function render_php_section() {
-        echo '<h4>' . esc_html__('Select PHP snippets to include.', 'arsol-wp-snippets') . '</h4>';
-        echo '<div class="arsol-addon-list">';
-        $this->render_php_addon_options();
-        echo '</div>';
-    }
-    
-    /**
-     * Render CSS section header
-     */
-    public function render_css_section() {
-        echo '<h4>' . esc_html__('Select CSS snippets to include.', 'arsol-wp-snippets') . '</h4>';
-        echo '<div class="arsol-addon-list">';
-        $this->render_css_addon_options();
-        echo '</div>';
-    }
-    
-    /**
-     * Render JS section header
-     */
-    public function render_js_section() {
-        echo '<h4>' . esc_html__('Select JavaScript snippets to include.', 'arsol-wp-snippets') . '</h4>';
-        echo '<div class="arsol-addon-list">';
-        $this->render_js_addon_options();
-        echo '</div>';
     }
     
     /**

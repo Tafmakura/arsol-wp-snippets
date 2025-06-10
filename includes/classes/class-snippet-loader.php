@@ -11,7 +11,26 @@ if (!defined('ABSPATH')) {
  */
 class Snippet_Loader {
     
+    /**
+     * Static instance to prevent multiple instantiations
+     * @var Snippet_Loader|null
+     */
+    private static $instance = null;
+    
+    /**
+     * Whether snippets have been registered
+     * @var bool
+     */
+    private $snippets_registered = false;
+    
     public function __construct() {
+        // Prevent multiple instances
+        if (self::$instance !== null) {
+            return self::$instance;
+        }
+        
+        self::$instance = $this;
+        
         // Register all snippets during initialization
         $this->register_snippets();
         
@@ -34,11 +53,18 @@ class Snippet_Loader {
      * Register all snippets with their priorities
      */
     private function register_snippets() {
+        // Prevent duplicate registrations
+        if ($this->snippets_registered) {
+            return;
+        }
+        
         $this->register_php_snippets();
         $this->register_css_snippets('frontend');
         $this->register_css_snippets('admin');
         $this->register_js_snippets('frontend');
         $this->register_js_snippets('admin');
+        
+        $this->snippets_registered = true;
     }
 
     /**
@@ -297,11 +323,26 @@ class Snippet_Loader {
         $file_data = $php_files[$file_key];
         
         if (file_exists($file_data['file'])) {
-            include_once $file_data['file'];
-            error_log('Arsol WP Snippets: Loaded PHP file - ' . $file_data['file']);
+            // Start output buffering to prevent early output from included files
+            ob_start();
             
-            // Trigger action when PHP file is loaded
-            do_action('arsol_wp_snippets_loaded_php_addon', $file_key, $file_data);
+            try {
+                include_once $file_data['file'];
+                error_log('Arsol WP Snippets: Loaded PHP file - ' . $file_data['file']);
+                
+                // Trigger action when PHP file is loaded
+                do_action('arsol_wp_snippets_loaded_php_addon', $file_key, $file_data);
+            } catch (Exception $e) {
+                error_log('Arsol WP Snippets: Error loading PHP file - ' . $file_data['file'] . ': ' . $e->getMessage());
+            } catch (Error $e) {
+                error_log('Arsol WP Snippets: Fatal error loading PHP file - ' . $file_data['file'] . ': ' . $e->getMessage());
+            }
+            
+            // Get any output and log it if there was any
+            $output = ob_get_clean();
+            if (!empty($output)) {
+                error_log('Arsol WP Snippets: WARNING - PHP file produced output: ' . $file_data['file'] . ' - Output: ' . substr($output, 0, 200));
+            }
         } else {
             error_log('Arsol WP Snippets: PHP file does not exist - ' . $file_data['file']);
         }

@@ -35,6 +35,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Start output buffering early to catch any premature output
+if (!ob_get_level()) {
+    ob_start();
+}
+
 // Define plugin constants
 define('ARSOL_WP_SNIPPETS_PLUGIN_FILE', __FILE__);
 define('ARSOL_WP_SNIPPETS_PLUGIN_DIR', plugin_dir_path(__FILE__));
@@ -57,11 +62,26 @@ function arsol_wp_snippets_get_version() {
     return $version;
 }
 
+/**
+ * Check for and log any premature output during plugin initialization
+ */
+function arsol_wp_snippets_check_early_output() {
+    if (ob_get_level() > 0) {
+        $output = ob_get_clean();
+        if (!empty(trim($output))) {
+            error_log('Arsol WP Snippets: Early output detected during plugin initialization: ' . substr($output, 0, 200));
+        }
+    }
+}
+
 // Setup Class
 require_once ARSOL_WP_SNIPPETS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
 // Initialize the plugin
 function arsol_wp_snippets_init() {
+    // Check for early output before initialization
+    arsol_wp_snippets_check_early_output();
+    
     // Initialize setup class which handles autoloading and other initialization
     new \Arsol_WP_Snippets\Setup();
 }

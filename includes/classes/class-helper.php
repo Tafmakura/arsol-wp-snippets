@@ -89,7 +89,7 @@ class Helper {
             'context' => 'global',
             'enabled' => false,
             'priority' => 10,
-            'hook' => 'init'  // Default hook for PHP snippets
+            'hook' => 'plugins_loaded'  // Changed to plugins_loaded to prevent header issues
         );
         
         if ($option_key !== null) {
